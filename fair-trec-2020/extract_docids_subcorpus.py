@@ -10,5 +10,5 @@ with gzip.open(subcorpus) as f:
     for doc in reader:
         subcorpus_ids.append(doc['id'])
 
-with open('resources/corpus2020/TREC-Fair-Ranking-subcorpus-docids.txt', 'w') as f:
+with open('resources/TREC-Fair-Ranking-subcorpus-docids.txt', 'w') as f:
     f.write('\n'.join(subcorpus_ids))

@@ -20,9 +20,9 @@ def sample_to_df(filename):
     return df
 
 
-eval_file = 'resources/corpus2020/TREC-Fair-Ranking-eval-sample.json'
-train_file = 'resources/corpus2020/TREC-Fair-Ranking-training-sample.json'
-corp_file = 'resources/corpus2020/corpus-subset-for-queries.papers.csv'
+eval_file = 'resources/TREC-Fair-Ranking-eval-sample.json'
+train_file = 'resources/TREC-Fair-Ranking-training-sample.json'
+corp_file = 'resources/corpus-subset-for-queries.papers.csv'
 
 corp_df = pd.read_csv(corp_file)
 corp_df = corp_df[['paper_sha']]
