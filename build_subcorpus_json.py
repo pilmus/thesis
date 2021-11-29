@@ -1,13 +1,33 @@
-# 1. loop through docs from training file
-# 2. extract files from corpus that match train/eva
-# 3. write them to a new file
 import glob
-import os
 
-import jsonlines as jsonlines
-from tqdm import tqdm
+import sys
 
 from fairtrec_util import sample_to_df
+
+
+
+def resource_path_builder(year):
+    return f'fair-trec-{year}/resources'
+
+
+def find_input_files(resource_path):
+    input_files = glob.glob(f"{resource_path}/*eval*.json") + glob.glob(f"{resource_path}/*train*.json")
+    return input_files
+
+def get_unique_input_docids(input_files):
+    docids = []
+    for input_file in input_files:
+        df = sample_to_df(input_file)
+        docids.append(df.documents.tolist())
+    return set(docids)
+
+years = ['2020']
+resource_paths = [resource_path_builder(year) for year in years]
+input_files = [input_file for input_file in find_input_files(resource_path) for resource_path in resource_paths]
+
+print(find_input_files(resource_path_builder(years[0])))
+
+sys.exit()
 
 eval_file = 'resources/fair-TREC-evaluation-sample.json'
 train_file = 'resources/fair-TREC-training-sample.json'
@@ -67,7 +87,7 @@ with jsonlines.open(eva_subcorp, mode="a") as eva_writer, jsonlines.open(tra_sub
             eva_lines = []
             tra_lines = []
             for line in tqdm(reader, total=1000000):
-            # for line in tqdm(reader, total=102):
+                # for line in tqdm(reader, total=102):
                 if line['id'] in eva_docs:
                     line['corpus_file'] = os.path.basename(corpusfile)
                     eva_lines.append(line)
@@ -80,12 +100,3 @@ with jsonlines.open(eva_subcorp, mode="a") as eva_writer, jsonlines.open(tra_sub
             eva_writer.write_all(eva_lines)
             tra_writer.write_all(tra_lines)
         # break
-
-
-
-    # docs = []
-#     for doc in tqdm(reader.iter(type=dict), total=100000):
-#         if doc['id'] in reldocids:
-#             print(f"Doc {doc['id']} found.")
-#             docs.append(doc)
-#

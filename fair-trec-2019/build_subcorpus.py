@@ -57,7 +57,7 @@ with jsonlines.open(eva_subcorp, mode="r") as eva_reader, jsonlines.open(tra_sub
 #
 # sys.exit()
 
-with jsonlines.open(eva_subcorp, mode="a") as eva_writer, jsonlines.open(tra_subcorp, mode="a") as tra_writer:
+
     corpusfiles = glob.glob(corpdir + f"/*[{last_ten}-9][{last_one}-9]")
 
     for corpusfile in corpusfiles:
@@ -77,9 +77,12 @@ with jsonlines.open(eva_subcorp, mode="a") as eva_writer, jsonlines.open(tra_sub
             print(f"Found {len(eva_lines)} eva docs...")
             print(f"Found {len(tra_lines)} tra docs...")
             print("Saving extracted documents...")
-            eva_writer.write_all(eva_lines)
-            tra_writer.write_all(tra_lines)
-        # break
+
+            with jsonlines.open(eva_subcorp, mode="a") as eva_writer:
+                eva_writer.write_all(eva_lines)
+            with jsonlines.open(tra_subcorp, mode="a") as tra_writer:
+                tra_writer.write_all(tra_lines)
+        break
 
 
 
