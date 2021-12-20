@@ -6,8 +6,3 @@ __pycache__/
 
 # Project files
 */resources/
-.idea/
-❌/
-
-# Indices
-elasticsearch/
