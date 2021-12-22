@@ -27,7 +27,9 @@
 	- Literature survey algorithmic causal fairness
 		- ML as a whole
 		- Ranking specifically
-		- Which CF approach most likely to yield an improvement for the FairTrec task?
+		
+	- Proposed improvement
+		- Which CF approach most likely to yield an improvement for the FairTrec task? Why?
 
 	- Experiments
 	- Results

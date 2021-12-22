@@ -45,7 +45,7 @@ In 2019, the following runs were submitted:
 Of these, we reproduce the results of 
 
 #### Random
-The simplest approach is by [@bonartFairRankingAcademic]. In this approach, items are randomly selected from the corpus and returned in a ranked list.
+[[Random shuffle (2019)]]
 
 #### Pairwise LtR
 Also from [@bonartFairRankingAcademic] is a pairwise LtR approach. They use the [LTR plugin for Elasticsearch](https://elasticsearch-learning-to-rank.readthedocs.io/en/latest/) to learn LambdaMART based on the features in table X. Their code is open source and is available [here](). We made a number of small changes to the source code during the replication process, these are recorded in the appendix.
