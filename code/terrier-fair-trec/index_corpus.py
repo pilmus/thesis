@@ -1,5 +1,6 @@
 import glob
 import shutil
+import time
 
 import pyterrier as pt
 import jsonlines
@@ -10,14 +11,35 @@ if not pt.started():
 
 
 # dict_keys(['entities', 'journalVolume', 'journalPages', 'pmid', 'year', 'outCitations', 's2Url', 's2PdfUrl', 'id', 'authors', 'journalName', 'paperAbstract', 'inCitations', 'pdfUrls', 'title', 'doi', 'sources', 'doiUrl', 'venue'])
+
+SAMPLE_FILE = './sample_corp.jsonl'
+
+CORPUS_DIR = "/mnt/g/thesis/corpus2019unzips"
+
+
+NONEE = '/mnt/d/terrier/nonedex'
+STEM = '/mnt/d/terrier/stemdex'
+STOP = '/mnt/d/terrier/stopdex'
+STOPSTEM = '/mnt/d/terrier/stopstemdex'
+
+
+
+
+
+
 def doc_generator():
-  for filename in glob.glob("/mnt/g/thesis/corpus2019unzips/s2-corpus-[0-9][0-9]"):
-    with jsonlines.open(filename) as reader:
+  for file in glob.glob(CORPUS_DIR + "/s2-corpus-01"):
+    print(f"processing {file}")
+    with jsonlines.open(file) as reader:
       for i, doc in enumerate(reader.iter(type=dict, skip_invalid=True)):
-        # if i == 1000:
-        #   break
         if i % 100000 == 0:
           print(f'processing document {i}')
+
+        id_ = doc.get('id')
+        title = doc.get('title')
+        paper_abstract = doc.get("paperAbstract")
+
+
         entities = ' '.join(doc.get('entities'))
         journal_volume = doc.get('journalVolume')
         journal_pages = doc.get('journalPages')
@@ -48,25 +70,28 @@ def doc_generator():
           [entities, journal_volume, journal_pages, pmid, year, outcitations, incitations, s2_url, s2_pdf_url,
            journal_name, pdf_urls, doi, doi_url, sources, venue, author_ids, author_names])
 
-        # yield {
-        #   'docno': doc.get('id'),
-        #   'title': 'horse'
-        #   }
+
+        text = ' '.join([id_, title, paper_abstract, other])
+
 
         d = {
-          "docno": doc.get('id'),
-          "title": doc.get('title'),
-          "paper_abstract": doc.get("paperAbstract"),
-          "other": other
-          } # field names have to be lower case?
-        # print(d)
+          "docno": id_,
+          "title": title,
+          "paperabstract": paper_abstract,
+          "other": other,
+          "text": text
+          }
 
         yield d
-#
-if os.path.exists('./iter_index'):
-  shutil.rmtree('./iter_index')
 
+index = NONEE
+if os.path.exists(index):
+  shutil.rmtree(index)
 
-iter_indexer = pt.IterDictIndexer("./iter_index")
-doc_iter = doc_generator()
-indexref = iter_indexer.index(doc_iter, fields=['title'])
+t1 = time.time()
+indexer = pt.IterDictIndexer(index, threads = 8)
+indexer.setProperty("termpipelines", "")
+indexref = indexer.index(doc_generator(), meta=["docno", "text"], fields=['title', 'paperabstract', 'other'])
+
+t2 = time.time()
+print("--- %s seconds ---" % (t2 - t1))
