@@ -80,8 +80,7 @@
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "year",
-                  "missing": null
+                  "field": "year"
                 }
               }
             ],

@@ -1,10 +1,11 @@
-import evaluation.validate_run as validate
 import src.reranker.lambdamart as model
 from src.interface.corpus import Corpus
 from src.interface.features import FeatureEngineer
 from src.interface.iohandler import InputOutputHandler
+from evaluation.validate_run import validate
 
-OUT = "./evaluation/submission_lambdamart2.json"
+
+OUT = "./evaluation/submission_lambdamart_missing_gone.json"
 QUERIES_EVAL = "./evaluation/fair-TREC-evaluation-sample.json"
 SEQUENCE_EVAL = "./evaluation/fair-TREC-evaluation-sequences.csv"
 
@@ -33,4 +34,4 @@ input_test.write_submission(lambdamart, outfile=OUT)
 
 
 print(f"Validating {OUT}...")
-validate.validate(QUERIES_EVAL, SEQUENCE_EVAL, OUT)
+validate(QUERIES_EVAL, SEQUENCE_EVAL, OUT)

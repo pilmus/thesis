@@ -219,10 +219,11 @@ if __name__ == '__main__':
 
     run_files_prefix = 'fairRuns/'
     run_files = [
-        "submission_random.json",
-        "submission_lambdamart.json"
+        # "submission_random.json",
+        # "submission_lambdamart.json"
         # 'example_run_name_1',
-        # 'example_run_name_2', 
+        # 'example_run_name_2',
+        "submission_lambdamart_missing_gone.json"
         ]
 
     performance_all_utility = defaultdict(list)

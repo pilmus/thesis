@@ -11,20 +11,20 @@ OUT = "./evaluation/submission_random.json"
 QUERIES = "./evaluation/fair-TREC-evaluation-sample.json"
 SEQUENCE = "./evaluation/fair-TREC-evaluation-sequences.csv"
 
-# print("Initializing corpus.")
-# corpus = Corpus()
-# print("Building features.")
-# ft = FeatureEngineer(corpus)
-#
-# input = InputOutputHandler(corpus,
-#                            fsequence=SEQUENCE,
-#                            fquery=QUERIES)
-# print("Predicting...")
-# random = model.RandomRanker(ft)
-# random.predict(input)
-#
-# print("Writing submission.")
-# input.write_submission(random, outfile=OUT)
+print("Initializing corpus.")
+corpus = Corpus()
+print("Building features.")
+ft = FeatureEngineer(corpus)
+
+input = InputOutputHandler(corpus,
+                           fsequence=SEQUENCE,
+                           fquery=QUERIES)
+print("Predicting...")
+random = model.RandomRanker(ft)
+random.predict(input)
+
+print("Writing submission.")
+input.write_submission(random, outfile=OUT)
 
 print(f"Validating {OUT}...")
 validate(QUERIES,SEQUENCE,OUT)
