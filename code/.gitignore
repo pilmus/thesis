@@ -3,3 +3,4 @@ terrier-core/
 resources/
 
 *.jsonl
+*.TREC
