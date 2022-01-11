@@ -7,14 +7,21 @@ import src.utils.io as io
 
 class InputOutputHandler:
     """Interface between the provided training data and other modules. 
-    When initialized author information for each doc are fetched from the database via the 
+    When initialized author information for each doc is fetched from the database via the
     provided Corpus object."""
 
     def __init__(self,
                  corpus,
-                 fsequence="./training/training-sequence.tsv",
-                 fquery="./training/fair-TREC-training-sample.json",
-                 fgroup="./training/fair-TREC-sample-author-groups.csv"):
+                 fsequence,
+                 fquery,
+                 fgroup):
+        """
+
+        :param corpus:
+        :param fsequence: training query sequence (e.g. training-sequence.tsv)
+        :param fquery: training queries (e.g. fair-TREC-training-sample.json)
+        :param fgroup: author groups (e.g. fair-TREC-sample-author-groups.csv)
+        """
 
         self.corpus = corpus
 
@@ -31,6 +38,7 @@ class InputOutputHandler:
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
         return seq.drop_duplicates()
+
 
     def get_authors(self):
         if self.authors is None:
