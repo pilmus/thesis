@@ -25,8 +25,7 @@ class Corpus():
         feature_set = io.read_json(fconfig)
         base = 'http://' + self.host + ":" + str(self.port) + '/'
         requests.put(base + '_ltr')
-        full_path = base + "_ltr/_featureset/features"  # todo: make this configurable so can incorporate features for
-        # todo: e.g. deltr
+        full_path = base + "_ltr/_featureset/" + feature_set['featureset']['name']
         head = {'Content-Type': 'application/json'}
         resp = requests.post(full_path, data=json.dumps(feature_set), headers=head)
         return resp

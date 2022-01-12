@@ -15,7 +15,7 @@ class RankerInterface(ABC):
         super().__init__()
 
     @abstractmethod
-    def train(self, inputhandler):
+    def train(self, inputhandler,save):
         """
         uses the labelled queries from the inputhandler to estimate a ranking model
         """
