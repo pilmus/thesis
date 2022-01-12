@@ -1,0 +1,31 @@
+{
+    "query": {
+        "bool": {
+            "filter": [
+                {
+                    "terms": {
+                        "_id": "doc_ids"
+                    }
+                },
+                {
+                    "sltr": {
+                        "_name": "logged_featureset_deltr",
+                        "featureset": "features_deltr",
+                        "params": {
+                            "keywords": "query"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "ext": {
+        "ltr_log": {
+            "log_specs": {
+                "name": "log_deltr",
+                "named_query": "logged_featureset_deltr",
+                "missing_as_zero": true
+            }
+        }
+    }
+}

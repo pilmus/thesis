@@ -17,8 +17,16 @@ class FeatureEngineer():
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
-        resp['qlength'] = len(queryterm)
+        resp['qlength'] = len(queryterm) #todo: relevant for all models?
         return resp
+
+    @property
+    def feature_names(self):
+        pass
+
+    @property
+    def log_field_name(self):
+        return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
     def get_feature_mat(self, iohandler):
         features = iohandler.get_query_seq().groupby('qid').apply(
@@ -28,7 +36,7 @@ class FeatureEngineer():
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']
-        features = [doc['fields']['_ltrlog'][0]['log_entry1'] for doc in docs]
+        features = [doc['fields']['_ltrlog'][0][self.log_field_name] for doc in docs]
         ids = [doc['_id'] for doc in docs]
         result = []
         for i, vec in enumerate(features):

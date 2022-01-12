@@ -6,8 +6,24 @@
     "index": "semanticscholar"
   },
   "featureset": {
-    "name": "featureset",
+    "name": "features_deltr",
     "features": [
+      {"name": "h_score",
+      "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "h",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        } },
       {
         "name": "title_score",
         "params": [
@@ -71,23 +87,6 @@
         "template": {
           "match": {
             "author_names": "{{keywords}}"
-          }
-        }
-      },
-      {
-        "name": "year",
-        "template": {
-          "function_score": {
-            "functions": [
-              {
-                "field_value_factor": {
-                  "field": "year"
-                }
-              }
-            ],
-            "query": {
-              "match_all": {}
-            }
           }
         }
       },
