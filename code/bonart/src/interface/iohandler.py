@@ -60,7 +60,7 @@ class InputOutputHandler:
                 })
         return ret
 
-    def write_submission(self, model, outfile="./training/submission.json"):
+    def write_submission(self, model, outfile):
         """
         accepts a model and writes a jsonlines submission file.
         """
