@@ -42,8 +42,18 @@ def eval(deltr=None):
     input_eval.write_submission(deltr, outfile=OUT)
 
 
+QUERIES_TRAIN = "../resources/2019/training/fair-TREC-training-sample-cleaned.json"
+SEQUENCE_TRAIN = "../resources/2019/evaluation/training-sequence-handmade.tsv"  # todo: make sure training sequence
 
+corpus = Corpus()
+ft = FeatureEngineer(corpus, fquery="./config/featurequery_deltr.json", fconfig='./config/features_deltr.json')
 
+input_train = InputOutputHandler(corpus,
+                                 fsequence=SEQUENCE_TRAIN,
+                                 fquery=QUERIES_TRAIN,
+                                 fgroup='../resources/2019/fair-TREC-sample-author-groups.csv')
 
-# deltr = train()
-eval()
+deltr = DeltrWrapper(ft, "h_score", 0, standardize=False)
+deltr.train(input_train,save=False)
+deltr.predict(input_train)
+input_train.write_submission(deltr, outfile='test')

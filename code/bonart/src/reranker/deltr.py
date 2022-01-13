@@ -1,5 +1,4 @@
 import json
-import sys
 
 import numpy as np
 import pandas as pd
@@ -13,6 +12,11 @@ class DeltrWrapper(model.RankerInterface):
     Wrapper arround DELTR
     """
 
+    COLUMN_ORDER = ["q_num", "doc_id", "protected",
+                    "abstract_score", "authors_score", "entities_score",
+                    "inCitations", "journal_score", "outCitations", "title_score",
+                    "venue_score", "qlength"]
+
     def __init__(self, featureengineer, protected_feature, gamma, standardize=False):
         super().__init__(featureengineer)
         # setup the DELTR object
@@ -25,13 +29,6 @@ class DeltrWrapper(model.RankerInterface):
         self.weights = None
         self.mus = None
         self.sigmas = None
-
-    def __first_group(self, group, inputhandler):
-        authors = inputhandler.get_authors()
-        doc_id = group['doc_id'].iloc[0]
-        groups = authors.gid[authors.doc_id == doc_id]
-        group['in_first'] = int(any(groups.isin(['1'])))
-        return group
 
     def load_model(self, model_path):
         with open(model_path) as mp:
@@ -55,14 +52,10 @@ class DeltrWrapper(model.RankerInterface):
         df['protected'][0:halfsize] = 1
         return df
 
-    def __prepare_data(self, inputhandler, has_judgment=True):
+    def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
         """
         DELTR requires the data to be in a specific order: qid, docid, protected feature, ...
         """
-        column_order = ["q_num", "doc_id", "protected",
-                        "abstract_score", "authors_score", "entities_score",
-                        "inCitations", "journal_score", "outCitations", "title_score",
-                        "venue_score", "qlength"]
 
         features = self.fe.get_feature_mat(inputhandler)
 
@@ -76,18 +69,20 @@ class DeltrWrapper(model.RankerInterface):
         # data['protected'] = data.apply(lambda row: 1 if row['protected'] > 0 else 0, axis=1)
         data = data.groupby('qid', as_index=False).apply(self.dummy_grouping)
 
-        # data = data.groupby('doc_id', as_index=False).apply(self.__first_group,inputhandler=inputhandler)
-
-        if not has_judgment:
-            data = data.drop('relevance', axis=1)
-            column_order.append("sid")
-            column_order.append("qid")
+        col_order = self.COLUMN_ORDER
+        if has_judgment:
+            col_order = self.COLUMN_ORDER + ['relevance']
         else:
-            column_order.append("relevance")
+            data = data.drop('relevance', axis=1)
+
+        if mode == 'train':
+            col_order[0] = 'qid'
+        if mode == 'eval':
+            data.q_num = data.sid.astype(str) + '.' + data.q_num.astype(str)
 
         data = data.dropna()  # drop missing values as some doc_ids are not in the corpus
 
-        data = data.reindex(columns=column_order)  # protected variable has to be at third position for DELTR
+        data = data.reindex(columns=col_order)  # protected variable has to be at third position for DELTR
 
         # data = data.sort_values('relevance', ascending=False)
         data = data.drop_duplicates()
@@ -106,15 +101,16 @@ class DeltrWrapper(model.RankerInterface):
         return self.weights
 
     def save(self):
-        feature_names = [self.protected_feature, "abstract_score", "authors_score", "entities_score",
-                         "inCitations", "journal_score", "outCitations", "title_score",
-                         "venue_score", "year", "qlength"]
+        feature_names = self.COLUMN_ORDER[2:-1]
+        feature_names[0] = self.protected_feature
+
         model_dict = {}
         model_dict['omega'] = dict(zip(feature_names, self.weights))
         model_dict['mus'] = self.mus
         model_dict['sigmas'] = self.sigmas
 
-        with(open(f'models/deltr_gamma_{self.gamma}.model.json', 'w')) as f: #todo: versioning
+        with(open(f'models/deltr_gamma_{self.gamma}_prot_{self.protected_feature}.model.json', 'w')) as f:  # todo:
+            # versioning
             json.dump(model_dict, f)
 
     def __predict_apply(self, df):
@@ -123,9 +119,9 @@ class DeltrWrapper(model.RankerInterface):
 
         df_copy = df.copy(deep=True)
         df_copy.q_num_combi = df.sid + "." + df.q_num
-        df_copy = df_copy.drop(['sid','q_num'],axis=1)
+        df_copy = df_copy.drop(['sid', 'q_num'], axis=1)
 
-        predictions = self.dtr.rank(df_copy,has_judgment=False)
+        predictions = self.dtr.rank(df_copy, has_judgment=False)
         predictions[['sid', 'q_num']] = predictions['q_num'].str.split('.')
         # return predictions
         return df
@@ -137,27 +133,25 @@ class DeltrWrapper(model.RankerInterface):
                                     i.e. higher scores are better
         """
 
-        data = self.__prepare_data(inputhandler, has_judgment=False)
+        data = self.__prepare_data(inputhandler, has_judgment=False, mode='eval')
 
-        print(data)
+        data = data.groupby('q_num').apply(self.dtr.rank, has_judgment=False)
+        data = data.reset_index(level=0)
 
-        grouped_by_qnum = data.drop(['sid','qid'],axis=1).groupby('q_num')
-        pred_df = pd.DataFrame(columns=['doc_id','protected','judgement','q_num','sid'])
-        for q_num, df in grouped_by_qnum:
-            print(q_num)
-            prediction = self.dtr.rank(df,has_judgment = False)
-            print(prediction)
-            prediction['q_num'] = q_num
-            prediction['sid'] = 1
-            pred_df = pred_df.append(prediction)
+        data['rank'] = data.groupby('q_num')['judgement'].apply(pd.Series.rank, ascending=False,
+                                                                method='first')
 
+        data[['sid', 'q_num']] = data['q_num'].str.split('.', expand=True)
 
+        data = data.astype({"sid": int, "q_num": int})
 
+        data = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], data, how='left',
+                        on=['sid', 'q_num', 'doc_id'])
 
-        pred_df['rank'] = pred_df.groupby(['sid', 'q_num'])['judgement'].apply(pd.Series.rank, ascending=False,
-                                                                         method='first')
+        # pred_df['rank'] = pred_df.groupby(['sid', 'q_num'])['judgement'].apply(pd.Series.rank, ascending=False,
+        #                                                                        method='first')
+        #
+        # pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], pred_df,
+        #                 how='left', on=['sid', 'q_num', 'doc_id'])
 
-        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], pred_df,
-                        how='left', on=['sid', 'q_num', 'doc_id'])
-
-        return pred
+        return data
