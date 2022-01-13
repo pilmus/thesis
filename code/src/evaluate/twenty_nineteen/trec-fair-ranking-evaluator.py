@@ -223,7 +223,8 @@ if __name__ == '__main__':
         # "submission_lambdamart.json"
         # 'example_run_name_1',
         # 'example_run_name_2',
-        "submission_lambdamart_missing_gone.json"
+        # "submission_lambdamart_missing_gone.json"
+        "deltr_gamma_0_prot_DocHLevel.json"
         ]
 
     performance_all_utility = defaultdict(list)

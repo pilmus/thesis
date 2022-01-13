@@ -37,6 +37,7 @@ class InputOutputHandler:
 
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
+        seq = seq.dropna() #todo: good solution?
         return seq.drop_duplicates()
 
 
