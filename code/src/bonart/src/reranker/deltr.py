@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from fairsearchdeltr import Deltr
 
-import src.reranker.model as model
+import bonart.src.reranker.model as model
 
 
 class DeltrWrapper(model.RankerInterface):
@@ -49,7 +49,7 @@ class DeltrWrapper(model.RankerInterface):
 
     def __protected_feature_grouping(self, df):
 
-        doc_annotations = pd.read_csv('../resources/2020/doc-annotations.csv')
+        doc_annotations = pd.read_csv('../../resources/2020/doc-annotations.csv')
 
         # todo: warning if not two groups
         doc_annotations['protected'] = doc_annotations.DocHLevel.map(self.protected_feature_mapping['value_mapping'])

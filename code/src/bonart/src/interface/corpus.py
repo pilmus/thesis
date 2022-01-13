@@ -7,7 +7,7 @@ from elasticsearch import Elasticsearch, helpers
 from elasticsearch_dsl import Search, Q
 from pandas.io.json import json_normalize
 
-import src.utils.io as io
+import bonart.src.utils.io as io
 
 
 class Corpus():
