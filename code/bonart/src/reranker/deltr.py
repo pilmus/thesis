@@ -17,10 +17,11 @@ class DeltrWrapper(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, protected_feature, gamma, standardize=False):
+    def __init__(self, featureengineer, protected_feature_mapping, gamma, standardize=False):
         super().__init__(featureengineer)
         # setup the DELTR object
-        self.protected_feature = protected_feature  # generic name so we can easily swap features around
+        self.protected_feature_name = protected_feature_mapping['feature_name']
+        self.protected_feature_mapping = protected_feature_mapping
         self.gamma = gamma
         self.standardize = standardize
 
@@ -46,10 +47,15 @@ class DeltrWrapper(model.RankerInterface):
 
         return self.dtr
 
-    def dummy_grouping(self, df):
-        df['protected'] = 0
-        halfsize = int(len(df) / 2)
-        df['protected'][0:halfsize] = 1
+    def __protected_feature_grouping(self, df):
+
+        doc_annotations = pd.read_csv('../resources/2020/doc-annotations.csv')
+
+        # todo: warning if not two groups
+        doc_annotations['protected'] = doc_annotations.DocHLevel.map(self.protected_feature_mapping['value_mapping'])
+
+
+        df['protected'] = doc_annotations['protected']
         return df
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
@@ -62,12 +68,8 @@ class DeltrWrapper(model.RankerInterface):
         data = inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']]
 
         data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
-        # rename protected feature
-        data = data.rename(columns={self.protected_feature: "protected"})
 
-        # todo; dummy solution!
-        # data['protected'] = data.apply(lambda row: 1 if row['protected'] > 0 else 0, axis=1)
-        data = data.groupby('qid', as_index=False).apply(self.dummy_grouping)
+        data = data.groupby('qid', as_index=False).apply(self.__protected_feature_grouping)
 
         col_order = self.COLUMN_ORDER
         if has_judgment:
@@ -80,7 +82,8 @@ class DeltrWrapper(model.RankerInterface):
         if mode == 'eval':
             data.q_num = data.sid.astype(str) + '.' + data.q_num.astype(str)
 
-        data = data.dropna()  # drop missing values as some doc_ids are not in the corpus
+        data = data.dropna()  # drop missing values as some doc_ids are not in the corpus and not all docs have
+        # Hlevel annotations
 
         data = data.reindex(columns=col_order)  # protected variable has to be at third position for DELTR
 
@@ -102,14 +105,14 @@ class DeltrWrapper(model.RankerInterface):
 
     def save(self):
         feature_names = self.COLUMN_ORDER[2:-1]
-        feature_names[0] = self.protected_feature
+        feature_names[0] = self.protected_feature_name
 
         model_dict = {}
         model_dict['omega'] = dict(zip(feature_names, self.weights))
         model_dict['mus'] = self.mus
         model_dict['sigmas'] = self.sigmas
 
-        with(open(f'models/deltr_gamma_{self.gamma}_prot_{self.protected_feature}.model.json', 'w')) as f:  # todo:
+        with(open(f'models/deltr_gamma_{self.gamma}_prot_{self.protected_feature_name}.model.json', 'w')) as f:  # todo:
             # versioning
             json.dump(model_dict, f)
 

@@ -4,56 +4,39 @@ from src.interface.iohandler import InputOutputHandler
 from src.reranker.deltr import DeltrWrapper
 
 
-def train():
-    QUERIES_TRAIN = "../resources/2019/training/fair-TREC-training-sample-cleaned.json"
-    SEQUENCE_TRAIN = "../resources/2019/training/training-sequence-handmade.tsv"  # todo: make sure training sequence
-    # ids
-    # in sample
+# protected feature name and which values of the feature are protected and which aren't
+CORPUS = Corpus()
+FEATURE_ENGINEER = FeatureEngineer(CORPUS, fquery="./config/featurequery_deltr.json",
+                                   fconfig='./config/features_deltr.json')
 
-    corpus = Corpus()
-    ft = FeatureEngineer(corpus, fquery="./config/featurequery_deltr.json", fconfig='./config/features_deltr.json')
+PROT_MAPPING = {'feature_name': 'DocHLevel', 'value_mapping':{'H': 0, 'Mixed': 1, 'L': 1}}
 
-    input_train = InputOutputHandler(corpus,
-                                     fsequence=SEQUENCE_TRAIN,
-                                     fquery=QUERIES_TRAIN,
-                                     fgroup='../resources/2019/fair-TREC-sample-author-groups.csv')
-
-    deltr = DeltrWrapper(ft, "h_score", 0, standardize=False)
-    weights = deltr.train(input_train)
-    return deltr
-
-
-def eval(deltr=None):
-    OUT = "./runs/submission_deltr_gamma_0.json"
-    QUERIES_EVAL = "../resources/2019/training/fair-TREC-training-sample-cleaned.json"
-    SEQUENCE_EVAL = "../resources/2019/training/training-sequence-handmade.tsv"
-
-    corpus = Corpus()
-    ft = FeatureEngineer(corpus, fquery="./config/featurequery_deltr.json", fconfig='./config/features_deltr.json')
-
-    input_eval = InputOutputHandler(corpus,fsequence=SEQUENCE_EVAL,fquery =QUERIES_EVAL,fgroup='../resources/2019/fair-TREC-sample-author-groups.csv')
-
-    if not deltr:
-        deltr = DeltrWrapper(ft, "h_score", 0, standardize=False) #todo: read this initialization from file
-        deltr.load_model('./models/deltr_gamma_0.model.json')
-        deltr.dtr._protected_feature = 0
-    deltr.predict(input_eval)
-
-    input_eval.write_submission(deltr, outfile=OUT)
-
-
+SEQUENCE_TRAIN = "../resources/2019/training/training-sequence-handmade.tsv"  # todo: make sure training sequence
 QUERIES_TRAIN = "../resources/2019/training/fair-TREC-training-sample-cleaned.json"
-SEQUENCE_TRAIN = "../resources/2019/evaluation/training-sequence-handmade.tsv"  # todo: make sure training sequence
 
-corpus = Corpus()
-ft = FeatureEngineer(corpus, fquery="./config/featurequery_deltr.json", fconfig='./config/features_deltr.json')
+SEQUENCE_EVAL = "../resources/2019/training/training-sequence-handmade.tsv"
+QUERIES_EVAL = "../resources/2019/training/fair-TREC-training-sample-cleaned.json"
 
-input_train = InputOutputHandler(corpus,
+input_train = InputOutputHandler(CORPUS,
                                  fsequence=SEQUENCE_TRAIN,
                                  fquery=QUERIES_TRAIN,
                                  fgroup='../resources/2019/fair-TREC-sample-author-groups.csv')
 
-deltr = DeltrWrapper(ft, "h_score", 0, standardize=False)
-deltr.train(input_train,save=False)
-deltr.predict(input_train)
-input_train.write_submission(deltr, outfile='test')
+input_eval = InputOutputHandler(CORPUS,
+                                 fsequence=SEQUENCE_EVAL,
+                                 fquery=QUERIES_EVAL,
+                                 fgroup='../resources/2019/fair-TREC-sample-author-groups.csv')
+
+# hyperparams
+gamma = 0
+standardize = True
+
+deltr = DeltrWrapper(FEATURE_ENGINEER, PROT_MAPPING, gamma, standardize=standardize)
+deltr.train(input_train, save=True)
+deltr.predict(input_eval)
+
+outfile = f"./runs/deltr_gamma_{gamma}_prot_{PROT_MAPPING['protected_feature_name']}.json"
+input_eval.write_submission(deltr, outfile=outfile)
+
+
+
