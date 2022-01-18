@@ -6,19 +6,18 @@ import jsonlines
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-data_path_name = "../m-fair-trec/fair-trec-2019/resources/corpus2019"
-data_path = Path(data_path_name)
-
-indexed_corpus_files = "./log/indexed_corpus_files.txt"
-
-if not os.path.exists(indexed_corpus_files):
-    with open(indexed_corpus_files, 'w') as pf:
-        pass
-with open(indexed_corpus_files, "r") as pf:
-    processed = pf.read().splitlines()
+logdir = 'resources/logs'
 
 
-def doc_generator(reader):
+def already_indexed(indexed_files):
+    if not os.path.exists(indexed_files):
+        with open(indexed_files, "w"):
+            pass
+    with open(indexed_files, "r") as fp:
+        return fp.read().splitlines()
+
+
+def doc_generator(reader, year):
     for doc in reader.iter(type=dict, skip_invalid=True):
         author_names = []
         author_ids = []
@@ -26,43 +25,55 @@ def doc_generator(reader):
             author_ids.extend(obj.get('ids'))
             author_names.append(obj.get('name'))
 
-        yield {
-            "_index": 'semanticscholar',
-            # "_type": "document", # deprecated
+        yield_dict = {
+
             "_id": doc.get('id'),
             "title": doc.get('title'),
-            "paperAbstract": doc.get("paperAbstract"),
+            "abstract": doc.get("paperAbstract"),
             "entities": doc.get("entities"),
-            "author_names": author_names,
-            "author_ids": author_ids,
-            "numInCitations": len(doc.get("inCitations")),
-            "numOutCitations": len(doc.get("outCitations")),
-            "year": doc.get("year"),
             "venue": doc.get('venue'),
             "journalName": doc.get('journalName'),
-            "journalVolume": doc.get('journalVolume'),
-            "sources": doc.get('sources'),  # todo: can leave out?
-            "doi": doc.get('doi')  # todo: can leave out?
-            }
+            "author_names": author_names,
+            "author_ids": author_ids,
+
+            "num_in_citations": len(doc.get("inCitations")),
+            "num_out_citations": len(doc.get("outCitations")),
+        }
+
+        if year == 2019:
+            yield_dict["_index"] = 'semanticscholar2019'
+            yield_dict['year'] = doc.get("year")
+
+        elif year == 2020:
+            yield_dict["_index"] = 'semanticscholar2020'
+            yield_dict["sources"] = doc.get("sources")
+            yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
+        else:
+            print(f"Invalid year {year}.")
+
+        yield yield_dict
 
 
-es = Elasticsearch([{'host': 'localhost', 'port': '9200'}])
+def index_files(year):
+    rawspath = f'resources/{year}/corpus/raw/'
+    raw_files = glob.glob(rawspath + "*")
 
-corp_files = glob.glob(data_path_name + "/s2-corpus-[0-9][0-9]")
-for corp_file in corp_files:
-    # corp_file = data_path_name + "/s2-corpus-42"
-    corp_file_name = os.path.basename(corp_file)
-    if corp_file_name not in processed:
-        print(f"Indexing contents of {corp_file_name}.")
-        with jsonlines.open(corp_file) as reader:
+    indexed_filepath = os.path.join(logdir, f'indexed_files_{year}.txt')
+    indexed_files = already_indexed(indexed_filepath)
 
-            for success, info in helpers.parallel_bulk(es, doc_generator(reader),
-                                                       # chunk_size=100, max_chunk_bytes=1000 * 1000 * 25,
-                                                       chunk_size=10,
-                                                       request_timeout=120):
-                if not success:
-                    print(f"There was an error: {info}.")
-        with open(indexed_corpus_files, "a") as pf:
-            pf.write(f"{corp_file_name}\n")
+    for raw in raw_files:
+        if os.path.basename(raw) not in indexed_files:
+            print(f"Indexing contents of {raw}.")
+            with jsonlines.open(raw) as reader:
+                for success, info in helpers.parallel_bulk(es, doc_generator(reader, year), chunk_size=10,
+                                                           request_timeout=120):
+                    if not success:
+                        print(f"There was an error: {info}.")
+            with open(indexed_filepath, "a") as fp:
+                fp.write(f"{raw}\n")
+                print(f"Indexed contents of {raw}.")
 
-        print(f"Indexed contents of {corp_file}.")
+
+es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timout': 120}])
+index_files(2019)
+print("I'm done.")
