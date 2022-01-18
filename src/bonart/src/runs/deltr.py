@@ -11,11 +11,11 @@ FEATURE_ENGINEER = FeatureEngineer(CORPUS, fquery="./config/featurequery_deltr.j
 
 PROT_MAPPING = {'feature_name': 'DocHLevel', 'value_mapping': {'H': 0, 'Mixed': 1, 'L': 1}}
 
-SEQUENCE_TRAIN = "../../resources/2019/training/training-sequence-full.tsv"  # todo: make sure training sequence
-QUERIES_TRAIN = "../../resources/2019/training/fair-TREC-training-sample-cleaned.json"
+SEQUENCE_TRAIN = "resources/training/2020/training-sequence-10.tsv"  # todo: make sure training sequence
+QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
 
-SEQUENCE_EVAL = "../../resources/2019/evaluation/fair-TREC-evaluation-sequences.csv"
-QUERIES_EVAL = "../../resources/2019/evaluation/fair-TREC-evaluation-sample.json"
+SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
+QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample-no-rel.json"
 
 
 # QUERIES_EVAL = "./evaluation/fair-TREC-evaluation-sample.json"
