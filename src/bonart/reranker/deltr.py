@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from fairsearchdeltr import Deltr
 
-import bonart.src.reranker.model as model
+import src.bonart.reranker.model as model
 
 
 class DeltrWrapper(model.RankerInterface):

@@ -1,6 +1,6 @@
 import pandas as pd
 
-import bonart.src.utils.io as io
+import src.bonart.utils.io as io
 
 
 class FeatureEngineer():
