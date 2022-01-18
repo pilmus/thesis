@@ -14,8 +14,6 @@ resources/corpus/2020/zips/
 
 venv/
 
-# Indices
-elasticsearch/
 
 
 indexed_files_*.txt

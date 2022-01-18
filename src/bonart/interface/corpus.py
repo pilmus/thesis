@@ -7,7 +7,7 @@ from elasticsearch import Elasticsearch, helpers
 from elasticsearch_dsl import Search, Q
 from pandas.io.json import json_normalize
 
-import bonart.src.utils.io as io
+import src.bonart.utils.io as io
 
 
 class Corpus():
@@ -77,12 +77,12 @@ class Corpus():
         res = helpers.scan(Elasticsearch(), query=body, index='semanticscholar')
         return self.__return_res_dict_as_df(res)
 
-    def get_authors(self, doc_ids):
-        docs = self.get_docs_by_ids(doc_ids)
-        docs = docs[["doc_id", "author_ids"]]
-        docs = docs.to_dict(orient='records')
-        docs = json_normalize(docs, 'author_ids', 'doc_id')
-        docs.rename(columns={0: 'author_id'}, inplace=True)
-        log.info("fetched %s author ids from %s of %s provided doc_ids", docs.author_id.nunique(),
-                 docs.doc_id.nunique(), len(doc_ids))
-        return docs
+    # def get_authors(self, doc_ids):
+    #     docs = self.get_docs_by_ids(doc_ids)
+    #     docs = docs[["doc_id", "author_ids"]]
+    #     docs = docs.to_dict(orient='records')
+    #     docs = json_normalize(docs, 'author_ids', 'doc_id')
+    #     docs.rename(columns={0: 'author_id'}, inplace=True)
+    #     log.info("fetched %s author ids from %s of %s provided doc_ids", docs.author_id.nunique(),
+    #              docs.doc_id.nunique(), len(doc_ids))
+    #     return docs
