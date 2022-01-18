@@ -61,8 +61,9 @@ def index_files(year):
     indexed_filepath = os.path.join(logdir, f'indexed_files_{year}.txt')
     indexed_files = already_indexed(indexed_filepath)
 
+    print(f"Already indexed: {indexed_files}.")
     for raw in raw_files:
-        if os.path.basename(raw) not in indexed_files:
+        if raw not in indexed_files:
             print(f"Indexing contents of {raw}.")
             with jsonlines.open(raw) as reader:
                 for success, info in helpers.parallel_bulk(es, doc_generator(reader, year), chunk_size=10,
@@ -75,5 +76,5 @@ def index_files(year):
 
 
 es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 10}])
-index_files(2019)
+index_files(2020)
 print("I'm done.")
