@@ -74,6 +74,6 @@ def index_files(year):
                 print(f"Indexed contents of {raw}.")
 
 
-es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timout': 120}])
+es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 10}])
 index_files(2019)
 print("I'm done.")

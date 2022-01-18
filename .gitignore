@@ -5,9 +5,10 @@
 __pycache__/
 
 # Project files
-*/resources/
 .idea/
-❌/
+*/raw/
+*/zips/
+venv/
 
 # Indices
 elasticsearch/
