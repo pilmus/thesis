@@ -7,6 +7,8 @@ __pycache__/
 # Project files
 /resources/corpus/2019/raw/
 /resources/corpus/2019/zips/
+/resources/corpus/2019/elasticsearch/
+
 /resources/corpus/2020/raw/
 /resources/corpus/2020/zips/
 
