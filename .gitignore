@@ -5,9 +5,13 @@
 __pycache__/
 
 # Project files
-*/resources/
-.idea/
-❌/
+/resources/2020/corpus/raw/
+/resources/2020/corpus/zips/
+/resources/2019/corpus/raw/
+/resources/2019/corpus/zips/
+
+
 
 # Indices
 elasticsearch/
+
