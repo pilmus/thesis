@@ -5,13 +5,14 @@
 __pycache__/
 
 # Project files
-/resources/2020/corpus/raw/
-/resources/2020/corpus/zips/
-/resources/2019/corpus/raw/
-/resources/2019/corpus/zips/
+/resources/corpus/2019/raw/
+/resources/corpus/2019/zips/
+/resources/corpus/2020/raw/
+/resources/corpus/2020/zips/
+
+
+/venv/
 
 
 
-# Indices
-elasticsearch/
-
+indexed_files_*.txt
