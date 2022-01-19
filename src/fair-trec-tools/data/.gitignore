@@ -1,6 +1,0 @@
-*corpus/
-ai2-trec-release/
-*.csv
-*.jsonl
-*.json
-*.gz
