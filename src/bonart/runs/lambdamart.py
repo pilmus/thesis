@@ -1,8 +1,8 @@
-import src.reranker.lambdamart as model
-from src.interface.corpus import Corpus
-from src.interface.features import FeatureEngineer
-from src.interface.iohandler import InputOutputHandler
-from evaluation.validate_run import validate
+import src.bonart.reranker.lambdamart as model
+from src.bonart.interface.corpus import Corpus
+from src.bonart.interface.features import FeatureEngineer
+from src.bonart.interface.iohandler import InputOutputHandler
+from src.evaluation.twenty_nineteen.validate_run import validate
 
 
 OUT = "./evaluation/submission_lambdamart_missing_gone.json"
