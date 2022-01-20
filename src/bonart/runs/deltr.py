@@ -5,7 +5,7 @@ from src.bonart.reranker.deltr import DeltrWrapper
 
 # from src.evaluate.twenty_twenty.validate_run_rerank import validate
 
-CORPUS = Corpus()
+CORPUS = Corpus('localhost','9200','semanticscholar2020')
 
 FEATURE_ENGINEER = FeatureEngineer(CORPUS, fquery="resources/elasticsearch-ltr-config/featurequery_deltr.json",
                                    fconfig='resources/elasticsearch-ltr-config/features_deltr.json')
@@ -37,7 +37,7 @@ deltr = DeltrWrapper(FEATURE_ENGINEER, PROT_MAPPING, gamma, standardize=standard
 deltr.train(input_train, save=True)
 deltr.predict(input_eval)
 
-outfile = f"./runs/deltr_gamma_{gamma}_prot_{PROT_MAPPING['feature_name']}.json"
+outfile = f"resources/runs/deltr_gamma_{gamma}_prot_{PROT_MAPPING['feature_name']}.json"
 input_eval.write_submission(deltr, outfile=outfile)
 
 # validate(QUERIES_EVAL, SEQUENCE_EVAL, outfile)

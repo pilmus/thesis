@@ -30,7 +30,7 @@ def clean_2019():
 
     dirty_ids = list(set([doc['doc_id'] for doc in dirty_df.documents.explode()]))
     b = {"query": {"ids": {"values": dirty_ids}}}
-    res = helpers.scan(es, query=b, index='semanticscholar')
+    res = helpers.scan(es, query=b, index='semanticscholar2019')
 
     es_df = pd.DataFrame(res)
     es_ids_set = set(es_df['_id'].to_list())

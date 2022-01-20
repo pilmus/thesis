@@ -47,13 +47,12 @@ class DeltrWrapper(model.RankerInterface):
 
         return self.dtr
 
-    def __protected_feature_grouping(self, df):
+    def __protected_feature_grouping(self, df):  # todo: generic method?
 
-        doc_annotations = pd.read_csv('../../resources/2020/doc-annotations.csv')
+        doc_annotations = pd.read_csv('resources/evaluation/2020/doc-annotations.csv')
 
         # todo: warning if not two groups
         doc_annotations['protected'] = doc_annotations.DocHLevel.map(self.protected_feature_mapping['value_mapping'])
-
 
         df['protected'] = doc_annotations['protected']
         return df
@@ -69,8 +68,8 @@ class DeltrWrapper(model.RankerInterface):
 
         data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
 
+        data = data.fillna(0.00001)  # todo: remove in real version
         data = data.groupby('qid', as_index=False).apply(self.__protected_feature_grouping)
-
         col_order = self.COLUMN_ORDER
         if has_judgment:
             col_order = self.COLUMN_ORDER + ['relevance']
@@ -112,7 +111,9 @@ class DeltrWrapper(model.RankerInterface):
         model_dict['mus'] = self.mus
         model_dict['sigmas'] = self.sigmas
 
-        with(open(f'models/deltr_gamma_{self.gamma}_prot_{self.protected_feature_name}.model.json', 'w')) as f:  # todo:
+        with(open(f'resources/models/deltr_gamma_{self.gamma}_prot_{self.protected_feature_name}.model.json',
+                  'w')) as f:  #
+            # todo:
             # versioning
             json.dump(model_dict, f)
 
@@ -146,7 +147,7 @@ class DeltrWrapper(model.RankerInterface):
 
         data[['sid', 'q_num']] = data['q_num'].str.split('.', expand=True)
 
-        data = data.astype({"sid": int, "q_num": int})
+        # data = data.astype({"sid": int, "q_num": int})
 
         data = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], data, how='left',
                         on=['sid', 'q_num', 'doc_id'])
