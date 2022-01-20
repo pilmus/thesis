@@ -5,21 +5,23 @@ from src.bonart.interface.iohandler import InputOutputHandler
 from src.evaluation.twenty_nineteen.validate_run import validate
 
 
-OUT = "./evaluation/submission_lambdamart_missing_gone.json"
-QUERIES_EVAL = "./evaluation/fair-TREC-evaluation-sample.json"
-SEQUENCE_EVAL = "./evaluation/fair-TREC-evaluation-sequences.csv"
+OUT = "resources/evaluation/2019/fairRuns/submission_lambdamart_missing_gone.json"
+QUERIES_EVAL = "resources/evaluation/2019/fair-TREC-evaluation-sample.json"
+SEQUENCE_EVAL = "resources/evaluation/2019/fair-TREC-evaluation-sequences.csv"
 
-QUERIES_TRAIN = "./training/fair-TREC-training-sample-cleaned.json"
-SEQUENCE_TRAIN = "./training/training-sequence-full.tsv"
+QUERIES_TRAIN = "resources/training/2019/fair-TREC-training-sample-cleaned.json"
+SEQUENCE_TRAIN = "resources/training/2019/training-sequence-full.tsv"
 
-corpus = Corpus()
-ft = FeatureEngineer(corpus)
+CORPUS = Corpus('localhost','9200','semanticscholar')
 
-input_train = InputOutputHandler(corpus,
+ft = FeatureEngineer(CORPUS, fquery='resources/elasticsearch-ltr-config/featurequery.json',
+                     fconfig='resources/elasticsearch-ltr-config/features_deltr.json')
+
+input_train = InputOutputHandler(CORPUS,
                                  fsequence=SEQUENCE_TRAIN,
                                  fquery=QUERIES_TRAIN)
 
-input_test = InputOutputHandler(corpus,
+input_test = InputOutputHandler(CORPUS,
                                 fsequence=SEQUENCE_EVAL,
                                 fquery=QUERIES_EVAL)
 

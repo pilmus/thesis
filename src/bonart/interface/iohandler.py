@@ -20,7 +20,9 @@ class InputOutputHandler:
         :param corpus:
         :param fsequence: training query sequence (e.g. training-sequence.tsv)
         :param fquery: training queries (e.g. fair-TREC-training-sample.json)
-        :param fgroup: author groups (e.g. fair-TREC-sample-author-groups.csv)
+        :param fgroup: grouping file mapping a certain entity to a group. This can be author-to-group as in
+        fair-TREC-sample-author-groups.csv or docid-to-group as in TREC-Fair-Ranking-eval-sample-groups.csv (
+        generated with eval_sample_annotated.py)
         """
 
         self.corpus = corpus
@@ -40,7 +42,7 @@ class InputOutputHandler:
         self.seq = sequence_df
         self.queries = pd.DataFrame(queries)
         # self.groups = pd.read_csv(fgroup, dtype={"author_id": str, "gid": str})
-        self.authors = None
+        # self.authors = None
 
     def get_queries(self):
         return self.queries.drop_duplicates()

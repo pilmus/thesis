@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
     for run in run_files:
 
-        outfile = f'eval_results/{args.group_definition}/{run}.csv'
+        outfile = f'resources/evaluation/2019/eval_results/{args.group_definition}/{run}.csv'
 
         dicts = [{'seq_id': seq_id,
                   'util-min': min(performance_all_utility[seq_id]),
@@ -302,5 +302,5 @@ if __name__ == '__main__':
     plt.ylabel("Utility: expected utility")
     #todo: one plot per item also?
     # fig = plt.figure()
-    plt.savefig('plots/%s/performance-all.pdf' % args.group_definition)
+    plt.savefig('resources/evaluation/2019/plots/%s/performance-all.pdf' % args.group_definition)
     # plt.show()

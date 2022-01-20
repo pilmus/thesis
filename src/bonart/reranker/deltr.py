@@ -17,7 +17,7 @@ class DeltrWrapper(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, protected_feature_mapping, gamma, standardize=False):
+    def __init__(self, featureengineer, protected_feature_mapping, gamma, grouping_file, standardize=False):
         super().__init__(featureengineer)
         # setup the DELTR object
         self.protected_feature_name = protected_feature_mapping['feature_name']
@@ -30,6 +30,9 @@ class DeltrWrapper(model.RankerInterface):
         self.weights = None
         self.mus = None
         self.sigmas = None
+
+
+        self.doc_annotations = pd.read_csv(group_file)
 
     def load_model(self, model_path):
         with open(model_path) as mp:
@@ -47,14 +50,15 @@ class DeltrWrapper(model.RankerInterface):
 
         return self.dtr
 
-    def __protected_feature_grouping(self, df):  # todo: generic method?
+    def __grouping_apply(self, df):  # todo: generic method?
 
-        doc_annotations = pd.read_csv('resources/evaluation/2020/doc-annotations.csv')
+        # doc_annotations = pd.read_csv('resources/evaluation/2020/doc-annotations.csv')
 
         # todo: warning if not two groups
-        doc_annotations['protected'] = doc_annotations.DocHLevel.map(self.protected_feature_mapping['value_mapping'])
+        self.doc_annotations['protected'] = self.doc_annotations.DocHLevel.map(self.protected_feature_mapping[
+                                                                             'value_mapping'])
 
-        df['protected'] = doc_annotations['protected']
+        df['protected'] = self.doc_annotations['protected']
         return df
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
@@ -69,7 +73,7 @@ class DeltrWrapper(model.RankerInterface):
         data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
 
         data = data.fillna(0.00001)  # todo: remove in real version
-        data = data.groupby('qid', as_index=False).apply(self.__protected_feature_grouping)
+        data = data.groupby('qid', as_index=False).apply(self.__grouping_apply)
         col_order = self.COLUMN_ORDER
         if has_judgment:
             col_order = self.COLUMN_ORDER + ['relevance']

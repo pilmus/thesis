@@ -1,7 +1,6 @@
 import pyltr
-from fairsearchdeltr import Deltr
 import pandas as pd
-import src.reranker.model as model
+import src.bonart.reranker.model as model
 
 class LambdaMart(model.RankerInterface):
     """

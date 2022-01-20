@@ -48,11 +48,11 @@ class Corpus():
         df['doc_id'] = df['_id']
         return df
 
-    def get_docs_by_authors(self, author_ids):
-        """queries the author table"""
-        s = Search(using=self.es)
-        s = s.filter('terms', author_ids=author_ids)
-        return self.__return_res_attr_dict_as_df(s)
+    # def get_docs_by_authors(self, author_ids):
+    #     """queries the author table"""
+    #     s = Search(using=self.es)
+    #     s = s.filter('terms', author_ids=author_ids)
+    #     return self.__return_res_attr_dict_as_df(s)
 
     def get_docs_by_ids(self, doc_ids):
         """queries the documents table"""
