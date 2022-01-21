@@ -1,6 +1,3 @@
-import json
-
-import numpy as np
 import pandas as pd
 from fairsearchdeltr import Deltr
 
@@ -22,32 +19,11 @@ class DeltrWrapper(model.RankerInterface):
         # setup the DELTR object
         self.protected_feature_name = protected_feature_mapping['feature_name']
         self.protected_feature_mapping = protected_feature_mapping
-        self.gamma = gamma
-        self.standardize = standardize
 
         # create the Deltr object
-        self.dtr = Deltr("protected", self.gamma, number_of_iterations=1, standardize=self.standardize)
-        self.weights = None
-        self.mus = None
-        self.sigmas = None
+        self.dtr = Deltr("protected", gamma, number_of_iterations=1, standardize=standardize)
 
         self.doc_annotations = pd.read_csv(group_file)
-
-    def load_model(self, model_path):
-        with open(model_path) as mp:
-            model_dict = json.load(mp)
-        self.weights = np.asarray(list(model_dict['omega'].values()))
-        self.mus = model_dict['mus']
-        self.sigmas = model_dict['sigmas']
-
-        self.dtr._omega = self.weights
-        self.dtr._mus = self.mus
-        self.dtr._sigmas = self.sigmas
-
-        if self.standardize and not (self.mus and self.sigmas):
-            print("You want to standardize but you don't have the required values stored.")
-
-        return self.dtr
 
     def __grouping_apply(self, df):  # todo: generic method?
 
@@ -89,31 +65,11 @@ class DeltrWrapper(model.RankerInterface):
         data = data.drop_duplicates()
         return data
 
-    def train(self, inputhandler, save=True):
+    def train(self, inputhandler):
         data = self.__prepare_data(inputhandler)
         self.weights = self.dtr.train(data)
-        if self.standardize:
-            self.mus = self.dtr._mus
-            self.sigmas = self.dtr._sigmas
-
-        if save:
-            self.save()
 
         return self.weights
-
-    def save(self):
-        feature_names = self.COLUMN_ORDER[2:-1]
-        feature_names[0] = self.protected_feature_name
-
-        model_dict = {}
-        model_dict['omega'] = dict(zip(feature_names, self.weights))
-        model_dict['mus'] = self.mus
-        model_dict['sigmas'] = self.sigmas
-
-        with(open(f'resources/models/deltr_gamma_{self.gamma}_prot_{self.protected_feature_name}.model.json',
-                  'w')) as f:  #
-            # todo: versioning
-            json.dump(model_dict, f)
 
     def __predict_apply(self, df):
 

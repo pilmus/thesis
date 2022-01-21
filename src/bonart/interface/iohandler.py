@@ -33,7 +33,7 @@ class InputOutputHandler:
         if sequence_df.sid_q_num.str.contains('.', regex=False).any():
             sequence_df[['sid','q_num']] = sequence_df.sid_q_num.str.split('.',expand = True)
         else:
-            sequence_df['sid'] = 0
+            sequence_df['sid'] = '0'
             sequence_df['q_num'] = sequence_df['sid_q_num']
         sequence_df = sequence_df[['sid','q_num','qid']]
 

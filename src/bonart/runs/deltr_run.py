@@ -1,9 +1,11 @@
+import pickle
+
 from src.bonart.interface.corpus import Corpus
 from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
 from src.bonart.reranker.deltr import DeltrWrapper
 
-# from src.evaluate.twenty_twenty.validate_run_rerank import validate
+from src.evaluation.validate_run import validate
 
 CORPUS = Corpus('localhost', '9200', 'semanticscholar2020')
 
@@ -20,8 +22,18 @@ QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample-no-rel.j
 
 
 
+
 num_samples = 10
 
+
+QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json"
+SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
+
+QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
+SEQUENCE_TRAIN = f"resources/training/2020/training-sequence-{num_samples}.tsv"
+
+SEQUENCE_EVAL = SEQUENCE_TRAIN
+QUERIES_EVAL = QUERIES_TRAIN
 
 
 
@@ -35,15 +47,28 @@ input_eval = InputOutputHandler(CORPUS,
                                 fsequence=SEQUENCE_EVAL,
                                 fquery=QUERIES_EVAL)
 
+group_file = 'resources/training/2020/doc-annotations.csv'
+
 # hyperparams
 gamma = 0
 standardize = True
 
-deltr = DeltrWrapper(FEATURE_ENGINEER, PROT_MAPPING, gamma, standardize=standardize)
-deltr.train(input_train, save=True)
+deltr = DeltrWrapper(FEATURE_ENGINEER, PROT_MAPPING, gamma, group_file, standardize=standardize)
+print("Training model...")
+deltr.train(input_train)
+
+print(f"Saving model...")
+with open(f"resources/models/2020/deltr_gamma_{gamma}_prot_{PROT_MAPPING['feature_name']}_{num_samples}.pickl",'wb') as fp:
+    pickle.dump(deltr.dtr, fp)
+
+
+print("Predicting...")
 deltr.predict(input_eval)
 
-outfile = f"resources/runs/deltr_gamma_{gamma}_prot_{PROT_MAPPING['feature_name']}.json"
-input_eval.write_submission(deltr, outfile=outfile)
+print("Writing submission...")
 
-# validate(QUERIES_EVAL, SEQUENCE_EVAL, outfile)
+OUT = f"resources/evaluation/2020/rawruns/deltr_gamma_{gamma}_prot_{PROT_MAPPING['feature_name']}_{num_samples}.json"
+input_eval.write_submission(deltr, outfile=OUT)
+
+print(f"Validating {OUT}...")
+validate(QUERIES_EVAL, SEQUENCE_EVAL, OUT)

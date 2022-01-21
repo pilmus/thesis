@@ -1,8 +1,0 @@
-# Jetbrains
-.idea/
-
-# Python
-__pycache__/
-
-# Project files
-*/resources/
