@@ -6,7 +6,7 @@ import src.bonart.utils.io as io
 class FeatureEngineer():
     """Returns feature vectors for provided query-doc_ids pairs"""
 
-    def __init__(self, corpus, fquery="./config/featurequery.json", fconfig='./config/features.json', init_ltr=True):
+    def __init__(self, corpus, fquery, fconfig, init_ltr=True):
         self.corpus = corpus
         self.query = io.read_json(fquery)
         if init_ltr:
@@ -17,7 +17,7 @@ class FeatureEngineer():
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
-        resp['qlength'] = len(queryterm) #todo: relevant for all models?
+        resp['qlength'] = len(queryterm)  # todo: relevant for all models?
         return resp
 
     @property
@@ -31,7 +31,7 @@ class FeatureEngineer():
     def get_feature_mat(self, iohandler):
         features = iohandler.get_query_seq().groupby('qid').apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
-        features.reset_index(inplace=True, level=0)
+        features = features.reset_index(level=0)
         return features
 
     def __features_from_response(self, docs):

@@ -28,8 +28,6 @@ class InputOutputHandler:
         queries = list(chain.from_iterable(queries))
         self.seq = pd.read_csv(fsequence, names=["sid", "q_num", "qid"], sep='\.|,', engine='python')
         self.queries = pd.DataFrame(queries)
-        # self.groups = pd.read_csv(fgroup, dtype={"author_id": str, "gid": str})
-        self.authors = None
 
     def get_queries(self):
         return self.queries.drop_duplicates()
@@ -38,14 +36,6 @@ class InputOutputHandler:
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
         seq = seq.dropna() #todo: good solution?
         return seq.drop_duplicates()
-
-
-    # def get_authors(self):
-    #     if self.authors is None:
-    #         ids = self.queries.doc_id.drop_duplicates().tolist()
-    #         self.authors = self.corpus.get_authors(ids)
-    #         self.authors = pd.merge(self.authors, self.groups, on="author_id", how='left')
-    #     return self.authors
 
     def __unnest_query(self, query):
         ret = []

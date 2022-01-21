@@ -220,28 +220,7 @@ if __name__ == '__main__':
 
     task = FairRankingTask(args.query_sequence_file, args.groundtruth_file, args.group_annotations_file)
 
-<<<<<<< HEAD:src/evaluate/twenty_nineteen/trec-fair-ranking-evaluator.py
-    run_files_prefix = 'fairRuns/'
-    run_files = [
-        # "submission_random.json",
-        # "submission_lambdamart.json"
-        # 'example_run_name_1',
-        # 'example_run_name_2',
-        # "submission_lambdamart_missing_gone.json"
-        "deltr_gamma_0_prot_DocHLevel.json"
-        ]
-=======
     run_files = args.runfiles
-    # run_files_prefix = 'fairRuns/'
-    # run_files = [
-    #     # "submission_random.json",
-    #     # "submission_lambdamart.json"
-    #     # 'example_run_name_1',
-    #     # 'example_run_name_2',
-    #     # "submission_lambdamart_missing_gone.json"
-    #     "deltr_gamma_0_prot_DocHLevel.json"
-    #     ]
->>>>>>> reconfirm_lambda:src/evaluation/twenty_nineteen/trec-fair-ranking-evaluator.py
 
     performance_all_utility = defaultdict(list)
     performance_team_utility = defaultdict(dict)
@@ -288,24 +267,6 @@ if __name__ == '__main__':
             print(df)
         df.to_csv(outfile)
 
-        #
-        #
-        # with open('eval_results/%s/%s' % (args.group_definition, run), 'w') as f_out:
-        #     f_out.write(
-        #         'seq_id\tutil-min\tutil-max\tutil-mean\tutil-run\tunfairness-min\tunfairness-max\tunfairness-mean'
-        #         '\tunfairness-run\n')
-        #     for seq_id in sorted(task.sequence):
-        #         f_out.write('%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n' % (
-        #             seq_id,
-        #             min(performance_all_utility[seq_id]),
-        #             max(performance_all_utility[seq_id]),
-        #             mean(performance_all_utility[seq_id]),
-        #             performance_team_utility[run][seq_id],  # run's utility
-        #             min(performance_all_fairness[seq_id]),
-        #             max(performance_all_fairness[seq_id]),
-        #             mean(performance_all_fairness[seq_id]),
-        #             performance_team_fairness[run][seq_id],  # run's unfairness
-        #             ))
 
     colormap = plt.cm.gist_ncar
     colors = [colormap(i) for i in np.linspace(0, 0.9, len(run_files))]

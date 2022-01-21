@@ -1,7 +1,6 @@
 import pyltr
-from fairsearchdeltr import Deltr
 import pandas as pd
-import src.reranker.model as model
+import src.bonart.reranker.model as model
 
 class LambdaMart(model.RankerInterface):
     """
@@ -66,6 +65,7 @@ class LambdaMart(model.RankerInterface):
 
 
     def _predict(self, inputhandler):
+
         x, y, qids, tmp1, tmp2, tmp3 = self.__prepare_data(inputhandler, frac = 1)
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred = pred)

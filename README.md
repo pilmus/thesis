@@ -1,4 +1,30 @@
-[![DOI](https://zenodo.org/badge/216515658.svg)](https://zenodo.org/badge/latestdoi/216515658)
+```
+docker run -d --rm --name es \
+-p 9200:9200 -p 9300:9300 \
+-e "discovery.type=single-node" \
+-e "http.cors.enabled=true" \
+-e "http.cors.allow-origin=*" \
+-e "http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization" \
+-e "http.cors.allow-credentials=true" \
+-e "ES_JAVA_OPTS=-Xms6g -Xmx6g" \
+-v /mnt/c/Users/maaik/Documents/thesis/resources/corpus/2019/elasticsearch:/usr/share/elasticsearch/data \
+elasticsearch-ltr
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BONART BELOW
 
 # TREC 2019 Fair Ranking Track
 

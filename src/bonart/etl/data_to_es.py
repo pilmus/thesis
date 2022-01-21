@@ -1,10 +1,11 @@
 import glob
 import os.path
-from pathlib import Path
+
+from elasticsearch import helpers
+import tqdm
 
 import jsonlines
 from elasticsearch import Elasticsearch
-from elasticsearch import helpers
 
 logdir = 'resources/logs'
 
@@ -15,6 +16,30 @@ def already_indexed(indexed_files):
             pass
     with open(indexed_files, "r") as fp:
         return fp.read().splitlines()
+
+
+def get_mapping(year):
+    base_mapping = {
+        "properties": {
+            "title": {"type": "text"},
+            "abstract": {"type": "text"},
+            "entities": {"type": "text"},
+            "venue": {"type": "text"},
+            "journalName": {"type": "text"},
+            "author_names": {"type": "text"},
+            "author_ids": {"type": "keyword"},
+            "num_in_citations": {"type": "integer"},
+            "num_out_citations": {"type": "integer"},
+            }
+        }
+
+    if year == 2019:
+        base_mapping["properties"]["year"] = {"type": "short"}
+
+    elif year == 2020:
+        base_mapping["properties"]["sources"] = {"type": "keyword"}
+        base_mapping["properties"]["fields_of_study"] = {"type": "keyword"}
+    return base_mapping
 
 
 def doc_generator(reader, year):
@@ -38,7 +63,7 @@ def doc_generator(reader, year):
 
             "num_in_citations": len(doc.get("inCitations")),
             "num_out_citations": len(doc.get("outCitations")),
-        }
+            }
 
         if year == 2019:
             yield_dict["_index"] = 'semanticscholar2019'
@@ -55,8 +80,10 @@ def doc_generator(reader, year):
 
 
 def index_files(year):
-    rawspath = f'resources/{year}/corpus/raw/'
+    rawspath = f'resources/corpus/{year}/raw/'
     raw_files = glob.glob(rawspath + "*")
+
+    print(f"Raw files: {raw_files}.")
 
     indexed_filepath = os.path.join(logdir, f'indexed_files_{year}.txt')
     indexed_files = already_indexed(indexed_filepath)
@@ -66,15 +93,18 @@ def index_files(year):
         if raw not in indexed_files:
             print(f"Indexing contents of {raw}.")
             with jsonlines.open(raw) as reader:
-                for success, info in helpers.parallel_bulk(es, doc_generator(reader, year), chunk_size=10,
-                                                           request_timeout=120):
-                    if not success:
-                        print(f"There was an error: {info}.")
+
+                progress = tqdm.tqdm(unit="docs", total=1000000)
+                successes = 0
+                for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year), chunk_size=100):
+                    progress.update(1)
+                    successes += ok
+
             with open(indexed_filepath, "a") as fp:
                 fp.write(f"{raw}\n")
                 print(f"Indexed contents of {raw}.")
 
 
-es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 10}])
+es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
 index_files(2020)
 print("I'm done.")

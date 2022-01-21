@@ -21,6 +21,10 @@ class RankerInterface(ABC):
         """
         pass
 
+    # @abstractmethod #todo necessary?
+    # def __grouping_apply(self, df, grouping_file):
+    #     pass
+
     def predict(self, inputhandler):
         """
         uses the query sequences from the inputhandler to rerank the documents according to the trained model. 
