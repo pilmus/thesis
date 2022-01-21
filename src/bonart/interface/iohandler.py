@@ -19,7 +19,9 @@ class InputOutputHandler:
         :param corpus:
         :param fsequence: training query sequence (e.g. training-sequence.tsv)
         :param fquery: training queries (e.g. fair-TREC-training-sample.json)
-        :param fgroup: author groups (e.g. fair-TREC-sample-author-groups.csv)
+        :param fgroup: grouping file mapping a certain entity to a group. This can be author-to-group as in
+        fair-TREC-sample-author-groups.csv or docid-to-group as in TREC-Fair-Ranking-eval-sample-groups.csv (
+        generated with eval_sample_annotated.py)
         """
 
         self.corpus = corpus
@@ -30,10 +32,9 @@ class InputOutputHandler:
         sequence_df = pd.read_csv(fsequence, names=['sid_q_num','qid'], dtype={'sid_q_num':'str'}, sep=',', engine='python')
         if sequence_df.sid_q_num.str.contains('.', regex=False).any():
             sequence_df[['sid','q_num']] = sequence_df.sid_q_num.str.split('.',expand = True)
-            sequence_df = sequence_df.drop('sid_q_num',axis = 1)
         else:
-            sequence_df.insert(0, 'sid', 0)
-            sequence_df.rename({'sid_q_num':'q_num'})
+            sequence_df['sid'] = 0
+            sequence_df['q_num'] = sequence_df['sid_q_num']
         sequence_df = sequence_df[['sid','q_num','qid']]
 
         self.seq = sequence_df
@@ -66,8 +67,8 @@ class InputOutputHandler:
         model.predictions.sort_values(['sid', 'q_num', 'rank'], axis=0, inplace=True)
         submission = model.predictions.groupby(['sid', 'q_num', 'qid']).apply(
             lambda df: pd.Series({'ranking': df['doc_id']}))
-        submission.reset_index(inplace=True)
-        q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
-        submission['q_num'] = q_num
-        submission.drop('sid', axis=1, inplace=True)
+
+        submission = submission.reset_index()
+        submission.q_num = submission.sid.astype(str) + '.' + submission.q_num.astype(str)
+        submission = submission[['q_num', 'qid', 'ranking']]
         submission.to_json(outfile, orient='records', lines=True)

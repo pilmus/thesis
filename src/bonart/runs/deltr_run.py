@@ -18,6 +18,15 @@ QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
 SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
 QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample-no-rel.json"
 
+
+
+num_samples = 10
+
+
+
+
+
+
 input_train = InputOutputHandler(CORPUS,
                                  fsequence=SEQUENCE_TRAIN,
                                  fquery=QUERIES_TRAIN)

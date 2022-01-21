@@ -11,6 +11,7 @@ OUT = "resources/evaluation/2019/fairRuns/submission_random_125000.json"
 QUERIES = "resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"
 SEQUENCE = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
 
+
 print("Initializing corpus.")
 corpus = Corpus('localhost', '9200', 'semanticscholar')
 print("Building features.")
