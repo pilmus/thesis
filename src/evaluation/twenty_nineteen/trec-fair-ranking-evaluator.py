@@ -9,6 +9,7 @@ import argparse
 import csv
 import json
 import math
+import os.path
 from collections import defaultdict
 from statistics import mean
 
@@ -200,6 +201,7 @@ if __name__ == '__main__':
 
     """
          python3 trec-fair-ranking-evaluator.py  \
+            --runfiles runfile1 runfile2 \
             --groundtruth_file TREC-Competition-eval-sample-with-rel.json  \
             --query_sequence_file TREC-Competition-eval-seq-5-25000.csv \
             --group_annotations_file group_annotations/article-level.csv \
@@ -207,6 +209,7 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser(description='Evaluate a TREC Fair Ranking submission.')
+    parser.add_argument('--runfiles', nargs='*', type=str, default=[],help='runfiles to evaluate')
     parser.add_argument('--groundtruth_file', help='fair ranking ground truth file')
     parser.add_argument('--query_sequence_file', help='fair ranking query sequences file')
     parser.add_argument('--group_annotations_file', help='document group annotations file')
@@ -217,23 +220,25 @@ if __name__ == '__main__':
 
     task = FairRankingTask(args.query_sequence_file, args.groundtruth_file, args.group_annotations_file)
 
-    run_files_prefix = 'fairRuns/'
-    run_files = [
-        # "submission_random.json",
-        # "submission_lambdamart.json"
-        # 'example_run_name_1',
-        # 'example_run_name_2',
-        # "submission_lambdamart_missing_gone.json"
-        "deltr_gamma_0_prot_DocHLevel.json"
-        ]
+    run_files = args.runfiles
+    # run_files_prefix = 'fairRuns/'
+    # run_files = [
+    #     # "submission_random.json",
+    #     # "submission_lambdamart.json"
+    #     # 'example_run_name_1',
+    #     # 'example_run_name_2',
+    #     # "submission_lambdamart_missing_gone.json"
+    #     "deltr_gamma_0_prot_DocHLevel.json"
+    #     ]
 
     performance_all_utility = defaultdict(list)
     performance_team_utility = defaultdict(dict)
     performance_all_fairness = defaultdict(list)
     performance_team_fairness = defaultdict(dict)
 
+
     for run in run_files:
-        submission = FairRankingSubmission(run_files_prefix + run)
+        submission = FairRankingSubmission(run)
 
         for seq_id in task.sequence:
             fairness = l2_loss(seq_id, task, submission, gamma=0.5)
@@ -245,8 +250,8 @@ if __name__ == '__main__':
             performance_all_utility[seq_id].append(utility)
 
     for run in run_files:
-
-        outfile = f'resources/evaluation/2019/eval_results/{args.group_definition}/{run}.csv'
+        run_name = os.path.basename(run)
+        outfile = f'resources/evaluation/2019/eval_results/{args.group_definition}/{run_name}.csv'
 
         dicts = [{'seq_id': seq_id,
                   'util-min': min(performance_all_utility[seq_id]),

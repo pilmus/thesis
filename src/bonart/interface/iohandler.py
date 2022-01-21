@@ -35,8 +35,9 @@ class InputOutputHandler:
             sequence_df[['sid','q_num']] = sequence_df.sid_q_num.str.split('.',expand = True)
             sequence_df = sequence_df.drop('sid_q_num',axis = 1)
         else:
-            sequence_df.insert(0, 'sid', 0)
-            sequence_df.rename({'sid_q_num':'q_num'})
+            sequence_df['sid'] = 0
+            sequence_df = sequence_df.rename(columns={'sid_q_num':'q_num'})
+
         sequence_df = sequence_df[['sid','q_num','qid']]
 
         self.seq = sequence_df
@@ -80,8 +81,10 @@ class InputOutputHandler:
         model.predictions.sort_values(['sid', 'q_num', 'rank'], axis=0, inplace=True)
         submission = model.predictions.groupby(['sid', 'q_num', 'qid']).apply(
             lambda df: pd.Series({'ranking': df['doc_id']}))
-        submission.reset_index(inplace=True)
-        q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
-        submission['q_num'] = q_num
-        submission.drop('sid', axis=1, inplace=True)
+        submission = submission.reset_index()
+        submission.q_num = submission.sid.astype(str) + '.' + submission.q_num.astype(str)
+        # q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
+        # submission['q_num'] = q_num
+        submission = submission[['q_num','qid','ranking']]
+        # submission.drop('sid', axis=1, inplace=True)
         submission.to_json(outfile, orient='records', lines=True)

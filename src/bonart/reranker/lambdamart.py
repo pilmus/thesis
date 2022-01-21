@@ -65,6 +65,7 @@ class LambdaMart(model.RankerInterface):
 
 
     def _predict(self, inputhandler):
+
         x, y, qids, tmp1, tmp2, tmp3 = self.__prepare_data(inputhandler, frac = 1)
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred = pred)
