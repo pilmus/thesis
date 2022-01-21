@@ -9,8 +9,8 @@ from src.evaluation.twenty_nineteen.validate_run import validate
 num_samples = 125000
 
 OUT = f"resources/evaluation/2019/fairRuns/submission_lambdamart_{num_samples}.json"
-QUERIES_EVAL = "resources/evaluation/2019/fair-TREC-evaluation-sample.json"
-SEQUENCE_EVAL = "resources/evaluation/2019/fair-TREC-evaluation-sequences.csv"
+QUERIES_EVAL = "resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"
+SEQUENCE_EVAL = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
 
 QUERIES_TRAIN = "resources/training/2019/fair-TREC-training-sample-cleaned.json"
 SEQUENCE_TRAIN = f"resources/training/2019/training-sequence-{num_samples}.tsv"

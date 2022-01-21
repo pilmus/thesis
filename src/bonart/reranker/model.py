@@ -2,6 +2,7 @@ import random
 from abc import ABC, abstractmethod
 
 import pandas as pd
+from tqdm import tqdm
 
 
 class RankerInterface(ABC):
@@ -46,7 +47,8 @@ class RandomRanker(RankerInterface):
         return group
 
     def _predict(self, inputhandler):
-        pred = inputhandler.get_query_seq().groupby(['sid', 'q_num', 'qid']).apply(self.__shuffle_group)
+        tqdm.pandas()
+        pred = inputhandler.get_query_seq().groupby(['sid', 'q_num', 'qid']).progress_apply(self.__shuffle_group)
         return pred
 
     def train(self, inputhandler):
