@@ -5,7 +5,7 @@ from src.bonart.reranker.deltr import DeltrWrapper
 
 # from src.evaluate.twenty_twenty.validate_run_rerank import validate
 
-CORPUS = Corpus('localhost','9200','semanticscholar2020')
+CORPUS = Corpus('localhost', '9200', 'semanticscholar2020')
 
 FEATURE_ENGINEER = FeatureEngineer(CORPUS, fquery="resources/elasticsearch-ltr-config/featurequery_deltr.json",
                                    fconfig='resources/elasticsearch-ltr-config/features_deltr.json')
@@ -17,9 +17,6 @@ QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
 
 SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
 QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample-no-rel.json"
-
-
-
 
 input_train = InputOutputHandler(CORPUS,
                                  fsequence=SEQUENCE_TRAIN,

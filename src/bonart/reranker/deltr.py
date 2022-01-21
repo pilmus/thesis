@@ -31,7 +31,6 @@ class DeltrWrapper(model.RankerInterface):
         self.mus = None
         self.sigmas = None
 
-
         self.doc_annotations = pd.read_csv(group_file)
 
     def load_model(self, model_path):
@@ -52,11 +51,9 @@ class DeltrWrapper(model.RankerInterface):
 
     def __grouping_apply(self, df):  # todo: generic method?
 
-        # doc_annotations = pd.read_csv('resources/evaluation/2020/doc-annotations.csv')
-
         # todo: warning if not two groups
         self.doc_annotations['protected'] = self.doc_annotations.DocHLevel.map(self.protected_feature_mapping[
-                                                                             'value_mapping'])
+                                                                                   'value_mapping'])
 
         df['protected'] = self.doc_annotations['protected']
         return df
@@ -89,7 +86,6 @@ class DeltrWrapper(model.RankerInterface):
 
         data = data.reindex(columns=col_order)  # protected variable has to be at third position for DELTR
 
-        # data = data.sort_values('relevance', ascending=False)
         data = data.drop_duplicates()
         return data
 
@@ -116,13 +112,10 @@ class DeltrWrapper(model.RankerInterface):
 
         with(open(f'resources/models/deltr_gamma_{self.gamma}_prot_{self.protected_feature_name}.model.json',
                   'w')) as f:  #
-            # todo:
-            # versioning
+            # todo: versioning
             json.dump(model_dict, f)
 
     def __predict_apply(self, df):
-        print(df.columns)
-        print(df)
 
         df_copy = df.copy(deep=True)
         df_copy.q_num_combi = df.sid + "." + df.q_num
@@ -130,7 +123,6 @@ class DeltrWrapper(model.RankerInterface):
 
         predictions = self.dtr.rank(df_copy, has_judgment=False)
         predictions[['sid', 'q_num']] = predictions['q_num'].str.split('.')
-        # return predictions
         return df
 
     def _predict(self, inputhandler):
@@ -150,9 +142,7 @@ class DeltrWrapper(model.RankerInterface):
 
         data[['sid', 'q_num']] = data['q_num'].str.split('.', expand=True)
 
-
         data = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], data, how='left',
                         on=['sid', 'q_num', 'doc_id'])
-
 
         return data

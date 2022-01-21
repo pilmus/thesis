@@ -12,7 +12,7 @@ QUERIES = "resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"
 SEQUENCE = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
 
 print("Initializing corpus.")
-corpus = Corpus('localhost','9200','semanticscholar')
+corpus = Corpus('localhost', '9200', 'semanticscholar')
 print("Building features.")
 ft = FeatureEngineer(corpus, fquery='resources/elasticsearch-ltr-config/featurequery.json',
                      fconfig='resources/elasticsearch-ltr-config/features.json')
@@ -28,5 +28,4 @@ print("Writing submission.")
 input.write_submission(random, outfile=OUT)
 
 print(f"Validating {OUT}...")
-validate(QUERIES,SEQUENCE,OUT)
-
+validate(QUERIES, SEQUENCE, OUT)

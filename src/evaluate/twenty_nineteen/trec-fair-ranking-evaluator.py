@@ -209,7 +209,7 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser(description='Evaluate a TREC Fair Ranking submission.')
-    parser.add_argument('--runfiles', nargs='*', type=str, default=[],help='runfiles to evaluate')
+    parser.add_argument('--runfiles', nargs='*', type=str, default=[], help='runfiles to evaluate')
     parser.add_argument('--groundtruth_file', help='fair ranking ground truth file')
     parser.add_argument('--query_sequence_file', help='fair ranking query sequences file')
     parser.add_argument('--group_annotations_file', help='document group annotations file')
@@ -217,37 +217,14 @@ if __name__ == '__main__':
     parser.add_argument('--average_scores', action='store_false', help='average the scores across query sequences')
     args = parser.parse_args()
 
-
     task = FairRankingTask(args.query_sequence_file, args.groundtruth_file, args.group_annotations_file)
 
-<<<<<<< HEAD:src/evaluate/twenty_nineteen/trec-fair-ranking-evaluator.py
-    run_files_prefix = 'fairRuns/'
-    run_files = [
-        # "submission_random.json",
-        # "submission_lambdamart.json"
-        # 'example_run_name_1',
-        # 'example_run_name_2',
-        # "submission_lambdamart_missing_gone.json"
-        "deltr_gamma_0_prot_DocHLevel.json"
-        ]
-=======
     run_files = args.runfiles
-    # run_files_prefix = 'fairRuns/'
-    # run_files = [
-    #     # "submission_random.json",
-    #     # "submission_lambdamart.json"
-    #     # 'example_run_name_1',
-    #     # 'example_run_name_2',
-    #     # "submission_lambdamart_missing_gone.json"
-    #     "deltr_gamma_0_prot_DocHLevel.json"
-    #     ]
->>>>>>> reconfirm_lambda:src/evaluation/twenty_nineteen/trec-fair-ranking-evaluator.py
 
     performance_all_utility = defaultdict(list)
     performance_team_utility = defaultdict(dict)
     performance_all_fairness = defaultdict(list)
     performance_team_fairness = defaultdict(dict)
-
 
     for run in run_files:
         submission = FairRankingSubmission(run)
@@ -279,33 +256,11 @@ if __name__ == '__main__':
         df = pd.DataFrame(dicts, columns=['seq_id', 'util-min', 'util-max', 'util-mean', 'util-run', 'unfairness-min',
                                           'unfairness-max', 'unfairness-mean', 'unfairness-run'])
 
-        # for seq_id in sorted(task.sequence):
-        #     df.loc[seq_id] =
-
         if args.average_scores:
             df.iloc[-1] = df.mean()
             df.iloc[-1, 0] = 'all'
             print(df)
         df.to_csv(outfile)
-
-        #
-        #
-        # with open('eval_results/%s/%s' % (args.group_definition, run), 'w') as f_out:
-        #     f_out.write(
-        #         'seq_id\tutil-min\tutil-max\tutil-mean\tutil-run\tunfairness-min\tunfairness-max\tunfairness-mean'
-        #         '\tunfairness-run\n')
-        #     for seq_id in sorted(task.sequence):
-        #         f_out.write('%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n' % (
-        #             seq_id,
-        #             min(performance_all_utility[seq_id]),
-        #             max(performance_all_utility[seq_id]),
-        #             mean(performance_all_utility[seq_id]),
-        #             performance_team_utility[run][seq_id],  # run's utility
-        #             min(performance_all_fairness[seq_id]),
-        #             max(performance_all_fairness[seq_id]),
-        #             mean(performance_all_fairness[seq_id]),
-        #             performance_team_fairness[run][seq_id],  # run's unfairness
-        #             ))
 
     colormap = plt.cm.gist_ncar
     colors = [colormap(i) for i in np.linspace(0, 0.9, len(run_files))]
@@ -317,7 +272,7 @@ if __name__ == '__main__':
     plt.legend(loc='lower right', fontsize='xx-small')
     plt.xlabel("Unfairness: L2")
     plt.ylabel("Utility: expected utility")
-    #todo: one plot per item also?
+    # todo: one plot per item also?
     # fig = plt.figure()
     plt.savefig('resources/evaluation/2019/plots/%s/performance-all.pdf' % args.group_definition)
     # plt.show()

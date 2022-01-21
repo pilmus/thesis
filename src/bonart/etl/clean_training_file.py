@@ -1,11 +1,5 @@
-import random
-
 import pandas as pd
 from elasticsearch import helpers, Elasticsearch
-
-import src.bonart.utils.io as io
-from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.iohandler import InputOutputHandler
 
 es = Elasticsearch(timeout=120)
 
@@ -47,10 +41,6 @@ def clean_2019():
     clean_df = clean_df.drop(to_delete)
     clean_df = clean_df.drop('doc_ids', axis=1)
     clean_df.to_json(clean_training, orient='records', lines=True)
-
-
-
-
 
 
 if __name__ == '__main__':

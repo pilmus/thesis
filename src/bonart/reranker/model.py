@@ -16,15 +16,11 @@ class RankerInterface(ABC):
         super().__init__()
 
     @abstractmethod
-    def train(self, inputhandler,save):
+    def train(self, inputhandler, save):
         """
         uses the labelled queries from the inputhandler to estimate a ranking model
         """
         pass
-
-    # @abstractmethod #todo necessary?
-    # def __grouping_apply(self, df, grouping_file):
-    #     pass
 
     def predict(self, inputhandler):
         """

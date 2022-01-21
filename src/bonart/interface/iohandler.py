@@ -26,7 +26,17 @@ class InputOutputHandler:
 
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
-        self.seq = pd.read_csv(fsequence, names=["sid", "q_num", "qid"], sep='\.|,', engine='python')
+
+        sequence_df = pd.read_csv(fsequence, names=['sid_q_num','qid'], dtype={'sid_q_num':'str'}, sep=',', engine='python')
+        if sequence_df.sid_q_num.str.contains('.', regex=False).any():
+            sequence_df[['sid','q_num']] = sequence_df.sid_q_num.str.split('.',expand = True)
+            sequence_df = sequence_df.drop('sid_q_num',axis = 1)
+        else:
+            sequence_df.insert(0, 'sid', 0)
+            sequence_df.rename({'sid_q_num':'q_num'})
+        sequence_df = sequence_df[['sid','q_num','qid']]
+
+        self.seq = sequence_df
         self.queries = pd.DataFrame(queries)
 
     def get_queries(self):
@@ -34,8 +44,7 @@ class InputOutputHandler:
 
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
-        seq = seq.dropna() #todo: good solution?
-        return seq.drop_duplicates()
+        return seq
 
     def __unnest_query(self, query):
         ret = []
