@@ -80,7 +80,7 @@ def doc_generator(reader, year):
 
 
 def index_files(year):
-    rawspath = f'resources/corpus/{year}/raw/'
+    rawspath = f'/mnt/d/corpus{year}/'
     raw_files = glob.glob(rawspath + "*")
 
     print(f"Raw files: {raw_files}.")
@@ -96,7 +96,7 @@ def index_files(year):
 
                 progress = tqdm.tqdm(unit="docs", total=1000000)
                 successes = 0
-                for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year), chunk_size=100):
+                for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year), chunk_size=2000):
                     progress.update(1)
                     successes += ok
 
@@ -106,5 +106,5 @@ def index_files(year):
 
 
 es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-index_files(2020)
+index_files(2019)
 print("I'm done.")

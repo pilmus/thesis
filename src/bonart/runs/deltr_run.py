@@ -14,16 +14,11 @@ FEATURE_ENGINEER = FeatureEngineer(CORPUS, fquery="resources/elasticsearch-ltr-c
 
 PROT_MAPPING = {'feature_name': 'DocHLevel', 'value_mapping': {'H': 0, 'Mixed': 1, 'L': 1}}
 
-SEQUENCE_TRAIN = "resources/training/2020/training-sequence-10.tsv"  # todo: make sure training sequence
-QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
-
-SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
-QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample-no-rel.json"
 
 
 
 
-num_samples = 10
+num_samples = 1000
 
 
 QUERIES_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json"
@@ -32,8 +27,8 @@ SEQUENCE_EVAL = "resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.csv"
 QUERIES_TRAIN = "resources/training/2020/TREC-Fair-Ranking-training-sample.json"
 SEQUENCE_TRAIN = f"resources/training/2020/training-sequence-{num_samples}.tsv"
 
-SEQUENCE_EVAL = SEQUENCE_TRAIN
-QUERIES_EVAL = QUERIES_TRAIN
+# SEQUENCE_EVAL = SEQUENCE_TRAIN
+# QUERIES_EVAL = QUERIES_TRAIN
 
 
 

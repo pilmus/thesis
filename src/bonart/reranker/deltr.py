@@ -21,7 +21,7 @@ class DeltrWrapper(model.RankerInterface):
         self.protected_feature_mapping = protected_feature_mapping
 
         # create the Deltr object
-        self.dtr = Deltr("protected", gamma, number_of_iterations=1, standardize=standardize)
+        self.dtr = Deltr("protected", gamma, number_of_iterations=5, standardize=standardize)
 
         self.doc_annotations = pd.read_csv(group_file)
 
