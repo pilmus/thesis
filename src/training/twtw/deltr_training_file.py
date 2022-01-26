@@ -33,9 +33,9 @@ merged = pd.merge(train, paper_author_hclass, how='left', on='paper_sha')
 merged = merged.groupby('qid').filter(lambda df: not df.merged_h_class.isnull().values.any())
 
 paper_sha_to_hclass = merged[['paper_sha', 'merged_h_class']]
-paper_sha_to_hclass = paper_sha_to_hclass.rename({'paper_sha': 'doc_id', 'merged_h_class': 'h_class'})
+paper_sha_to_hclass = paper_sha_to_hclass.rename({'paper_sha': 'doc_id', 'merged_h_class': 'h_class'}, axis=1)
 
-paper_sha_to_hclass.to_csv('resources/training/2020/doc-hclass.csv')
+paper_sha_to_hclass.to_csv('resources/training/2020/doc-hclass.csv', index=False)
 
 merged = merged[['qid', 'query', 'frequency', 'documents']]
 merged = merged.groupby(['qid', 'query', 'frequency']).documents.apply(list).reset_index()

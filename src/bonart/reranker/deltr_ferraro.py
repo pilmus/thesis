@@ -1,12 +1,14 @@
+import pickle
+
 import pandas as pd
 from fairsearchdeltr import Deltr
 
 import src.bonart.reranker.model as model
 
 
-class DeltrWrapper(model.RankerInterface):
+class DeltrFerraro(model.RankerInterface):
     """
-    Wrapper arround DELTR
+    Wrapper arround DELTR, contains two separate DELTR models trained on the same dataset whose scores are combined in the prediction phase.
     """
 
     COLUMN_ORDER = ["q_num", "doc_id", "protected",
@@ -14,24 +16,26 @@ class DeltrWrapper(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, protected_feature_mapping, gamma, group_file, standardize=False):
+    def __init__(self, featureengineer, protected_feature, protected_feature_mapping, group_file, standardize=False):
         super().__init__(featureengineer)
         # setup the DELTR object
-        self.protected_feature_name = protected_feature_mapping['feature_name']
-        self.protected_feature_mapping = protected_feature_mapping
+        self._protected_feature = protected_feature
+        self._protected_feature_mapping = protected_feature_mapping
 
         # create the Deltr object
-        self.dtr = Deltr("protected", gamma, number_of_iterations=5, standardize=standardize)
+        self.dtr_zero = Deltr("protected", 0, number_of_iterations=5, standardize=standardize)
+        self.dtr_one = Deltr("protected", 1, number_of_iterations=5, standardize=standardize)
 
-        self.doc_annotations = pd.read_csv(group_file)
+        self._grouping = pd.read_csv(group_file)
 
-    def __grouping_apply(self, df):  # todo: generic method?
 
-        # todo: warning if not two groups
-        self.doc_annotations['protected'] = self.doc_annotations.DocHLevel.map(self.protected_feature_mapping[
-                                                                                   'value_mapping'])
+    def __grouping_apply(self, df):
 
-        df['protected'] = self.doc_annotations['protected']
+        # todo: warning if not two groups??
+        self.grouping['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
+        df = pd.merge(df,self.grouping[['doc_id','protected']], how='left',on='doc_id')
+
+        # df['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
         return df
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
@@ -69,10 +73,13 @@ class DeltrWrapper(model.RankerInterface):
 
     def train(self, inputhandler):
         data = self.__prepare_data(inputhandler)
-        print(f"Now actually training...")
-        self.weights = self.dtr.train(data)
+        print(f"Training gamma == 0...")
+        self.dtr_zero.train(data)
 
-        return self.weights
+        print(f"Training gamma == 1...")
+        self.dtr_one.train(data)
+
+        return self.dtr_one, self.dtr_zero
 
     def __predict_apply(self, df):
 
@@ -93,7 +100,7 @@ class DeltrWrapper(model.RankerInterface):
 
         data = self.__prepare_data(inputhandler, has_judgment=False, mode='eval')
 
-        data = data.groupby('q_num').apply(self.dtr.rank, has_judgment=False)
+        data = data.groupby('q_num').apply(self.dtr_zero.rank, has_judgment=False)
         data = data.reset_index(level=0)
 
         data['rank'] = data.groupby('q_num')['judgement'].apply(pd.Series.rank, ascending=False,
@@ -105,3 +112,44 @@ class DeltrWrapper(model.RankerInterface):
                         on=['sid', 'q_num', 'doc_id'])
 
         return data
+
+    def save(self):
+        print(f"Saving models...")
+        with open(f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}.pickle",
+                  'wb') as fp:
+            pickle.dump(self.dtr_zero, fp)
+        with open(f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}.pickle",
+                  'wb') as fp:
+            pickle.dump(self.dtr_one, fp)
+        return f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}.pickle", f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}.pickle"
+
+    def load(self, dtr_zero_path, dtr_one_path):
+        with open(dtr_zero_path, "rb") as fp:
+            self.dtr_zero =   pickle.load(fp)
+        with open(dtr_one_path, "rb") as fp:
+            self.dtr_one =   pickle.load(fp)
+        return True
+
+    @property
+    def protected_feature(self):
+        return self._protected_feature
+
+    @protected_feature.setter
+    def protected_feature(self, value):
+        self._protected_feature = value
+
+    @property
+    def protected_feature_mapping(self):
+        return self._protected_feature_mapping
+
+    @protected_feature_mapping.setter
+    def protected_feature_mapping(self, value):
+        self._protected_feature_mapping = value
+
+    @property
+    def grouping(self):
+        return self._grouping
+
+    @grouping.setter
+    def grouping(self, value):
+        self._grouping = pd.read_csv(value)

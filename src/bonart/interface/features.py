@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 from tqdm import tqdm
 
@@ -16,16 +18,11 @@ class FeatureEngineer():
     def __get_features(self, queryterm, doc_ids):
         self.query['query']['bool']['filter'][0]['terms']['_id'] = doc_ids
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
-        print("Get feat")
-        print(queryterm, len(doc_ids))
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
         resp['qlength'] = len(queryterm)  # todo: relevant for all models?
         return resp
 
-    @property
-    def feature_names(self):
-        pass
 
     @property
     def log_field_name(self):
@@ -37,6 +34,10 @@ class FeatureEngineer():
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
         features = features.reset_index(level=0)
         return features
+
+    def features_from_df(self, df):
+
+        return df
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']
