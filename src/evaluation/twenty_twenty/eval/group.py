@@ -5,6 +5,14 @@ from metrics import GroupRelevance
 from metrics import GroupDifference
 
 def exposure(exposures, did2gids, qrels, complete):
+    """
+
+    :param exposures: The exposure on the docs for a single query
+    :param did2gids: The docid to groupid mapping for a single query
+    :param qrels: The true relevance of the documents
+    :param complete: reranking (true) or retrieval (false)
+    :return:
+    """
     groupExposures = {}
     for did,gids in did2gids.items():
         if (complete) or ((did in qrels) and (qrels[did] > 0)):

@@ -45,7 +45,7 @@ input_eval = InputOutputHandler(CORPUS,
 group_file = 'resources/training/2020/doc-annotations.csv'
 
 # hyperparams
-gamma = 0
+gamma = 1
 standardize = True
 
 deltr = DeltrWrapper(FEATURE_ENGINEER, PROT_MAPPING, gamma, group_file, standardize=standardize)

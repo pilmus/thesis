@@ -16,7 +16,7 @@ class Corpus():
 
     def __init__(self, host, port,index):
         """needs a path to a valid .json db configuration file"""
-        self.es = Elasticsearch([{'host': host, 'port': port, 'timeout':120}])
+        self.es = Elasticsearch([{'host': host, 'port': port, 'timeout':300}])
         self.index = index
         self.host = host
         self.port = port

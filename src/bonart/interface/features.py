@@ -1,4 +1,5 @@
 import pandas as pd
+from tqdm import tqdm
 
 import src.bonart.utils.io as io
 
@@ -15,6 +16,8 @@ class FeatureEngineer():
     def __get_features(self, queryterm, doc_ids):
         self.query['query']['bool']['filter'][0]['terms']['_id'] = doc_ids
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
+        print("Get feat")
+        print(queryterm, len(doc_ids))
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
         resp['qlength'] = len(queryterm)  # todo: relevant for all models?
@@ -29,7 +32,8 @@ class FeatureEngineer():
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
     def get_feature_mat(self, iohandler):
-        features = iohandler.get_query_seq().groupby('qid').apply(
+        tqdm.pandas()
+        features = iohandler.get_query_seq().groupby('qid').progress_apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
         features = features.reset_index(level=0)
         return features

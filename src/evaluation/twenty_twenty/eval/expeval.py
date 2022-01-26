@@ -21,8 +21,8 @@ def main():
     groupEvaluation = parameters["groupEvaluation"]
     complete = parameters["complete"]
     normalize = parameters["normalize"]    
-    relfn = parameters["relfn"]
-    topfn = parameters["topfn"]
+    relfn = parameters["relfn"] # qrel file name
+    topfn = parameters["topfn"] # the run file?
     #
     # get target exposures
     #
@@ -31,7 +31,6 @@ def main():
     disparity  = {}
     relevance  = {}
     difference = {}
-    print(qrels)
     for qid, qrels_qid in qrels.items():
         targ, disp, rel, diff = exposure.target(qrels_qid, umType, 
                                                 umPatience, umUtility, 
@@ -49,7 +48,7 @@ def main():
         for qid in targExp.keys():
             if qid in did2gids:
                 t = targExp[qid]
-                targ = group.exposure(t, did2gids[qid], qrels[qid], complete)
+                targ = group.exposure(t, did2gids[qid], qrels[qid], complete) # og qrels used for targ compute
                 n = len(t) if complete else math.inf
                 r = sum(1 for v in qrels[qid].values() if v > 0)
                 disp, rel, diff = group.metrics(targ, umType, umPatience, 
@@ -77,13 +76,17 @@ def main():
     # aggregate exposures if group evaluation and replace queries missing groups 
     # with nulls
     #
+    # at the end of the loop below, runExp contains the actual group exposures for each query
+    #
     if groupEvaluation:
-        for qid in runExp.keys():
-            if (qid in did2gids):
+        for qid in runExp.keys(): # for each query...
+            if (qid in did2gids): # if query has documents that belong to a group... which all queries do, b/c if no group it's set to -1
                 rexp = runExp[qid]
                 runExp[qid] = group.exposure(rexp, did2gids[qid], qrels[qid], complete)
             else:
                 runExp[qid] = None
+
+
     #
     # compute and print per-query metrics
     #

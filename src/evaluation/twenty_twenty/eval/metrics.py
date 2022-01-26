@@ -1,5 +1,7 @@
 import math
 import util
+
+
 #
 # metric class to hold raw metric value and supporting data
 #
@@ -10,7 +12,8 @@ class Metric:
         self.upperBound = None
         self.defaultValue = defaultValue
         self.value = 0
-    def float(self,normalized = False):
+
+    def float(self, normalized=False):
         if normalized:
             if (self.lowerBound == None) or (self.upperBound == None) or (self.lowerBound == self.upperBound):
                 return self.defaultValue
@@ -18,9 +21,11 @@ class Metric:
                 return self.value / (self.upperBound - self.lowerBound)
         else:
             return self.value
-    def string(self,normalized = False):
+
+    def string(self, normalized=False):
         v = self.float(normalized)
-        return "%f"%v
+        return "%f" % v
+
 
 #
 # INDIVIDUAL METRICS
@@ -31,7 +36,7 @@ class Metric:
 #
 class Relevance(Metric):
     def __init__(self, target, umType, p, u, relevanceLevels, n):
-        super().__init__("relevance",1.0)
+        super().__init__("relevance", 1.0)
         self.target = target
         #
         # upper bound: the run reproduces the target exposure
@@ -44,44 +49,47 @@ class Relevance(Metric):
         if (n != math.inf):
             pp = p if (umType == "rbp") else p * u
             dist = []
-            for d,e in target.items():
+            for d, e in target.items():
                 dist.append(e)
             dist.sort()
             for i in range(len(dist)):
-                self.lowerBound = self.lowerBound + pow(pp,i)*dist[i]
+                self.lowerBound = self.lowerBound + pow(pp, i) * dist[i]
         if len(relevanceLevels) <= 1:
             self.upperBound = 0.0
             self.lowerBound = 0.0
-            
-    def compute(self,run):
-        self.value = util.dot(self.target,run)
+
+    def compute(self, run):
+        self.value = util.dot(self.target, run)
+
 
 #
 # disparity
 #
 class Disparity(Metric):
     def __init__(self, target, umType, p, u, relevanceLevels, n):
-        super().__init__("disparity",0.0)
+        super().__init__("disparity", 0.0)
         #
         # upper bound: static ranking
         #
-        self.upperBound = util.geometricSeries(p*p,n)
+        self.upperBound = util.geometricSeries(p * p, n)
         #
         # lower bound: uniform random
         #
         self.lowerBound = 0.0
         if (n != math.inf):
             pp = p if (umType == "rbp") else p * u
-            self.lowerBound = pow( util.geometricSeries(pp,n), 2 ) / n
-    def compute(self,run):
-        self.value = util.l2(run,False)
+            self.lowerBound = pow(util.geometricSeries(pp, n), 2) / n
+
+    def compute(self, run):
+        self.value = util.l2(run, False)
+
 
 #
 # difference
 #
 class Difference(Metric):
     def __init__(self, target, umType, p, u, relevanceLevels, n):
-        super().__init__("difference",0.0)
+        super().__init__("difference", 0.0)
         self.target = target
         #
         # lower bound: run exposure reproduces target exposure
@@ -108,35 +116,38 @@ class Difference(Metric):
         #
         # reranking setting (n != math.inf)
         #
-        # assume the worst exposure is a static ranking in reverse order of relevance
+        # assume the worst exposure is a static ranking in reverse order of relevance <-- this one
         #
-        pp = p if (umType == "rbp") else p * u        
+        pp = p if (umType == "rbp") else p * u
         ub = 0.0
         if (n == math.inf):
             #
             # retrieval condition
             #
-        
+
             # contribution lost from relevant documents
-            for d,e in target.items():
-                ub += e*e
+            for d, e in target.items():
+                ub += e * e
             # contribution gained from nonrelevant documents
-            ub = ub + util.geometricSeries(pp,n)
+            ub = ub + util.geometricSeries(pp, n)
         else:
             #
             # reranking condition
             #
             # construct the sorted target exposure
             target_vector = []
-            for d,e in target.items():
+            for d, e in target.items():
                 target_vector.append(e)
             target_vector.sort()
             for i in range(len(target_vector)):
-                diff = pow(pp,i) - target_vector[i]
-                ub += diff*diff
+                diff = pow(pp, i) - target_vector[i]
+                ub += diff * diff
         self.upperBound = ub
-    def compute(self,run):
+
+    def compute(self, run):
         self.value = util.distance(self.target, run, False)
+
+
 #
 # GROUP METRICS
 #
@@ -146,84 +157,86 @@ class Difference(Metric):
 #
 class GroupRelevance(Metric):
     def __init__(self, target, umType, p, u, r, k):
-        super().__init__("relevance",1.0)
+        super().__init__("relevance", 1.0)
         self.target = target
         #
         # upper bound: assume the all groups get all of the exposure (loose)
         #
-        attention_mass = util.geometricSeries(p,r)
+        attention_mass = util.geometricSeries(p, r)
         ub = 0.0
         for v in target.values():
-            ub += v * ub
+            ub += v * ub # if you multiply the base value of 0 by something, it's gonna remain zero???
         self.upperBound = ub
-        
+
         #
         # lower bound: assume a non-relevant group gets all of the exposure
         #
         self.lowerBound = 0.0
-            
-    def compute(self,run):
-        self.value = util.dot(self.target,run)
+
+    def compute(self, run):
+        self.value = util.dot(self.target, run)
+
 
 #
 # group disparity
 #
 class GroupDisparity(Metric):
     def __init__(self, target, umType, p, u, r, k):
-        super().__init__("disparity",0.0)
-        if (k==1):
+        super().__init__("disparity", 0.0)
+        if (k == 1):
             self.lowerBound = 0
             self.upperBound = 0
         else:
             #
             # upper bound: assume all groups get all of the exposure
             #
-            e = util.geometricSeries(p,r) 
+            e = util.geometricSeries(p, r)
             self.upperBound = e * e * k
             #
             # lower bound: assume all groups get equal exposure
             #
             lb = 0.0
             if (r != math.inf):
-                pp = p if (umType == "rbp") else p * u        
-                exposure = util.geometricSeries(pp,r)
+                pp = p if (umType == "rbp") else p * u
+                exposure = util.geometricSeries(pp, r)
                 lb = k * exposure * exposure
             self.lowerBound = lb
-    
-    def compute(self,run):
-        self.value = util.l2(run,False)
+
+    def compute(self, run):
+        self.value = util.l2(run, False)
+
 
 #
 # group difference
 #
 class GroupDifference(Metric):
     def __init__(self, target, umType, p, u, r, k):
-        super().__init__("difference",0.0)
+        super().__init__("difference", 0.0)
         self.target = target
         #
         # upper bound: assume the least relevant group gets all of the exposure
         #
-        exposure_mass = util.geometricSeries(p,r)
+        exposure_mass = util.geometricSeries(p, r)
         #
         # case 1: no exposure to any relevant group
         #
         norm = 0.0
-        for d,e in target.items():
-            norm += e*e
+        for d, e in target.items():
+            norm += e * e
         #
         # case 2: max exposure to all groups
         #
         retval = 0.0
         dist = []
         diff = 0.0
-        for d,e in target.items():
+        for d, e in target.items():
             dist.append(e)
-            diff += (exposure_mass-e)*(exposure_mass-e)
+            diff += (exposure_mass - e) * (exposure_mass - e)
         self.upperBound = norm if (norm > diff) else diff
         #
         # lower bound: 
         #
         self.lowerBound = 0.0
-    
-    def compute(self,run):
+
+    def compute(self, run):
         self.value = util.distance(self.target, run, False)

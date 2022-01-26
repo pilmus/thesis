@@ -38,9 +38,11 @@ class DeltrWrapper(model.RankerInterface):
         """
         DELTR requires the data to be in a specific order: qid, docid, protected feature, ...
         """
-
+        print(f"Preparing data...")
+        print(f"Getting features...")
         features = self.fe.get_feature_mat(inputhandler)
 
+        print("Rest of the prep...")
         data = inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']]
 
         data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
@@ -67,6 +69,7 @@ class DeltrWrapper(model.RankerInterface):
 
     def train(self, inputhandler):
         data = self.__prepare_data(inputhandler)
+        print(f"Now actually training...")
         self.weights = self.dtr.train(data)
 
         return self.weights

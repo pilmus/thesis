@@ -35,6 +35,15 @@ import metrics
 
 
 def expected(permutations, qrels, umType, p, u):
+    """
+
+    :param permutations: permutations as returned by the system we're evaluating
+    :param qrels:
+    :param umType:
+    :param p:
+    :param u:
+    :return: the exposure that's on each document across all permutations
+    """
     numSamples = len(permutations.keys())
     exposures = {}
     for itr,permutationObj in permutations.items():
@@ -59,13 +68,22 @@ def expected(permutations, qrels, umType, p, u):
 #
 # function: target_exposures
 #
-# given a user model and its paramters, compute the target exposures for 
+# given a user model and its parameters, compute the target exposures for
 # documents.
 #
 #
 def target(qrels, umType, p, u, complete):
+    """
+    :param qrels: dictionary mapping docids to a relevance value. all docids should belong to a single qid
+    :param umType: user model, can be rbp or gerr. GERR is used in the overview paper
+    :param p: patience, default = 0.5
+    :param u: utility, default = 0.5
+    :param complete: complete relevant judgments known? used for re-ranking
+    :return:
+    """
     #
     # compute [ [relevanceLevel, count], ...] vector
+    # example: [[0, 4],[1,3]] --> there were 7 items, 4 with relevance level 0 and 3 with relevance level 1
     #
     relevanceLevelAccumulators = {}
     relevanceLevels = []
@@ -104,7 +122,7 @@ def target(qrels, umType, p, u, complete):
     #
     # compute the metric structure to maintain bounds, defaults, etc
     #
-    n = len(qrels) if (complete) else math.inf
+    n = len(qrels) if (complete) else math.inf # for re-ranking == len(qrels)
     disparity = metrics.Disparity(target, umType, p, u, relevanceLevels, n)
     relevance = metrics.Relevance(target, umType, p, u, relevanceLevels, n)
     difference = metrics.Difference(target, umType, p, u, relevanceLevels, n)
