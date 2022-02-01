@@ -36,7 +36,7 @@ def get_mapping(year):
     if year == 2019:
         base_mapping["properties"]["year"] = {"type": "short"}
 
-    elif year == 2020:
+    elif year == 2020 or year == '2020subset':
         base_mapping["properties"]["sources"] = {"type": "keyword"}
         base_mapping["properties"]["fields_of_study"] = {"type": "keyword"}
     return base_mapping
@@ -73,10 +73,19 @@ def doc_generator(reader, year):
             yield_dict["_index"] = 'semanticscholar2020'
             yield_dict["sources"] = doc.get("sources")
             yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
+        elif year == '2020subset':
+            yield_dict["_index"] = 'semanticscholar2020subset'
+            yield_dict["sources"] = doc.get("sources")
+            yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
         else:
             print(f"Invalid year {year}.")
 
         yield yield_dict
+
+def new_index(year):
+    idx_name = f"semanticscholar{year}"
+    es.indices.create(idx_name)
+    es.indices.put_mapping(get_mapping(year),index=idx_name)
 
 
 def index_files(year):
@@ -91,20 +100,24 @@ def index_files(year):
     print(f"Already indexed: {indexed_files}.")
     for raw in raw_files:
         if raw not in indexed_files:
-            print(f"Indexing contents of {raw}.")
-            with jsonlines.open(raw) as reader:
-
-                progress = tqdm.tqdm(unit="docs", total=1000000)
-                successes = 0
-                for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year), chunk_size=2000):
-                    progress.update(1)
-                    successes += ok
+            index_file(raw, year)
 
             with open(indexed_filepath, "a") as fp:
                 fp.write(f"{raw}\n")
                 print(f"Indexed contents of {raw}.")
 
 
+def index_file(raw, year):
+    print(f"Indexing contents of {raw}.")
+    with jsonlines.open(raw) as reader:
+        progress = tqdm.tqdm(unit="docs", total=1000000)
+        successes = 0
+        for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year), chunk_size=2000):
+            progress.update(1)
+            successes += ok
+
+
 es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-index_files(2019)
+# new_index('2020subset')
+index_file('resources/training/2020/corpus-subset-for-queries.jsonl','2020subset')
 print("I'm done.")

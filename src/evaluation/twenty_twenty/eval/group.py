@@ -24,6 +24,16 @@ def exposure(exposures, did2gids, qrels, complete):
     return groupExposures
 
 def metrics(target, umType, p, u, n, r):
+    """
+
+    :param target: target exposure aggregated by group
+    :param umType:
+    :param p:
+    :param u:
+    :param n: size of the ranking
+    :param r: Total items with relevance == 1.
+    :return:
+    """
     k = len(target)
     disparity = GroupDisparity(target, umType, p, u, r, k)
     relevance = GroupRelevance(target, umType, p, u, r, k)

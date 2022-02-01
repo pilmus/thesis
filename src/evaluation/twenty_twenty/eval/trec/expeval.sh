@@ -14,4 +14,4 @@ done
 ./trec/json2runfile.py -I $RUNFILE_JSON > runfile.tsv
 #
 ##./expeval.py -I runfile.tsv -R qrels.tsv -G -C
-./expeval.py qrels.tsv runfile.tsv -G -C -B
+./expeval.py qrels.tsv runfile.tsv -G -C

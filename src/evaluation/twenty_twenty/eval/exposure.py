@@ -2,6 +2,8 @@ import util
 import math
 import permutation
 import metrics
+
+
 #
 # function: expected
 #
@@ -46,24 +48,24 @@ def expected(permutations, qrels, umType, p, u):
     """
     numSamples = len(permutations.keys())
     exposures = {}
-    for itr,permutationObj in permutations.items():
+    for itr, permutationObj in permutations.items():
         permutation = permutationObj.value()
         relret = 0
         for i in range(len(permutation)):
             did = permutation[i]
-            if not(did in exposures):
+            if not (did in exposures):
                 exposures[did] = 0.0
 
             if (umType == "rbp"):
-                e_i = p**(i)
+                e_i = p ** (i)
             elif (umType == "gerr"):
-                e_i = p**(i) * (1.0-u)**(relret)
+                e_i = p ** (i) * (1.0 - u) ** (relret)
 
             exposures[did] += (e_i / numSamples)
             if (did in qrels) and (qrels[did] > 0):
                 relret = relret + 1
     return exposures
-    
+
 
 #
 # function: target_exposures
@@ -87,44 +89,45 @@ def target(qrels, umType, p, u, complete):
     #
     relevanceLevelAccumulators = {}
     relevanceLevels = []
-    for did,rel in qrels.items():
+    for did, rel in qrels.items():
         if rel in relevanceLevelAccumulators:
             relevanceLevelAccumulators[rel] += 1
         else:
             relevanceLevelAccumulators[rel] = 1
-    for k,v in relevanceLevelAccumulators.items():
-        relevanceLevels.append([k,v])
-    relevanceLevels.sort(reverse=True)
+    for k, v in relevanceLevelAccumulators.items():
+        relevanceLevels.append([k, v])
+    relevanceLevels.sort(reverse=True)  # reverse == true so sort in descending order
     #
     # compute { relevanceLevel : exposure }
     #
-    b = 0 # numDominating
+    b = 0  # numDominating
     targetExposurePerRelevanceLevel = {}
     for i in range(len(relevanceLevels)):
         g = relevanceLevels[i][0]
         m = relevanceLevels[i][1]
         if (umType == "rbp"):
-            te_g = (p**(b) - p**(b+m)) / (m*(1.0-p))
+            te_g = (p ** (b) - p ** (b + m)) / (m * (1.0 - p))
         elif (umType == "gerr"):
             pp = p * (1.0 - u)
             if (g > 0):
-                te_g = (pp**(b) - pp**(b+m)) / (m*(1.0-pp))
+                te_g = (pp ** (b) - pp ** (b + m)) / (m * (1.0 - pp))
             else:
-                te_g = ( (1.0-u)**(b)*(p**(b) - p**(b+m)) ) / (m*(1.0-p))
+                te_g = ((1.0 - u) ** (b) * (p ** (b) - p ** (b + m))) / (m * (1.0 - p))
+        else:
+            raise Exception("Invalid umType specified.")
         targetExposurePerRelevanceLevel[g] = te_g
         b = b + m
     #
     # create { did : exposure }
     #
     target = {}
-    for did,rel in qrels.items():
-        target[did] = targetExposurePerRelevanceLevel[rel]
+    for did, rel in qrels.items():
+        target[did] = targetExposurePerRelevanceLevel[rel]  # <-- target exposure level fully dependent on relevance
     #
     # compute the metric structure to maintain bounds, defaults, etc
     #
-    n = len(qrels) if (complete) else math.inf # for re-ranking == len(qrels)
+    n = len(qrels) if (complete) else math.inf  # for re-ranking == len(qrels)
     disparity = metrics.Disparity(target, umType, p, u, relevanceLevels, n)
     relevance = metrics.Relevance(target, umType, p, u, relevanceLevels, n)
     difference = metrics.Difference(target, umType, p, u, relevanceLevels, n)
     return target, disparity, relevance, difference
-

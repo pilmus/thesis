@@ -14,9 +14,9 @@ class Corpus():
     """Interface between the corpus data on Elasticsearch and other modules. All fetched data is returned as a pandas
     dataframe."""
 
-    def __init__(self, host, port,index):
+    def __init__(self, host, port, index):
         """needs a path to a valid .json db configuration file"""
-        self.es = Elasticsearch([{'host': host, 'port': port, 'timeout':300}])
+        self.es = Elasticsearch([{'host': host, 'port': port, 'timeout': 300}])
         self.index = index
         self.host = host
         self.port = port
@@ -31,7 +31,7 @@ class Corpus():
         return resp
 
     def count_docs(self):
-        s = Search(using=self.es)
+        s = Search(index=self.index, using=self.es)
         resp = s.query().count()
         return resp
 
@@ -44,14 +44,12 @@ class Corpus():
 
     def __return_res_dict_as_df(self, s):
         df = pd.DataFrame(s)
-        df = pd.concat([df, df["_source"].apply(pd.Series)],axis = 1)
+        df = pd.concat([df, df["_source"].apply(pd.Series)], axis=1)
         df['doc_id'] = df['_id']
         return df
 
-
     def get_docs_by_ids(self, doc_ids):
         """queries the documents table"""
-        s = Search(using=self.es)
+        s = Search(index=self.index, using=self.es)
         s = s.query("ids", values=doc_ids)
         return self.__return_res_attr_dict_as_df(s)
-

@@ -76,12 +76,18 @@ def parseArguments():
     parser.add_argument('-U', dest='unnormalized', default=False, 
                         action='store_true', 
                         help='compute unnormalized metrics.')
-    
-    parser.add_argument(dest='trec_rel_file', 
+
+    # added by me
+    parser.add_argument('-S', dest='sq', default=False, action='store_true')
+    parser.add_argument('-D', dest='destination', help='path to output file')
+    parser.add_argument('-NV', dest='non_verbose', default=False, action='store_true')
+
+    parser.add_argument(dest='trec_rel_file',
                         help='path to relevance judgments.')
-    
+
+
     parser.add_argument(dest='trec_top_file', help='path to results file.')
-    
+
     args = parser.parse_args()
     
     parameters={}
@@ -92,8 +98,14 @@ def parseArguments():
     parameters["groupEvaluation"] = bool(args.group)
     parameters["complete"] = bool(args.complete)
     parameters["normalize"] = not bool(args.unnormalized)
+
+
+    parameters["sq"] = bool(args.sq)
+    parameters["destination"] = args.destination
+    parameters["non_verbose"] = bool(args.non_verbose)
     parameters["relfn"] = args.trec_rel_file
     parameters["topfn"] = args.trec_top_file
-    
+
+
     return parameters
     

@@ -48,12 +48,12 @@ class Relevance(Metric):
         self.lowerBound = 0.0
         if (n != math.inf):
             pp = p if (umType == "rbp") else p * u
-            dist = []
-            for d, e in target.items():
-                dist.append(e)
-            dist.sort()
-            for i in range(len(dist)):
-                self.lowerBound = self.lowerBound + pow(pp, i) * dist[i]
+            targ_exps = []
+            for doc_id, targ_exp in target.items():
+                targ_exps.append(targ_exp)
+            targ_exps.sort()
+            for i in range(len(targ_exps)):
+                self.lowerBound = self.lowerBound + pow(pp, i) * targ_exps[i]
         if len(relevanceLevels) <= 1:
             self.upperBound = 0.0
             self.lowerBound = 0.0
@@ -67,6 +67,15 @@ class Relevance(Metric):
 #
 class Disparity(Metric):
     def __init__(self, target, umType, p, u, relevanceLevels, n):
+        """
+
+        :param target:
+        :param umType:
+        :param p:
+        :param u:
+        :param relevanceLevels:
+        :param n: Number of items in the ranking.
+        """
         super().__init__("disparity", 0.0)
         #
         # upper bound: static ranking
@@ -144,8 +153,9 @@ class Difference(Metric):
                 ub += diff * diff
         self.upperBound = ub
 
-    def compute(self, run):
-        self.value = util.distance(self.target, run, False)
+    def compute(self, run, sq):
+        # self.value = util.distance(self.target, run, False) # og
+        self.value = util.distance(self.target, run, sq)
 
 
 #
@@ -182,6 +192,15 @@ class GroupRelevance(Metric):
 #
 class GroupDisparity(Metric):
     def __init__(self, target, umType, p, u, r, k):
+        """
+
+        :param target: Target exposure per group
+        :param umType:
+        :param p:
+        :param u:
+        :param r: Total number of items with relevance == 1.
+        :param k: Number of groups
+        """
         super().__init__("disparity", 0.0)
         if (k == 1):
             self.lowerBound = 0
@@ -238,5 +257,6 @@ class GroupDifference(Metric):
         #
         self.lowerBound = 0.0
 
-    def compute(self, run):
-        self.value = util.distance(self.target, run, False)
+    def compute(self, run, sq):
+        # self.value = util.distance(self.target, run, False) # <-- why drop the sqrt? OG
+        self.value = util.distance(self.target, run, sq)

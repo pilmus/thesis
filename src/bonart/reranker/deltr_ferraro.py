@@ -16,24 +16,25 @@ class DeltrFerraro(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, protected_feature, protected_feature_mapping, group_file, standardize=False):
+    def __init__(self, featureengineer, protected_feature, protected_feature_mapping, group_file, standardize=False, relevance_weight=0.25):
         super().__init__(featureengineer)
         # setup the DELTR object
         self._protected_feature = protected_feature
         self._protected_feature_mapping = protected_feature_mapping
+        self.standardize = standardize
 
         # create the Deltr object
         self.dtr_zero = Deltr("protected", 0, number_of_iterations=5, standardize=standardize)
         self.dtr_one = Deltr("protected", 1, number_of_iterations=5, standardize=standardize)
 
         self._grouping = pd.read_csv(group_file)
-
+        self.relevance_weight = relevance_weight
 
     def __grouping_apply(self, df):
 
         # todo: warning if not two groups??
         self.grouping['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
-        df = pd.merge(df,self.grouping[['doc_id','protected']], how='left',on='doc_id')
+        df = pd.merge(df, self.grouping[['doc_id', 'protected']], how='left', on='doc_id')
 
         # df['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
         return df
@@ -64,7 +65,7 @@ class DeltrFerraro(model.RankerInterface):
             data.q_num = data.sid.astype(str) + '.' + data.q_num.astype(str)
 
         data = data.dropna()  # drop missing values as some doc_ids are not in the corpus and not all docs have
-        # Hlevel annotations
+        # annotations
 
         data = data.reindex(columns=col_order)  # protected variable has to be at third position for DELTR
 
@@ -81,15 +82,8 @@ class DeltrFerraro(model.RankerInterface):
 
         return self.dtr_one, self.dtr_zero
 
-    def __predict_apply(self, df):
-
-        df_copy = df.copy(deep=True)
-        df_copy.q_num_combi = df.sid + "." + df.q_num
-        df_copy = df_copy.drop(['sid', 'q_num'], axis=1)
-
-        predictions = self.dtr.rank(df_copy, has_judgment=False)
-        predictions[['sid', 'q_num']] = predictions['q_num'].str.split('.')
-        return df
+    def _prepare_data(self, inputhandler, has_judgment, mode):
+        return self.__prepare_data(inputhandler, has_judgment, mode)
 
     def _predict(self, inputhandler):
         """
@@ -100,8 +94,28 @@ class DeltrFerraro(model.RankerInterface):
 
         data = self.__prepare_data(inputhandler, has_judgment=False, mode='eval')
 
-        data = data.groupby('q_num').apply(self.dtr_zero.rank, has_judgment=False)
-        data = data.reset_index(level=0)
+        print(f"Ranking zero...")
+        data_zero = data.groupby('q_num').apply(self.dtr_zero.rank, has_judgment=False)
+        data_zero = data_zero.rename({'judgement': 'judgement_zero'}, axis=1)
+
+        print(f"Ranking one...")
+        data_one = data.groupby('q_num').apply(self.dtr_one.rank, has_judgment=False)
+        data_one = data_one.rename({'judgement': 'judgement_one'}, axis=1)
+
+        data_merged = pd.merge(data_one.reset_index(), data_zero.reset_index(), on=['q_num','doc_id'])
+        data_merged['judgement'] = data_merged.apply(lambda row: self.relevance_weight * row.judgement_zero + (1 - self.relevance_weight) * row.judgement_one, axis=1)
+
+
+        # data_mean_judgment = \
+        # pd.concat((data_one.reset_index(), data_zero.reset_index())).groupby(['q_num', 'doc_id'], as_index=False,
+        #                                                                      sort=False)[
+        #     'judgement'].mean()
+
+        data = pd.merge(data,
+                        data_merged[['q_num','doc_id','judgement']],
+                        on=['q_num', 'doc_id'], how='left')
+
+        # data = data.reset_index(level=0) #necessary?
 
         data['rank'] = data.groupby('q_num')['judgement'].apply(pd.Series.rank, ascending=False,
                                                                 method='first')
@@ -115,19 +129,20 @@ class DeltrFerraro(model.RankerInterface):
 
     def save(self):
         print(f"Saving models...")
-        with open(f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}.pickle",
-                  'wb') as fp:
+        zero_path = f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}_std_{self.standardize}.pickle"
+        one_path = f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}_std_{self.standardize}.pickle"
+
+        with open(zero_path, 'wb') as fp:
             pickle.dump(self.dtr_zero, fp)
-        with open(f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}.pickle",
-                  'wb') as fp:
+        with open(one_path, 'wb') as fp:
             pickle.dump(self.dtr_one, fp)
-        return f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}.pickle", f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}.pickle"
+        return zero_path, one_path
 
     def load(self, dtr_zero_path, dtr_one_path):
         with open(dtr_zero_path, "rb") as fp:
-            self.dtr_zero =   pickle.load(fp)
+            self.dtr_zero = pickle.load(fp)
         with open(dtr_one_path, "rb") as fp:
-            self.dtr_one =   pickle.load(fp)
+            self.dtr_one = pickle.load(fp)
         return True
 
     @property
