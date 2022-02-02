@@ -11,37 +11,35 @@ class DeltrFerraro(model.RankerInterface):
     Wrapper arround DELTR, contains two separate DELTR models trained on the same dataset whose scores are combined in the prediction phase.
     """
 
-    COLUMN_ORDER = ["q_num", "doc_id", "protected",
+    COLUMN_ORDER = ["q_num", "doc_id", "group",
                     "abstract_score", "authors_score", "entities_score",
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, protected_feature, protected_feature_mapping, group_file, standardize=False, relevance_weight=0.25):
+    def __init__(self, featureengineer, group_file, standardize=False, relevance_weight=0.25):
         super().__init__(featureengineer)
         # setup the DELTR object
-        self._protected_feature = protected_feature
-        self._protected_feature_mapping = protected_feature_mapping
         self.standardize = standardize
 
         # create the Deltr object
-        self.dtr_zero = Deltr("protected", 0, number_of_iterations=5, standardize=standardize)
-        self.dtr_one = Deltr("protected", 1, number_of_iterations=5, standardize=standardize)
+        self.dtr_zero = Deltr("group", 0, number_of_iterations=1, standardize=standardize)
+        self.dtr_one = Deltr("group", 1, number_of_iterations=1, standardize=standardize)
 
         self._grouping = pd.read_csv(group_file)
         self.relevance_weight = relevance_weight
 
     def __grouping_apply(self, df):
+        df = pd.merge(df, self.grouping[['doc_id', 'group']], how='left', on='doc_id')
 
-        # todo: warning if not two groups??
-        self.grouping['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
-        df = pd.merge(df, self.grouping[['doc_id', 'protected']], how='left', on='doc_id')
-
-        # df['protected'] = self.grouping[self.protected_feature].map(self.protected_feature_mapping)
         return df
+
+    def __is_unique(self, s):
+        a = s.to_numpy()  # s.values (pandas<0.24)
+        return (a[0] == a).all()
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
         """
-        DELTR requires the data to be in a specific order: qid, docid, protected feature, ...
+        DELTR requires the data to be in a specific order: qid, docid, protected feature (group), ...
         """
         print(f"Preparing data...")
         print(f"Getting features...")
@@ -53,6 +51,11 @@ class DeltrFerraro(model.RankerInterface):
         data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
 
         data = data.groupby('qid', as_index=False).apply(self.__grouping_apply)
+
+        # remove queries for which all documents belong to one group -- this leads to nan values in training
+        if mode == 'train':
+            data = data.groupby('qid').filter(lambda g: not self.__is_unique(g.group))
+
         col_order = self.COLUMN_ORDER
         if has_judgment:
             col_order = self.COLUMN_ORDER + ['relevance']
@@ -74,11 +77,11 @@ class DeltrFerraro(model.RankerInterface):
 
     def train(self, inputhandler):
         data = self.__prepare_data(inputhandler)
-        print(f"Training gamma == 0...")
-        self.dtr_zero.train(data)
-
         print(f"Training gamma == 1...")
         self.dtr_one.train(data)
+
+        print(f"Training gamma == 0...")
+        self.dtr_zero.train(data)
 
         return self.dtr_one, self.dtr_zero
 
@@ -102,9 +105,10 @@ class DeltrFerraro(model.RankerInterface):
         data_one = data.groupby('q_num').apply(self.dtr_one.rank, has_judgment=False)
         data_one = data_one.rename({'judgement': 'judgement_one'}, axis=1)
 
-        data_merged = pd.merge(data_one.reset_index(), data_zero.reset_index(), on=['q_num','doc_id'])
-        data_merged['judgement'] = data_merged.apply(lambda row: self.relevance_weight * row.judgement_zero + (1 - self.relevance_weight) * row.judgement_one, axis=1)
-
+        data_merged = pd.merge(data_one.reset_index(), data_zero.reset_index(), on=['q_num', 'doc_id'])
+        data_merged['judgement'] = data_merged.apply(
+            lambda row: self.relevance_weight * row.judgement_zero + (1 - self.relevance_weight) * row.judgement_one,
+            axis=1)
 
         # data_mean_judgment = \
         # pd.concat((data_one.reset_index(), data_zero.reset_index())).groupby(['q_num', 'doc_id'], as_index=False,
@@ -112,7 +116,7 @@ class DeltrFerraro(model.RankerInterface):
         #     'judgement'].mean()
 
         data = pd.merge(data,
-                        data_merged[['q_num','doc_id','judgement']],
+                        data_merged[['q_num', 'doc_id', 'judgement']],
                         on=['q_num', 'doc_id'], how='left')
 
         # data = data.reset_index(level=0) #necessary?
@@ -129,8 +133,8 @@ class DeltrFerraro(model.RankerInterface):
 
     def save(self):
         print(f"Saving models...")
-        zero_path = f"resources/models/2020/deltr_gamma_0_prot_{self._protected_feature}_std_{self.standardize}.pickle"
-        one_path = f"resources/models/2020/deltr_gamma_1_prot_{self._protected_feature}_std_{self.standardize}.pickle"
+        zero_path = f"resources/models/2020/deltr_gamma_0_std_{self.standardize}.pickle"
+        one_path = f"resources/models/2020/deltr_gamma_1_std_{self.standardize}.pickle"
 
         with open(zero_path, 'wb') as fp:
             pickle.dump(self.dtr_zero, fp)
@@ -144,22 +148,6 @@ class DeltrFerraro(model.RankerInterface):
         with open(dtr_one_path, "rb") as fp:
             self.dtr_one = pickle.load(fp)
         return True
-
-    @property
-    def protected_feature(self):
-        return self._protected_feature
-
-    @protected_feature.setter
-    def protected_feature(self, value):
-        self._protected_feature = value
-
-    @property
-    def protected_feature_mapping(self):
-        return self._protected_feature_mapping
-
-    @protected_feature_mapping.setter
-    def protected_feature_mapping(self, value):
-        self._protected_feature_mapping = value
 
     @property
     def grouping(self):
