@@ -16,14 +16,15 @@ class DeltrFerraro(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, group_file, standardize=False, relevance_weight=0.25):
+    def __init__(self, featureengineer, group_file, standardize=False, relevance_weight=0.25, iter_nums = 5):
         super().__init__(featureengineer)
         # setup the DELTR object
         self.standardize = standardize
+        self.iter_nums = iter_nums
 
         # create the Deltr object
-        self.dtr_zero = Deltr("group", 0, number_of_iterations=1, standardize=standardize)
-        self.dtr_one = Deltr("group", 1, number_of_iterations=1, standardize=standardize)
+        self.dtr_zero = Deltr("group", 0, number_of_iterations=iter_nums, standardize=standardize)
+        self.dtr_one = Deltr("group", 1, number_of_iterations=iter_nums, standardize=standardize)
 
         self._grouping = pd.read_csv(group_file)
         self.relevance_weight = relevance_weight
@@ -133,8 +134,8 @@ class DeltrFerraro(model.RankerInterface):
 
     def save(self):
         print(f"Saving models...")
-        zero_path = f"resources/models/2020/deltr_gamma_0_std_{self.standardize}.pickle"
-        one_path = f"resources/models/2020/deltr_gamma_1_std_{self.standardize}.pickle"
+        zero_path = f"resources/models/2020/deltr_gamma_0_std_{self.standardize}_iter_{self.iter_nums}.pickle"
+        one_path = f"resources/models/2020/deltr_gamma_1_std_{self.standardize}_iter_{self.iter_nums}.pickle"
 
         with open(zero_path, 'wb') as fp:
             pickle.dump(self.dtr_zero, fp)
