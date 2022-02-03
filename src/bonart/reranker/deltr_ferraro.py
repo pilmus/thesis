@@ -4,8 +4,27 @@ from collections import Counter
 
 import pandas as pd
 from fairsearchdeltr import Deltr
+from tqdm import tqdm
 
 import src.bonart.reranker.model as model
+
+# class Deltr(LibDeltr):
+#     def _train_nn(self, tr, query_ids, feature_matrix, training_scores):
+#         old_calc_cost = tr._calculate_cost
+#         old_exposure_diff = tr._exposure_diff
+#         new_query_ids = query_ids
+#         wrapped_query_ids = tqdm(query_ids)
+#
+#         def new_calc_cost(training_judgments, predictions, _, prot_idx, data_per_query_predicted):
+#             return old_calc_cost(training_judgments, predictions, wrapped_query_ids, prot_idx, data_per_query_predicted)
+#
+#         def new_exposure_diff(predictions, _, which_query, prot_idx):
+#             return old_exposure_diff(predictions, new_query_ids, which_query, prot_idx)
+#
+#         tr._calculate_cost = new_calc_cost
+#         tr._exposure_diff = new_exposure_diff
+#
+#         return tr.train_nn(query_ids, feature_matrix, training_scores)
 
 
 class DeltrFerraro(model.RankerInterface):
