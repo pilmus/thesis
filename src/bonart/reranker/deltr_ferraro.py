@@ -1,4 +1,6 @@
+import os
 import pickle
+from collections import Counter
 
 import pandas as pd
 from fairsearchdeltr import Deltr
@@ -16,7 +18,15 @@ class DeltrFerraro(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, group_file, standardize=False, relevance_weight=0.25, iter_nums = 5):
+    def __init__(self, featureengineer, group_file, standardize=False, alpha=0.25, iter_nums=5):
+        """
+
+        :param featureengineer:
+        :param group_file:
+        :param standardize:
+        :param alpha: Determines the weight of relevance vs fairness. Lower alpha is more emphasis on relevance.
+        :param iter_nums:
+        """
         super().__init__(featureengineer)
         # setup the DELTR object
         self.standardize = standardize
@@ -25,18 +35,28 @@ class DeltrFerraro(model.RankerInterface):
         # create the Deltr object
         self.dtr_zero = Deltr("group", 0, number_of_iterations=iter_nums, standardize=standardize)
         self.dtr_one = Deltr("group", 1, number_of_iterations=iter_nums, standardize=standardize)
-
+        self.group_name = os.path.basename(group_file).replace('doc-annotations-hclass-groups-', '').replace('.csv', '')
         self._grouping = pd.read_csv(group_file)
-        self.relevance_weight = relevance_weight
+        self.alpha = alpha
 
     def __grouping_apply(self, df):
         df = pd.merge(df, self.grouping[['doc_id', 'group']], how='left', on='doc_id')
-
         return df
 
-    def __is_unique(self, s):
-        a = s.to_numpy()  # s.values (pandas<0.24)
-        return (a[0] == a).all()
+    def __groups_mult_members(self, g):
+        """
+        When training, discard queries for which all items belong to a single group or for which one or more groups
+        only have one item. These cause division by zero exceptions during the training process.
+        :param g:
+        :return:
+        """
+        c = Counter(g.group.to_list())
+        if len(c) == 1:
+            return False
+        for v in c.values():
+            if v == 1:
+                return False
+        return True
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):
         """
@@ -55,7 +75,7 @@ class DeltrFerraro(model.RankerInterface):
 
         # remove queries for which all documents belong to one group -- this leads to nan values in training
         if mode == 'train':
-            data = data.groupby('qid').filter(lambda g: not self.__is_unique(g.group))
+            data = data.groupby('qid').filter(self.__groups_mult_members)
 
         col_order = self.COLUMN_ORDER
         if has_judgment:
@@ -86,8 +106,9 @@ class DeltrFerraro(model.RankerInterface):
 
         return self.dtr_one, self.dtr_zero
 
-    def _prepare_data(self, inputhandler, has_judgment, mode):
-        return self.__prepare_data(inputhandler, has_judgment, mode)
+    def __weight_judgements(self, row):
+        # print(f"{row.judgement_zero} - {row.judgement_one}")
+        return self.alpha * row.judgement_zero + (1 - self.alpha) * row.judgement_one
 
     def _predict(self, inputhandler):
         """
@@ -107,14 +128,12 @@ class DeltrFerraro(model.RankerInterface):
         data_one = data_one.rename({'judgement': 'judgement_one'}, axis=1)
 
         data_merged = pd.merge(data_one.reset_index(), data_zero.reset_index(), on=['q_num', 'doc_id'])
-        data_merged['judgement'] = data_merged.apply(
-            lambda row: self.relevance_weight * row.judgement_zero + (1 - self.relevance_weight) * row.judgement_one,
-            axis=1)
+        # data_merged['judgement'] = data_merged.apply(
+        #     lambda row: self.alpha * row.judgement_zero + (1 - self.alpha) * row.judgement_one,
+        #     axis=1)
 
-        # data_mean_judgment = \
-        # pd.concat((data_one.reset_index(), data_zero.reset_index())).groupby(['q_num', 'doc_id'], as_index=False,
-        #                                                                      sort=False)[
-        #     'judgement'].mean()
+        data_merged['judgement'] = data_merged.apply(self.__weight_judgements,
+                                                     axis=1)
 
         data = pd.merge(data,
                         data_merged[['q_num', 'doc_id', 'judgement']],
@@ -134,8 +153,8 @@ class DeltrFerraro(model.RankerInterface):
 
     def save(self):
         print(f"Saving models...")
-        zero_path = f"resources/models/2020/deltr_gamma_0_std_{self.standardize}_iter_{self.iter_nums}.pickle"
-        one_path = f"resources/models/2020/deltr_gamma_1_std_{self.standardize}_iter_{self.iter_nums}.pickle"
+        zero_path = f"resources/models/2020/deltr_gamma_0_alpha_{self.alpha}_corp_{self.fe.corpus.index}-group-{self.group_name}.pickle"
+        one_path = f"resources/models/2020/deltr_gamma_1_alpha_{self.alpha}_corp_{self.fe.corpus.index}-group-{self.group_name}.pickle"
 
         with open(zero_path, 'wb') as fp:
             pickle.dump(self.dtr_zero, fp)
