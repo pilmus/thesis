@@ -1,9 +1,6 @@
 import argparse
-import os
-import sys
 
 import pandas as pd
-from jsonlines import jsonlines
 
 def merge_author_groups(df):
     levels = set(df.level.to_list())

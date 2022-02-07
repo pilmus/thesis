@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--queries-eval', default="resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
     parser.add_argument('--sequence-eval', default="resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv")
     parser.add_argument('--eval-group-file',
-                        default='resources/evaluation/2020/merged-annotations-groups-mixed_group.csv')
+                        default='resources/evaluation/2020/groupings/merged-annotations-groups-mixed_group.csv')
 
 
     parser.add_argument('--deltr-zero')
@@ -93,7 +93,7 @@ def main():
 
     print("Writing submission...")
     train_grouping_name = os.path.basename(training_group_file).replace('doc-annotations-hclass-groups-', '').replace('.csv', '')
-    out = f"resources/evaluation/2020/rawruns/deltr_gammas-alpha-{alpha}-corpus-{corp}-grouping-{train_grouping_name}.json"
+    out = f"resources/evaluation/2020/rawruns/deltr_gammas-alpha-{alpha}-corpus-{corp}-grouping-{train_grouping_name}_mix_down_eval_mapping.json"
     input_eval.write_submission(deltr, outfile=out)
 
     print(f"Validating {out}...")
