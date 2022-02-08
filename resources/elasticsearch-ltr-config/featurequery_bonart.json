@@ -9,8 +9,8 @@
                 },
                 {
                     "sltr": {
-                        "_name": "logged_featureset_deltr",
-                        "featureset": "features_deltr",
+                        "_name": "logged_featureset_bonart",
+                        "featureset": "featureset_bonart",
                         "params": {
                             "keywords": "query"
                         }
@@ -22,8 +22,8 @@
     "ext": {
         "ltr_log": {
             "log_specs": {
-                "name": "log_deltr",
-                "named_query": "logged_featureset_deltr",
+                "name": "log_bonart",
+                "named_query": "logged_featureset_bonart",
                 "missing_as_zero": true
             }
         }

@@ -24,11 +24,23 @@ class RankerInterface(ABC):
 
     def predict(self, inputhandler):
         """
-        uses the query sequences from the inputhandler to rerank the documents according to the trained model. 
+        uses the query sequences from the inputhandler to rerank the documents according to the trained model.
         must return a dataframe with columns [sid, q_num, qid, doc_id, rank]
         """
         self.predictions = self._predict(inputhandler)[['sid', 'q_num', 'qid', 'doc_id', 'rank']]
         return self.predictions
+
+    @abstractmethod
+    def save(self, path):
+        """
+        Save the trained model.
+        """
+        pass
+
+    @abstractmethod
+    def load(self, path):
+        """load trained model"""
+        pass
 
     @abstractmethod
     def _predict(self, inputhandler):

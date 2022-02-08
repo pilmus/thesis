@@ -15,8 +15,8 @@ SEQUENCE = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
 print("Initializing corpus.")
 corpus = Corpus('localhost', '9200', 'semanticscholar')
 print("Building features.")
-ft = FeatureEngineer(corpus, fquery='resources/elasticsearch-ltr-config/featurequery.json',
-                     fconfig='resources/elasticsearch-ltr-config/features.json')
+ft = FeatureEngineer(corpus, fquery='resources/elasticsearch-ltr-config/featurequery_lambdamart.json',
+                     fconfig='resources/elasticsearch-ltr-config/features_lambdamart.json')
 
 input = InputOutputHandler(corpus,
                            fsequence=SEQUENCE,

@@ -3,10 +3,10 @@
     "params": {
       "keywords": "python"
     },
-    "index": "semanticscholar"
+    "index": "semanticscholar2019"
   },
   "featureset": {
-    "name": "featureset",
+    "name": "featureset_bonart",
     "features": [
       {
         "name": "title_score",
@@ -26,7 +26,7 @@
         ],
         "template": {
           "match": {
-            "paperAbstract": "{{keywords}}"
+            "abstract": "{{keywords}}"
           }
         }
       },
@@ -81,24 +81,7 @@
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "year"
-                }
-              }
-            ],
-            "query": {
-              "match_all": {}
-            }
-          }
-        }
-      },
-      {
-        "name": "inCitations",
-        "template": {
-          "function_score": {
-            "functions": [
-              {
-                "field_value_factor": {
-                  "field": "inCitations",
+                  "field": "year",
                   "missing": 0
                 }
               }
@@ -110,13 +93,31 @@
         }
       },
       {
-        "name": "outCitations",
+        "name": "in_citations",
         "template": {
           "function_score": {
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "outCitations",
+                  "field": "in_citations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      },
+      {
+        "name": "out_citations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "out_citations",
                   "missing": 0
                 }
               }

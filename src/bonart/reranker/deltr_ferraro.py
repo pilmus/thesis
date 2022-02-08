@@ -37,7 +37,7 @@ class DeltrFerraro(model.RankerInterface):
                     "inCitations", "journal_score", "outCitations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, group_file, standardize=False, alpha=0.25, iter_nums=5):
+    def __init__(self, featureengineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
         """
 
         :param featureengineer:
@@ -50,11 +50,11 @@ class DeltrFerraro(model.RankerInterface):
         # setup the DELTR object
         self.standardize = standardize
         self.iter_nums = iter_nums
+        self.group_name=group_name
 
         # create the Deltr object
         self.dtr_zero = Deltr("group", 0, number_of_iterations=iter_nums, standardize=standardize)
         self.dtr_one = Deltr("group", 1, number_of_iterations=iter_nums, standardize=standardize)
-        self.group_name = os.path.basename(group_file).replace('doc-annotations-hclass-groups-', '').replace('.csv', '')
         self._grouping = pd.read_csv(group_file)
         self.alpha = alpha
 

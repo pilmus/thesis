@@ -6,7 +6,7 @@
     "index": "semanticscholar2020"
   },
   "featureset": {
-    "name": "features_deltr",
+    "name": "features_ferraro",
     "features": [
       {
         "name": "title_score",
@@ -26,7 +26,7 @@
         ],
         "template": {
           "match": {
-            "paperAbstract": "{{keywords}}"
+            "abstract": "{{keywords}}"
           }
         }
       },
@@ -75,13 +75,13 @@
         }
       },
       {
-        "name": "inCitations",
+        "name": "in_citations",
         "template": {
           "function_score": {
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "inCitations",
+                  "field": "in_citations",
                   "missing": 0
                 }
               }
@@ -93,13 +93,13 @@
         }
       },
       {
-        "name": "outCitations",
+        "name": "out_citations",
         "template": {
           "function_score": {
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "outCitations",
+                  "field": "out_citations",
                   "missing": 0
                 }
               }

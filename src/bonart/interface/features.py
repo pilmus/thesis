@@ -1,3 +1,4 @@
+import json
 import sys
 
 import pandas as pd
@@ -29,15 +30,13 @@ class FeatureEngineer():
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
     def get_feature_mat(self, iohandler):
+        print("Getting features...")
         tqdm.pandas()
         features = iohandler.get_query_seq().groupby('qid').progress_apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
         features = features.reset_index(level=0)
         return features
 
-    def features_from_df(self, df):
-
-        return df
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']

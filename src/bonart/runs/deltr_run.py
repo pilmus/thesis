@@ -10,13 +10,13 @@ from src.evaluation.validate_run import validate
 
 
 def main():
-    parser = argparse.ArgumentParser(description='create different group mappings')
+    parser = argparse.ArgumentParser(description='train/evaluate with Deltr ranker')
 
     parser.add_argument('-c', '--corpus', dest='corpus', default='2020')
 
     parser.add_argument('--feature-query', dest='fq',
-                        default="resources/elasticsearch-ltr-config/featurequery_deltr.json")
-    parser.add_argument('--feature-config', dest='fc', default='resources/elasticsearch-ltr-config/features_deltr.json')
+                        default="resources/elasticsearch-ltr-config/featurequery_ferraro.json")
+    parser.add_argument('--feature-config', dest='fc', default='resources/elasticsearch-ltr-config/features_ferraro.json')
 
     parser.add_argument('--queries-train', default="resources/training/2020/DELTR-training-sample.json")
     parser.add_argument('--sequence-train', default=f"resources/training/2020/DELTR-sequence.tsv")
@@ -26,7 +26,6 @@ def main():
     parser.add_argument('--sequence-eval', default="resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv")
     parser.add_argument('--eval-group-file',
                         default='resources/evaluation/2020/groupings/merged-annotations-groups-mixed_group.csv')
-
 
     parser.add_argument('--deltr-zero')
     parser.add_argument('--deltr-one')
@@ -66,8 +65,12 @@ def main():
                                     fsequence=sequence_eval,
                                     fquery=queries_eval)
 
+    train_group_name = os.path.basename(training_group_file).replace('doc-annotations-hclass-groups-', '').replace(
+        '.csv', '')
+    eval_group_name = os.path.basename(eval_group_file).replace('merged-annotations-groups-', '').replace('.csv', '')
+
     if training:
-        deltr = DeltrFerraro(feature_engineer, training_group_file, alpha=alpha,
+        deltr = DeltrFerraro(feature_engineer, training_group_file, train_group_name, alpha=alpha,
                              standardize=True)
 
         print("Training model...")
@@ -84,7 +87,7 @@ def main():
         deltr_zero_pickle_path = args.deltr_zero
         deltr_one_pickle_path = args.deltr_one
 
-        deltr = DeltrFerraro(feature_engineer, eval_group_file, alpha=alpha,
+        deltr = DeltrFerraro(feature_engineer, eval_group_file, eval_group_name, alpha=alpha,
                              standardize=True)
         deltr.load(deltr_zero_pickle_path, deltr_one_pickle_path)
 
@@ -92,8 +95,8 @@ def main():
     deltr.predict(input_eval)
 
     print("Writing submission...")
-    train_grouping_name = os.path.basename(training_group_file).replace('doc-annotations-hclass-groups-', '').replace('.csv', '')
-    out = f"resources/evaluation/2020/rawruns/deltr_gammas-alpha-{alpha}-corpus-{corp}-grouping-{train_grouping_name}_mix_down_eval_mapping.json"
+
+    out = f"resources/evaluation/2020/rawruns/deltr_gammas-alpha-{alpha}-corpus-{corp}-tgrouping-{train_group_name}-egrouping-{eval_group_name}.json"
     input_eval.write_submission(deltr, outfile=out)
 
     print(f"Validating {out}...")

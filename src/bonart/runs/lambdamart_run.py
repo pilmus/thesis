@@ -1,51 +1,97 @@
+import argparse
+import os.path
 import pickle
 
-import src.bonart.reranker.lambdamart as model
+from bonart.reranker.lambdamart import LambdaMart
+from bonart.reranker.lambdamart_ferraro import LambdaMartFerraro
+from evaluation.validate_run import validate
 from src.bonart.interface.corpus import Corpus
 from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
-from src.evaluation.twenty_nineteen.validate_run import validate
-
-num_samples = 10
-
-OUT = f"resources/evaluation/2019/fairRuns/submission_lambdamart_{num_samples}.json"
-QUERIES_EVAL = "resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"
-SEQUENCE_EVAL = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
-
-QUERIES_TRAIN = "resources/training/2019/fair-TREC-training-sample-cleaned.json"
-SEQUENCE_TRAIN = f"resources/training/2019/training-sequence-{num_samples}.tsv"
-
-SEQUENCE_EVAL = SEQUENCE_TRAIN
-QUERIES_EVAL = QUERIES_TRAIN
-
-CORPUS = Corpus('localhost','9200','semanticscholar')
-
-ft = FeatureEngineer(CORPUS, fquery='resources/elasticsearch-ltr-config/featurequery.json',
-                     fconfig='resources/elasticsearch-ltr-config/features.json')
-
-input_train = InputOutputHandler(CORPUS,
-                                 fsequence=SEQUENCE_TRAIN,
-                                 fquery=QUERIES_TRAIN)
-
-input_test = InputOutputHandler(CORPUS,
-                                fsequence=SEQUENCE_EVAL,
-                                fquery=QUERIES_EVAL)
-
-lambdamart = model.LambdaMart(ft)
-print("Training model...")
-lambdamart.train(input_train)
-print(f"Saving model...")
-with open(f'resources/models/2019/lambdamart-{num_samples}.pickle','wb') as fp:
-    pickle.dump(lambdamart.lambdamart, fp)
-print("Predicting ranking...")
-lambdamart.predict(input_test)
-
-print("Writing submission...")
-input_test.write_submission(lambdamart, outfile=OUT)
-#
-# # args = validate.Args(queries=QUERIES_EVAL, query_sequence_file = SEQUENCE_EVAL, run_file=OUT)
-# # validate.main(args)
 
 
-print(f"Validating {OUT}...")
-validate(QUERIES_EVAL, SEQUENCE_EVAL, OUT)
+def main():
+    parser = argparse.ArgumentParser(description='train/evaluate lambdamart')
+
+    parser.add_argument('-c', '--corpus', dest='corpus', default='semanticscholar2020')
+
+    parser.add_argument('--lambdamart-version', dest='lamb_vers')
+
+    parser.add_argument('--feature-query', dest='fq',
+                        default='resources/elasticsearch-ltr-config/featurequery_ferraro.json')
+    parser.add_argument('--feature-config', dest='fc',
+                        default='resources/elasticsearch-ltr-config/features_ferraro.json')
+
+    parser.add_argument('--queries-train', default='resources/training/2020/TREC-Fair-Ranking-training-sample.json')
+    parser.add_argument('--sequence-train', default='resources/training/2020/training-sequence-1000.tsv')
+
+    parser.add_argument('--queries-eval', default='resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json')
+    parser.add_argument('--sequence-eval', default="resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv")
+
+    parser.add_argument('-t', '--training', dest='training', default=False, action='store_true',
+                        help='train and save a model before evaluating')
+
+    parser.add_argument('--model-dir', dest='model_dir', default='resources/models',
+                        help='location where the model is saved')
+
+    args = parser.parse_args()
+    corp = args.corpus
+
+    lversion = args.lamb_vers
+    fquery = args.fq
+    fconfig = args.fc
+    model_dir = args.model_dir
+
+    queries_train = args.queries_train
+    sequence_train = args.sequence_train
+    queries_eval = args.queries_eval
+    sequence_eval = args.sequence_eval
+
+    training = args.training
+
+    num_samples = os.path.splitext(os.path.basename(queries_train))[0].split('-')[-1]
+
+    corpus = Corpus('localhost', '9200', corp)
+
+    ft = FeatureEngineer(corpus, fquery=fquery,
+                         fconfig=fconfig)
+
+    input_train = InputOutputHandler(corpus,
+                                     fsequence=sequence_train,
+                                     fquery=queries_train)
+
+    input_test = InputOutputHandler(corpus,
+                                    fsequence=sequence_eval,
+                                    fquery=queries_eval)
+
+    if lversion == 'ferraro':
+        lambdamart = LambdaMartFerraro(ft)
+        outfile = f"resources/evaluation/2020/rawruns/lambdamart_{corp}_{num_samples}.json"
+        model_path = os.path.join(model_dir, f"2020/lambdamart_{corp}_{num_samples}.pickle")
+    elif lversion == 'bonart':
+        lambdamart = LambdaMart(ft)
+        outfile = f"resources/evaluation/2019/fairRuns/lambdamart_{corp}_{num_samples}.json"
+        model_path = os.path.join(model_dir, f"2019/lambdamart_{corp}_{num_samples}.pickle")
+    else:
+        raise ValueError(
+            f'Invalid option given for LambdaMart version: {lversion}.\nValid options are: "ferraro", "bonart".')
+
+    if bool(training):
+        print("Training model...")
+        lambdamart.train(input_train)
+        lambdamart.save(model_path)
+    else:
+        lambdamart.load(model_path)
+
+    print("Predicting ranking...")
+    lambdamart.predict(input_test)
+
+    print("Writing submission...")
+    input_test.write_submission(lambdamart, outfile=outfile)
+
+    print(f"Validating {outfile}...")
+    validate(queries_eval, sequence_eval, outfile)
+
+
+if __name__ == '__main__':
+    main()

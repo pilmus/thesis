@@ -1,3 +1,5 @@
+import pickle
+
 import pyltr
 import pandas as pd
 import src.bonart.reranker.model as model
@@ -30,7 +32,7 @@ class LambdaMart(model.RankerInterface):
         x.drop(['q_num', 'doc_id', 'relevance', 'qid'], inplace=True, axis=1)
         return (x, y, qids)
 
-    def __prepare_data(self, inputhandler, frac=0.66):
+    def _prepare_data(self, inputhandler, frac=0.66):
         x = self.fe.get_feature_mat(inputhandler)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
@@ -54,7 +56,7 @@ class LambdaMart(model.RankerInterface):
         all queries with the same qid appear in one contiguous block.
         """
 
-        x_train, y_train, qids_train, x_val, y_val, qids_val = self.__prepare_data(inputhandler, frac=0.66)
+        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
@@ -62,8 +64,7 @@ class LambdaMart(model.RankerInterface):
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
     def _predict(self, inputhandler):
-
-        x, y, qids, tmp1, tmp2, tmp3 = self.__prepare_data(inputhandler, frac=1)
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred=pred)
         qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].apply(pd.Series.rank, ascending=False, method='first')
@@ -71,3 +72,14 @@ class LambdaMart(model.RankerInterface):
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
         return pred
+
+    def save(self, path):
+        print(f"Saving models...")
+
+        with open(path, 'wb') as fp:
+            pickle.dump(self.lambdamart, fp)
+        return True
+
+    def load(self, path):
+        with open(path, "rb") as fp:
+            self.lambdamart = pickle.load(fp)

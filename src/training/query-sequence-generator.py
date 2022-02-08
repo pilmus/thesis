@@ -45,12 +45,17 @@ def generate_sequence(seq_len, query_distribution):
 
     np.random.seed()
 
-    #normailze the frequencies to form a distribution
+    #normalize the frequencies to form a distribution
     query_ids, distribution = zip(*query_distribution)
     distribution /= sum(np.array(distribution))
 
     return np.random.choice(query_ids, size=seq_len,
         replace=True, p=distribution)
+
+def random_sequence(seq_len, query_dist):
+    query_ids, distribution = zip(*query_dist)
+    return np.random.choice(query_ids,size=seq_len)
+
 
 
 
@@ -79,9 +84,13 @@ if __name__ == '__main__':
     parser.add_argument('query_distribution_file', 
         metavar='query-distribution-file', type=str, 
         help='File with the query distribution')
+    parser.add_argument('-r',dest="r", default=False, action='store_true')
     args = parser.parse_args()
 
-    query_sequence = generate_sequence(args.seq_len, 
+    if bool(args.r):
+        query_sequence = random_sequence(args.seq_len, load_query_distribution(args.query_distribution_file))
+    else:
+        query_sequence = generate_sequence(args.seq_len,
         load_query_distribution(args.query_distribution_file))
 
     print('\n'.join(["%d,%s" % (i, qid) 
