@@ -1,10 +1,9 @@
 import argparse
 import os.path
-import pickle
 
-from bonart.reranker.lambdamart import LambdaMart
-from bonart.reranker.lambdamart_ferraro import LambdaMartFerraro
-from evaluation.validate_run import validate
+from src.bonart.reranker.lambdamart import LambdaMart
+from src.bonart.reranker.lambdamart import LambdaMartFerraro
+from src.evaluation.validate_run import validate
 from src.bonart.interface.corpus import Corpus
 from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
@@ -31,10 +30,14 @@ def main():
     parser.add_argument('-t', '--training', dest='training', default=False, action='store_true',
                         help='train and save a model before evaluating')
 
+    parser.add_argument('--sort-reverse', default=False, action='store_true', help='applicable for ferraro-runs. if true, sort relevances in descending order during randomization')
+
     parser.add_argument('--model-dir', dest='model_dir', default='resources/models',
                         help='location where the model is saved')
 
+
     args = parser.parse_args()
+    print(args.sort_reverse)
     corp = args.corpus
 
     lversion = args.lamb_vers
@@ -48,8 +51,10 @@ def main():
     sequence_eval = args.sequence_eval
 
     training = args.training
+    sort_reverse = args.sort_reverse
 
-    num_samples = os.path.splitext(os.path.basename(queries_train))[0].split('-')[-1]
+    num_samples_t = os.path.splitext(os.path.basename(sequence_train))[0].split('-')[-1]
+    num_samples_e = os.path.splitext(os.path.basename(sequence_eval))[0].split('-')[-1]
 
     corpus = Corpus('localhost', '9200', corp)
 
@@ -65,13 +70,13 @@ def main():
                                     fquery=queries_eval)
 
     if lversion == 'ferraro':
-        lambdamart = LambdaMartFerraro(ft)
-        outfile = f"resources/evaluation/2020/rawruns/lambdamart_{corp}_{num_samples}.json"
-        model_path = os.path.join(model_dir, f"2020/lambdamart_{corp}_{num_samples}.pickle")
+        lambdamart = LambdaMartFerraro(ft, sort_reverse)
+        outfile = f"resources/evaluation/2020/rawruns/lambdamart_{corp}_{num_samples_t}_{num_samples_e}_rev_{sort_reverse}.json"
+        model_path = os.path.join(model_dir, f"2020/lambdamart_{corp}_{num_samples_t}.pickle")
     elif lversion == 'bonart':
         lambdamart = LambdaMart(ft)
-        outfile = f"resources/evaluation/2019/fairRuns/lambdamart_{corp}_{num_samples}.json"
-        model_path = os.path.join(model_dir, f"2019/lambdamart_{corp}_{num_samples}.pickle")
+        outfile = f"resources/evaluation/2019/fairRuns/lambdamart_{corp}_{num_samples_t}.json"
+        model_path = os.path.join(model_dir, f"2019/lambdamart_{corp}_{num_samples_t}.pickle")
     else:
         raise ValueError(
             f'Invalid option given for LambdaMart version: {lversion}.\nValid options are: "ferraro", "bonart".')

@@ -3,6 +3,8 @@ import os
 
 import pandas as pd
 
+"""This script was used to confirm that the first four columns of each eval run are summary statistics over all submitted runs."""
+
 rundir = 'resources/evaluation/2020/trec_runs/reranking'
 
 runfiles = glob.glob(os.path.join(rundir, '*.csv'))
@@ -28,7 +30,7 @@ def compute_stats(row):
 
 statsdf = df.apply(lambda row: compute_stats(row), axis=1)
 
-ogdf = pd.read_csv(runfiles[0], sep='\t', dtype={'qid': str})[['qid','min','max','mean', 'median']]
+ogdf = pd.read_csv(runfiles[0], sep='\t', dtype={'qid': str})[['qid', 'min', 'max', 'mean', 'median']]
 
 comparison = statsdf.compare(ogdf)
 comparison

@@ -1,4 +1,5 @@
 import pickle
+import random
 
 import pyltr
 import pandas as pd
@@ -83,3 +84,34 @@ class LambdaMart(model.RankerInterface):
     def load(self, path):
         with open(path, "rb") as fp:
             self.lambdamart = pickle.load(fp)
+
+
+class LambdaMartFerraro(LambdaMart):
+    """
+    Extends Bonart's LambdaMart wrapper with a predict function for reproducing the results in
+    Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
+    """
+    def __init__(self,featureengineer, sort_reverse=False):
+        super().__init__(featureengineer)
+        self.sort_reverse = sort_reverse
+
+    def __randomize_apply(self, df):
+        pred_list = sorted(df.pred.to_list(), reverse=self.sort_reverse)
+        mean_diff = (pred_list[-1] - pred_list[0]) / len(pred_list)
+        df.pred = df.apply(lambda row: row.pred + random.uniform(0, mean_diff), axis=1)
+
+        return df
+
+    def _predict(self, inputhandler):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+        pred = self.lambdamart.predict(x)
+
+        qids = qids.assign(pred=pred)
+
+        qids.groupby(['sid', 'q_num']).apply(self.__randomize_apply)
+
+        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].apply(pd.Series.rank, ascending=False, method='first')
+        qids.drop('pred', inplace=True, axis=1)
+        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
+                        how='left', on=['sid', 'q_num', 'doc_id'])
+        return pred

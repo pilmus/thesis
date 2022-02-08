@@ -12,7 +12,7 @@ from src.evaluation.validate_run import validate
 def main():
     parser = argparse.ArgumentParser(description='train/evaluate with Deltr ranker')
 
-    parser.add_argument('-c', '--corpus', dest='corpus', default='2020')
+    parser.add_argument('-c', '--corpus', dest='corpus', default='semanticscholar2020')
 
     parser.add_argument('--feature-query', dest='fq',
                         default="resources/elasticsearch-ltr-config/featurequery_ferraro.json")
@@ -52,7 +52,7 @@ def main():
     training = args.training
     alpha = float(args.alpha)
 
-    corpus = Corpus('localhost', '9200', f'semanticscholar{corp}')
+    corpus = Corpus('localhost', '9200', corp)
 
     feature_engineer = FeatureEngineer(corpus, fquery=fquery,
                                        fconfig=fconfig)

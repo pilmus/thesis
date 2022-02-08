@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+"""This script was used to discover which mix of parameters is used in the official evaluation."""
 
 basename = 'resources/evaluation/2020/eval_output'
 runfiles = ['Deltr-gammas-ferraro-basic.tsv',

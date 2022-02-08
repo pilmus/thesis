@@ -82,7 +82,6 @@ class DeltrFerraro(model.RankerInterface):
         DELTR requires the data to be in a specific order: qid, docid, protected feature (group), ...
         """
         print(f"Preparing data...")
-        print(f"Getting features...")
         features = self.fe.get_feature_mat(inputhandler)
 
         print("Rest of the prep...")

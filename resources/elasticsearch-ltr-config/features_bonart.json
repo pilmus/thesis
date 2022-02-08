@@ -99,7 +99,7 @@
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "in_citations",
+                  "field": "num_in_citations",
                   "missing": 0
                 }
               }
@@ -117,7 +117,7 @@
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "out_citations",
+                  "field": "num_out_citations",
                   "missing": 0
                 }
               }
