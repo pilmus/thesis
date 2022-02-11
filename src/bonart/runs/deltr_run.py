@@ -84,11 +84,11 @@ def main():
         print("Loading trained models...")
         deltr_zero_pickle_path = 'resources/models/2020/deltr_gamma_0_alpha_0.0_corp_2020subset.pickle'
         deltr_one_pickle_path = 'resources/models/2020/deltr_gamma_1_alpha_0.0_corp_2020subset.pickle'
-        deltr_zero_pickle_path = args.deltr_zero
+        deltr_zero_pickle_path = args.deltr_zero #change to location
         deltr_one_pickle_path = args.deltr_one
 
         deltr = DeltrFerraro(feature_engineer, eval_group_file, eval_group_name, alpha=alpha,
-                             standardize=True)
+                             standardize=True, iter_nums=1)
         deltr.load(deltr_zero_pickle_path, deltr_one_pickle_path)
 
     print("Predicting...")

@@ -42,6 +42,7 @@ def clean_2019():
     clean_df = clean_df.drop('doc_ids', axis=1)
     clean_df.to_json(clean_training, orient='records', lines=True)
 
+
 def clean_2020():
     """
     It has come to our attention that the training query set includes document IDs that cannot be resolved in the
@@ -62,7 +63,7 @@ def clean_2020():
     dirty_df = pd.read_json(dirty_training, lines=True)
 
     dirty_ids = list(set([doc['doc_id'] for doc in dirty_df.documents.explode()]))
-    b = {"query": {"ids": {"values": dirty_ids}}, "size":'5000'}
+    b = {"query": {"ids": {"values": dirty_ids}}, "size": '5000'}
     print(f"Executing query...")
     # res = helpers.scan(es, query=b, index='semanticscholar2020')
     res = es.search(index='semanticscholar2020', body=b)

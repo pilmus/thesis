@@ -209,14 +209,17 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser(description='Evaluate a TREC Fair Ranking submission.')
-    parser.add_argument('--runfiles', nargs='*', type=str, default=[],help='runfiles to evaluate')
-    parser.add_argument('--groundtruth_file', help='fair ranking ground truth file')
-    parser.add_argument('--query_sequence_file', help='fair ranking query sequences file')
+    parser.add_argument('--runfiles', nargs='*', type=str, help='runfiles to evaluate')
+    parser.add_argument('--groundtruth_file',
+                        default='resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json',
+                        help='fair ranking ground truth file')
+    parser.add_argument('--query_sequence_file',
+                        default='resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv',
+                        help='fair ranking query sequences file')
     parser.add_argument('--group_annotations_file', help='document group annotations file')
     parser.add_argument('--group_definition', help='keyword defining group definitions')
     parser.add_argument('--average_scores', action='store_false', help='average the scores across query sequences')
     args = parser.parse_args()
-
 
     task = FairRankingTask(args.query_sequence_file, args.groundtruth_file, args.group_annotations_file)
 
@@ -226,7 +229,6 @@ if __name__ == '__main__':
     performance_team_utility = defaultdict(dict)
     performance_all_fairness = defaultdict(list)
     performance_team_fairness = defaultdict(dict)
-
 
     for run in run_files:
         submission = FairRankingSubmission(run)
@@ -267,7 +269,6 @@ if __name__ == '__main__':
             print(df)
         df.to_csv(outfile)
 
-
     colormap = plt.cm.gist_ncar
     colors = [colormap(i) for i in np.linspace(0, 0.9, len(run_files))]
     for i, run in enumerate(run_files):
@@ -278,7 +279,7 @@ if __name__ == '__main__':
     plt.legend(loc='lower right', fontsize='xx-small')
     plt.xlabel("Unfairness: L2")
     plt.ylabel("Utility: expected utility")
-    #todo: one plot per item also?
+    # todo: one plot per item also?
     # fig = plt.figure()
     plt.savefig('resources/evaluation/2019/plots/%s/performance-all.pdf' % args.group_definition)
     # plt.show()

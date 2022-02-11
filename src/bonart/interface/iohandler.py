@@ -28,14 +28,14 @@ class InputOutputHandler:
 
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
-
-        sequence_df = pd.read_csv(fsequence, names=['sid_q_num','qid'], dtype={'sid_q_num':'str'}, sep=',', engine='python')
+        sequence_df = pd.read_csv(fsequence, names=['sid_q_num', 'qid'], dtype={'sid_q_num': 'str'}, sep=',',
+                                  engine='python')
         if sequence_df.sid_q_num.str.contains('.', regex=False).any():
-            sequence_df[['sid','q_num']] = sequence_df.sid_q_num.str.split('.',expand = True)
+            sequence_df[['sid', 'q_num']] = sequence_df.sid_q_num.str.split('.', expand=True)
         else:
             sequence_df['sid'] = '0'
             sequence_df['q_num'] = sequence_df['sid_q_num']
-        sequence_df = sequence_df[['sid','q_num','qid']]
+        sequence_df = sequence_df[['sid', 'q_num', 'qid']]
 
         self.seq = sequence_df
         self.queries = pd.DataFrame(queries)
@@ -45,7 +45,7 @@ class InputOutputHandler:
 
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
-        return seq
+        return seq.drop_duplicates() #todo investigate if makes differene
 
     def __unnest_query(self, query):
         ret = []
@@ -57,7 +57,7 @@ class InputOutputHandler:
                 "frequency": query.get("frequency"),
                 "qid": query.get("qid"),
                 "query": query.get("query")
-                })
+            })
         return ret
 
     def write_submission(self, model, outfile):
@@ -67,7 +67,6 @@ class InputOutputHandler:
         model.predictions.sort_values(['sid', 'q_num', 'rank'], axis=0, inplace=True)
         submission = model.predictions.groupby(['sid', 'q_num', 'qid']).apply(
             lambda df: pd.Series({'ranking': df['doc_id']}))
-
         submission = submission.reset_index()
         submission.q_num = submission.sid.astype(str) + '.' + submission.q_num.astype(str)
         submission = submission[['q_num', 'qid', 'ranking']]

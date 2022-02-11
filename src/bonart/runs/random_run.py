@@ -1,32 +1,44 @@
-import sys
+import argparse
+import os
 
-from src.evaluation.twenty_nineteen.validate_run import validate
-
-import src.bonart.reranker.model as model
 from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
-
-OUT = "resources/evaluation/2019/fairRuns/submission_random_125000.json"
-QUERIES = "resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"
-SEQUENCE = "resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv"
+from src.bonart.reranker.random_ranker import RandomRanker
+from src.evaluation.validate_run import validate
 
 
-print("Initializing corpus.")
-corpus = Corpus('localhost', '9200', 'semanticscholar')
-print("Building features.")
-ft = FeatureEngineer(corpus, fquery='resources/elasticsearch-ltr-config/featurequery_lambdamart.json',
-                     fconfig='resources/elasticsearch-ltr-config/features_lambdamart.json')
+def main():
+    parser = argparse.ArgumentParser(description='random run')
+    parser.add_argument('-c', '--corpus', dest='corpus', default='semanticscholar2019')
+    parser.add_argument('-q', '--queries', dest='queries',
+                        default="resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json")
+    parser.add_argument('-s', '--sequence', dest='sequence',
+                        default="resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv")
+    parser.add_argument('-o', '--out', dest='out', default="resources/evaluation/2019/fairRuns/submission_random_125000.json")
 
-input = InputOutputHandler(corpus,
-                           fsequence=SEQUENCE,
-                           fquery=QUERIES)
-print("Predicting...")
-random = model.RandomRanker(ft)
-random.predict(input)
+    args = parser.parse_args()
 
-print("Writing submission.")
-input.write_submission(random, outfile=OUT)
+    corpus = args.corpus
+    queries = args.queries
+    sequence = args.sequence
+    out = args.out
 
-print(f"Validating {OUT}...")
-validate(QUERIES, SEQUENCE, OUT)
+    print("Initializing corpus.")
+    corpus = Corpus('localhost', '9200', corpus)
+
+    input = InputOutputHandler(corpus,
+                               fsequence=sequence,
+                               fquery=queries)
+    print("Predicting...")
+    random = RandomRanker(None)
+    random.predict(input)
+
+    print("Writing submission.")
+    input.write_submission(random, outfile=out)
+
+    print(f"Validating {out}...")
+    validate(queries, sequence, out)
+
+
+if __name__ == '__main__':
+    main()

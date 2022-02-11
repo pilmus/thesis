@@ -14,7 +14,7 @@ def main():
 
     parser.add_argument('-c', '--corpus', dest='corpus', default='semanticscholar2020')
 
-    parser.add_argument('--lambdamart-version', dest='lamb_vers')
+    parser.add_argument('-l', '--lambdamart-version', dest='lamb_vers')
 
     parser.add_argument('--feature-query', dest='fq',
                         default='resources/elasticsearch-ltr-config/featurequery_ferraro.json')
@@ -30,14 +30,13 @@ def main():
     parser.add_argument('-t', '--training', dest='training', default=False, action='store_true',
                         help='train and save a model before evaluating')
 
-    parser.add_argument('--sort-reverse', default=False, action='store_true', help='applicable for ferraro-runs. if true, sort relevances in descending order during randomization')
+    parser.add_argument('--sort-reverse', default=False, action='store_true',
+                        help='applicable for ferraro-runs. if true, sort relevances in descending order during randomization')
 
     parser.add_argument('--model-dir', dest='model_dir', default='resources/models',
-                        help='location where the model is saved')
-
+                        help='location where the models are saved')
 
     args = parser.parse_args()
-    print(args.sort_reverse)
     corp = args.corpus
 
     lversion = args.lamb_vers
@@ -72,14 +71,16 @@ def main():
     if lversion == 'ferraro':
         lambdamart = LambdaMartFerraro(ft, sort_reverse)
         outfile = f"resources/evaluation/2020/rawruns/lambdamart_{corp}_{num_samples_t}_{num_samples_e}_rev_{sort_reverse}.json"
-        model_path = os.path.join(model_dir, f"2020/lambdamart_{corp}_{num_samples_t}.pickle")
+        model_path = os.path.join(model_dir, "2020")
     elif lversion == 'bonart':
         lambdamart = LambdaMart(ft)
-        outfile = f"resources/evaluation/2019/fairRuns/lambdamart_{corp}_{num_samples_t}.json"
-        model_path = os.path.join(model_dir, f"2019/lambdamart_{corp}_{num_samples_t}.pickle")
+        outfile = f"resources/evaluation/2019/fairRuns/lambdamart_bonart_{corp}_{num_samples_t}.json"
+        model_path = os.path.join(model_dir, "2019")
     else:
         raise ValueError(
             f'Invalid option given for LambdaMart version: {lversion}.\nValid options are: "ferraro", "bonart".')
+
+    model_path = os.path.join(model_path, f"lambdamart_{lversion}_{corp}_{num_samples_t}.pickle")
 
     if bool(training):
         print("Training model...")

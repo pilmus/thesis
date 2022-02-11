@@ -8,7 +8,7 @@ import src.bonart.reranker.model as model
 
 class LambdaMart(model.RankerInterface):
     """
-    Wrapper arround the LambdaMart algorithm
+    Wrapper around the LambdaMart algorithm
     """
 
     def __init__(self, featureengineer):
@@ -91,7 +91,8 @@ class LambdaMartFerraro(LambdaMart):
     Extends Bonart's LambdaMart wrapper with a predict function for reproducing the results in
     Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
     """
-    def __init__(self,featureengineer, sort_reverse=False):
+
+    def __init__(self, featureengineer, sort_reverse=False):
         super().__init__(featureengineer)
         self.sort_reverse = sort_reverse
 

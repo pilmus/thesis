@@ -60,7 +60,6 @@ def doc_generator(reader, year):
             "journalName": doc.get('journalName'),
             "author_names": author_names,
             "author_ids": author_ids,
-
             "num_in_citations": len(doc.get("inCitations")),
             "num_out_citations": len(doc.get("outCitations")),
             }

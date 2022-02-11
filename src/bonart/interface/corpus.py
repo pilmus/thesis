@@ -42,12 +42,6 @@ class Corpus():
         log.info("fetched %s doc_ids", df.doc_id.nunique())
         return df
 
-    def __return_res_dict_as_df(self, s):
-        df = pd.DataFrame(s)
-        df = pd.concat([df, df["_source"].apply(pd.Series)], axis=1)
-        df['doc_id'] = df['_id']
-        return df
-
     def get_docs_by_ids(self, doc_ids):
         """queries the documents table"""
         s = Search(index=self.index, using=self.es)

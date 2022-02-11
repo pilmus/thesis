@@ -34,7 +34,7 @@ class DeltrFerraro(model.RankerInterface):
 
     COLUMN_ORDER = ["q_num", "doc_id", "group",
                     "abstract_score", "authors_score", "entities_score",
-                    "inCitations", "journal_score", "outCitations", "title_score",
+                    "in_citations", "journal_score", "out_citations", "title_score",
                     "venue_score", "qlength"]
 
     def __init__(self, featureengineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
