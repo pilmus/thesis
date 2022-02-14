@@ -72,9 +72,10 @@ class DeltrFerraro(model.RankerInterface):
         c = Counter(g.group.to_list())
         if len(c) == 1:
             return False
-        for v in c.values():
-            if v == 1:
-                return False
+        # for v in c.values():
+        #     if v == 1:
+        #         continue
+        #         return False
         return True
 
     def __prepare_data(self, inputhandler, has_judgment=True, mode='train'):

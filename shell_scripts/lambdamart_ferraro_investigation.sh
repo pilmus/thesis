@@ -1,8 +1,9 @@
-for corpus in semanticscholar2020subset semanticscholar2020; do
-  for grouping in all_low all_high majorityL majorityH; do
-    for alpha in 0.0 0.25 0.50 0.75 1.0; do
-      echo $corpus $grouping $alpha
-      python src/bonart/runs/deltr_run.py -c $corpus --training-group-file "resources/training/2020/doc-annotations-hclass-groups-$grouping.csv" -r $alpha -t
-    done
+for corpus in semanticscholar2020; do
+#for corpus in semanticscholar2020subset semanticscholar2020; do
+  for rev in "--sort-reverse" ""; do
+#  for rev in ""; do
+      echo $corpus $rev
+      python src/bonart/runs/lambdamart_run.py -c $corpus --lambdamart-version ferraro --sequence-train resources/training/2020/training-sequence-10000.tsv -t $rev
   done
 done
+
