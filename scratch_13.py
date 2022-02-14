@@ -38,7 +38,7 @@ def find_ranklist_size(runfile):
 
 
 def to_ranking(row):
-    return list(range(0, len(row.ranking_1))), [row.ranking_2.index(item) for item in row.ranking_1]
+    return list(range(0, len(row.ranking_1))), [row.ranking_1.index(item) for item in row.ranking_2]
 
 
 tqdm.pandas()
