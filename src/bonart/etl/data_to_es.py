@@ -30,8 +30,8 @@ def get_mapping(year):
             "author_ids": {"type": "keyword"},
             "num_in_citations": {"type": "integer"},
             "num_out_citations": {"type": "integer"},
-            }
         }
+    }
 
     if year == 2019:
         base_mapping["properties"]["year"] = {"type": "short"}
@@ -56,13 +56,13 @@ def doc_generator(reader, year):
             "title": doc.get('title'),
             "abstract": doc.get("paperAbstract"),
             "entities": doc.get("entities"),
-            "venue": doc.get('venue'),
-            "journalName": doc.get('journalName'),
             "author_names": author_names,
             "author_ids": author_ids,
             "num_in_citations": len(doc.get("inCitations")),
             "num_out_citations": len(doc.get("outCitations")),
-            }
+            "venue": doc.get('venue'),
+            "journalName": doc.get('journalName'),
+        }
 
         if year == 2019:
             yield_dict["_index"] = 'semanticscholar2019'
@@ -81,10 +81,11 @@ def doc_generator(reader, year):
 
         yield yield_dict
 
+
 def new_index(year):
     idx_name = f"semanticscholar{year}"
     es.indices.create(idx_name)
-    es.indices.put_mapping(get_mapping(year),index=idx_name)
+    es.indices.put_mapping(get_mapping(year), index=idx_name)
 
 
 def index_files(year):
@@ -117,6 +118,5 @@ def index_file(raw, year):
 
 
 es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-# new_index('2020subset')
-index_file('resources/training/2020/corpus-subset-for-queries.jsonl','2020subset')
+index_files(2019)
 print("I'm done.")

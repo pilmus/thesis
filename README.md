@@ -94,10 +94,12 @@ see the example scripts in `src/runs`
 
 ## some stats
 
-- the corpus contains `46 947 044` unique documents
-- the training sample contains `4641` documents (`4490` unique docs) and `652` queries
-- the cleand training sample contains `557` queries, as some doc_ids are missing in the corpus (see `./src/etl/remove_missing_ids.py`)
-- 3863 docs from the training sample are included in the corpus
+- [x] the corpus contains `46 947 044` unique documents
+- [x] the training sample contains `4641` documents 
+- [x] (`4490` unique docs) 
+- [x] and `652` queries
+- [x] the cleaned training sample contains `557` queries, as some doc_ids are missing in the corpus (see `./src/etl/remove_missing_ids.py`)
+- [x] `3863` docs from the training sample are included in the corpus
 - the length of each ranking ranges from `2` to `26` docs with an average of `7` docs
 - on average arround `50.94%` of docs per query are not relevant
 

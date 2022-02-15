@@ -76,7 +76,10 @@ ktdf = kendalls_taus(basefile, compfile)
 # ktdf
 
 
-print(ktdf)
+print(kendalls_taus(basefile, compfile).kt_tau.mean())
+print(kendalls_taus(compfile, basefile).kt_tau.mean())
+print(kendalls_taus("resources/evaluation/2020/rawruns/trec_run/trec_run.LM-relevance.json", "resources/evaluation/2020/rawruns/lambdamart_ferraro/lambdamart_semanticscholar2020_10000_seq_rev_False_2.json").kt_tau.mean())
+print(kendalls_taus("resources/evaluation/2020/rawruns/trec_run/trec_run.Deltr-gammas.json","resources/evaluation/2020/rawruns/deltr_gammas/deltr_gammas-alpha-0.25-corpus-2020-grouping-all_low.json").kt_tau.mean())
 
 #
 # print(rankdata(np.array([list1,list2])))
