@@ -21,7 +21,7 @@ class FeatureEngineer():
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
-        resp['qlength'] = len(queryterm)
+        resp['qlength'] = len(queryterm) #move out of here
         return resp
 
 

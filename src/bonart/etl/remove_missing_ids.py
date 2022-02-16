@@ -9,13 +9,12 @@ There is a two-step procedure you can follow to remove such documents:
 This will result in dropping approximately 100 training queries.
 """
 from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.iohandler import InputOutputHandler
+from src.bonart.interface.iohandler import InputOutputHandler, Queries
 from src.bonart.utils import io
 
 corpus = Corpus('localhost','9200','semanticscholar2019')
-input = InputOutputHandler(corpus, fquery='resources/training/2019/fair-TREC-training-sample.json',fsequence="resources/training/2019/old/training-sequence-10.tsv")
+queries = Queries('resources/training/2019/fair-TREC-training-sample.json').queries
 
-queries = input.get_queries()
 
 doc_ids = queries.doc_id.drop_duplicates().to_list()
 ids_available = corpus.get_docs_by_ids(doc_ids).doc_id.drop_duplicates().to_list()
@@ -32,4 +31,4 @@ queries_raw = io.read_jsonlines('resources/training/2019/fair-TREC-training-samp
 
 queries_raw = [query for query in queries_raw if query['qid'] not in queries_remove]
 
-io.write_jsonlines(queries_raw, 'resources/training/2019/fair-TREC-training-sample-cleaned_og-full_index.json')
+io.write_jsonlines(queries_raw, 'resources/training/2019/fair-TREC-training-sample-cleaned_og-full_index_sepver.json')
