@@ -43,7 +43,7 @@ def main():
     else:
         raise ValueError(f"Invalid version: {v}.")
 
-    features = ft.get_feature_mat(input)
+    features = ft.get_feature_mat_from_iohandler(input)
     out = os.path.join('resources/features/', o)
     features.to_csv(out, index=False)
 

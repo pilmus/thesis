@@ -5,9 +5,10 @@ import pandas as pd
 from tqdm import tqdm
 
 import src.bonart.utils.io as io
+from src.bonart.interface.iohandler import Queries
 
 
-class FeatureEngineer():
+class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
     def __init__(self, corpus, fquery, fconfig, init_ltr=True):
@@ -21,7 +22,7 @@ class FeatureEngineer():
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
         resp = self.__features_from_response(docs)
-        resp['qlength'] = len(queryterm) #move out of here
+        resp['qlength'] = len(queryterm) #todo: move out of here
         return resp
 
 
@@ -29,14 +30,24 @@ class FeatureEngineer():
     def log_field_name(self):
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
-    def get_feature_mat(self, iohandler):
+    def get_feature_mat_from_iohandler(self, iohandler):
         print("Getting features...")
+
+        features = self._get_feature_mat(iohandler.get_query_seq())
+        return features
+
+    def get_feature_mat_from_queries(self, queries: Queries) -> pd.DataFrame:
+        print("Getting features from queries...")
         tqdm.pandas()
-        features = iohandler.get_query_seq().groupby('qid').progress_apply(
+        features = self._get_feature_mat(queries.queries)
+        return features
+
+    def _get_feature_mat(self, df: pd.DataFrame):
+        tqdm.pandas()
+        features = df.groupby('qid').progress_apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
         features = features.reset_index(level=0)
         return features
-
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']

@@ -37,7 +37,7 @@ class LambdaMart(model.RankerInterface):
         if prepped_data:
             x = pd.read_csv(prepped_data)
         else:
-            x = self.fe.get_feature_mat(inputhandler)
+            x = self.fe.get_feature_mat_from_iohandler(inputhandler)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
         training = x.q_num.drop_duplicates().sample(frac=frac)
