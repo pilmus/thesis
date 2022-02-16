@@ -10,7 +10,6 @@ import json
 
 
 def load_query_distribution(filename):
-
     """
         Reads a query distribution from a tsv file
 
@@ -30,7 +29,6 @@ def load_query_distribution(filename):
 
 
 def generate_sequence(seq_len, query_distribution):
-    
     """
         Generates a list of query IDs sampled from a given distribution 
         with replacement.
@@ -45,18 +43,23 @@ def generate_sequence(seq_len, query_distribution):
 
     np.random.seed()
 
-    #normalize the frequencies to form a distribution
+    # normalize the frequencies to form a distribution
     query_ids, distribution = zip(*query_distribution)
     distribution /= sum(np.array(distribution))
 
     return np.random.choice(query_ids, size=seq_len,
-        replace=True, p=distribution)
+                            replace=True, p=distribution)
+
 
 def random_sequence(seq_len, query_dist):
     query_ids, distribution = zip(*query_dist)
-    return np.random.choice(query_ids,size=seq_len)
+    return np.random.choice(query_ids, size=seq_len)
 
 
+def straight_sequence(query_dist):
+    """Return a sequence with each query in the query_dist file."""
+    query_ids, distribution = zip(*query_dist)
+    return query_ids
 
 
 if __name__ == '__main__':
@@ -79,20 +82,25 @@ if __name__ == '__main__':
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('seq_len', metavar='seq-len', type=int, 
-        help='Length of the query sequence')
-    parser.add_argument('query_distribution_file', 
-        metavar='query-distribution-file', type=str, 
-        help='File with the query distribution')
-    parser.add_argument('-r',dest="r", default=False, action='store_true')
+    parser.add_argument('seq_len', metavar='seq-len', type=int,
+                        help='Length of the query sequence')
+    parser.add_argument('query_distribution_file',
+                        metavar='query-distribution-file', type=str,
+                        help='File with the query distribution')
+    parser.add_argument('-m', '--mode', dest='mode', default='regular')
     args = parser.parse_args()
 
-    if bool(args.r):
+    mode = args.mode
+
+    if mode == 'regular':
         query_sequence = random_sequence(args.seq_len, load_query_distribution(args.query_distribution_file))
-    else:
+    elif mode == 'random':
         query_sequence = generate_sequence(args.seq_len,
-        load_query_distribution(args.query_distribution_file))
+                                           load_query_distribution(args.query_distribution_file))
+    elif mode == 'straight':
+        query_sequence = straight_sequence(load_query_distribution(args.query_distribution_file))
+    else:
+        raise ValueError(f"Invalid value for mode: {mode}.")
 
-    print('\n'.join(["%d,%s" % (i, qid) 
-        for i, qid in enumerate(query_sequence)]))
-
+    print('\n'.join(["%d,%s" % (i, qid)
+                     for i, qid in enumerate(query_sequence)]))

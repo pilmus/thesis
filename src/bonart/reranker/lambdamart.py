@@ -33,8 +33,11 @@ class LambdaMart(model.RankerInterface):
         x.drop(['q_num', 'doc_id', 'relevance', 'qid'], inplace=True, axis=1)
         return (x, y, qids)
 
-    def _prepare_data(self, inputhandler, frac=0.66):
-        x = self.fe.get_feature_mat(inputhandler)
+    def _prepare_data(self, inputhandler, frac=0.66, prepped_data=None):
+        if prepped_data:
+            x = pd.read_csv(prepped_data)
+        else:
+            x = self.fe.get_feature_mat(inputhandler)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
         training = x.q_num.drop_duplicates().sample(frac=frac)
@@ -47,7 +50,7 @@ class LambdaMart(model.RankerInterface):
 
         return (x_train, y_train, qids_train, x_val, y_val, qids_val)
 
-    def train(self, inputhandler):
+    def train(self, inputhandler, prepped_data=None):
         """
         X : array_like, shape = [n_samples, n_features] Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
@@ -57,15 +60,16 @@ class LambdaMart(model.RankerInterface):
         all queries with the same qid appear in one contiguous block.
         """
 
-        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
+        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66,
+                                                                                  prepped_data=prepped_data)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
-    def _predict(self, inputhandler):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+    def _predict(self, inputhandler, prepped_data=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1, prepped_data=prepped_data)
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred=pred)
         qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].apply(pd.Series.rank, ascending=False, method='first')
@@ -103,8 +107,8 @@ class LambdaMartFerraro(LambdaMart):
 
         return df
 
-    def _predict(self, inputhandler):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+    def _predict(self, inputhandler, prepped_data=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1, prepped_data=prepped_data)
         pred = self.lambdamart.predict(x)
 
         qids = qids.assign(pred=pred)

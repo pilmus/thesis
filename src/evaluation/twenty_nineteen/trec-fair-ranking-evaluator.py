@@ -210,15 +210,15 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Evaluate a TREC Fair Ranking submission.')
     parser.add_argument('--runfiles', nargs='*', type=str, help='runfiles to evaluate')
-    parser.add_argument('--groundtruth_file',
+    parser.add_argument('--groundtruth-file',
                         default='resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json',
                         help='fair ranking ground truth file')
-    parser.add_argument('--query_sequence_file',
+    parser.add_argument('--query-sequence-file',
                         default='resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv',
                         help='fair ranking query sequences file')
-    parser.add_argument('--group_annotations_file', help='document group annotations file')
-    parser.add_argument('--group_definition', help='keyword defining group definitions')
-    parser.add_argument('--average_scores', action='store_false', help='average the scores across query sequences')
+    parser.add_argument('--group-annotations-file', help='document group annotations file')
+    parser.add_argument('--group-definition', help='keyword defining group definitions')
+    parser.add_argument('--average-scores', action='store_false', help='average the scores across query sequences')
     args = parser.parse_args()
 
     task = FairRankingTask(args.query_sequence_file, args.groundtruth_file, args.group_annotations_file)

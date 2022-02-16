@@ -72,6 +72,7 @@ def doc_generator(reader, year):
             yield_dict["_index"] = 'semanticscholar2020'
             yield_dict["sources"] = doc.get("sources")
             yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
+
         elif year == '2020subset':
             yield_dict["_index"] = 'semanticscholar2020subset'
             yield_dict["sources"] = doc.get("sources")
@@ -118,5 +119,5 @@ def index_file(raw, year):
 
 
 es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-index_files(2019)
+index_files(2020)
 print("I'm done.")
