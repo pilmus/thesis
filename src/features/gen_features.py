@@ -3,7 +3,7 @@ import os
 
 from src.bonart.interface.iohandler import InputOutputHandler
 from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.features import FeatureEngineer
+from src.bonart.interface.features import ESFeatureEngineer
 
 
 def main():
@@ -20,23 +20,23 @@ def main():
     o = args.o
 
     if v == 'bonart_lm':
-        ft = FeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2019'),
-                             fquery="resources/elasticsearch-ltr-config/featurequery_bonart.json",
-                             fconfig="resources/elasticsearch-ltr-config/features_bonart.json")
+        ft = ESFeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2019'),
+                               fquery="resources/elasticsearch-ltr-config/featurequery_bonart.json",
+                               fconfig="resources/elasticsearch-ltr-config/features_bonart.json")
         input = InputOutputHandler(Corpus('localhost', '9200', 'semanticscholar2019'),
                                    fsequence=s,
                                    fquery=q)
     elif v == 'ferraro_lm':
-        ft = FeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2020'),
-                             fquery="resources/elasticsearch-ltr-config/featurequery_ferraro.json",
-                             fconfig="resources/elasticsearch-ltr-config/features_ferraro.json")
+        ft = ESFeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2020'),
+                               fquery="resources/elasticsearch-ltr-config/featurequery_ferraro.json",
+                               fconfig="resources/elasticsearch-ltr-config/features_ferraro.json")
         input = InputOutputHandler(Corpus('localhost', '9200', 'semanticscholar2020'),
                                    fsequence=s,
                                    fquery=q)
     elif v == 'ferraro_deltr':
-        ft = FeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2020'),
-                             fquery="resources/elasticsearch-ltr-config/featurequery_ferraro.json",
-                             fconfig="resources/elasticsearch-ltr-config/features_ferraro.json")
+        ft = ESFeatureEngineer(Corpus('localhost', '9200', 'semanticscholar2020'),
+                               fquery="resources/elasticsearch-ltr-config/featurequery_ferraro.json",
+                               fconfig="resources/elasticsearch-ltr-config/features_ferraro.json")
         input = InputOutputHandler(Corpus('localhost', '9200', 'semanticscholar2020'),
                                    fsequence=s,
                                    fquery=q)

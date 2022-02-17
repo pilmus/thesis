@@ -2,7 +2,7 @@ import argparse
 import os.path
 
 from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.features import FeatureEngineer
+from src.bonart.interface.features import ESFeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
 from src.bonart.reranker.deltr_ferraro import DeltrFerraro
 
@@ -54,8 +54,8 @@ def main():
 
     corpus = Corpus('localhost', '9200', corp)
 
-    feature_engineer = FeatureEngineer(corpus, fquery=fquery,
-                                       fconfig=fconfig)
+    feature_engineer = ESFeatureEngineer(corpus, fquery=fquery,
+                                         fconfig=fconfig)
 
     input_train = InputOutputHandler(corpus,
                                      fsequence=sequence_train,

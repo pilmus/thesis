@@ -31,17 +31,6 @@
         }
       },
       {
-        "name": "entities_score",
-        "params": [
-          "keywords"
-        ],
-        "template": {
-          "match": {
-            "entities": "{{keywords}}"
-          }
-        }
-      },
-      {
         "name": "venue_score",
         "params": [
           "keywords"
@@ -49,17 +38,6 @@
         "template": {
           "match": {
             "venue": "{{keywords}}"
-          }
-        }
-      },
-      {
-        "name": "journal_score",
-        "params": [
-          "keywords"
-        ],
-        "template": {
-          "match": {
-            "journalName": "{{keywords}}"
           }
         }
       },
@@ -73,6 +51,17 @@
             "author_names": "{{keywords}}"
           }
         }
+      },
+      {"name": "sources_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "sources": "{{keywords}}"
+          }
+        }
+
       },
       {
         "name": "fields_of_study_score",

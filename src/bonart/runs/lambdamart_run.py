@@ -5,7 +5,7 @@ from src.bonart.reranker.lambdamart import LambdaMart
 from src.bonart.reranker.lambdamart import LambdaMartFerraro
 from src.evaluation.validate_run import validate
 from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.features import FeatureEngineer
+from src.bonart.interface.features import ESFeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
 
 
@@ -77,8 +77,8 @@ def main():
 
     corpus = Corpus('localhost', '9200', corp)
 
-    engineer = FeatureEngineer(corpus, fquery=fquery,
-                         fconfig=fconfig)
+    engineer = ESFeatureEngineer(corpus, fquery=fquery,
+                                 fconfig=fconfig)
 
     input_train = InputOutputHandler(corpus,
                                      fsequence=sequence_train,
