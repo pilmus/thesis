@@ -1,22 +1,18 @@
-import pandas as pd
+from bonart.interface.corpus import Corpus
+from bonart.interface.features import FeatureEngineer
+from bonart.interface.iohandler import Queries
 
 
-def load_features():
-    pass
-
-
-def load_queries():
-    pass
-
-
-def extract_qid_query_docid(file):
-    df = pd.read_json(file, lines=True)
-    df = df.explode('documents')
-    df['doc_id'] = df.apply(lambda row: row.documents.get('doc_id'), axis=1)
-    df = df[['qid', 'query', 'doc_id']]
-    return df
+def extract_features(fq, fc, corpus, sample):
+    fe = FeatureEngineer(Corpus('localhost','9200',corpus), fq, fc)
+    q = Queries(sample)
+    features = fe.get_feature_mat_from_queries(q)
+    return features
 
 
 
 
-print(extract_qid_query_docid("resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json"))
+
+
+fe = FeatureEngineer(Corpus('localhost','9200','semanticscholar2019'), "resources/elasticsearch-ltr-config/featurequery_bonart.json", "resources/elasticsearch-ltr-config/features_bonart.json")
+Queries("resources/training/2019/fair-TREC-training-sample.json")
