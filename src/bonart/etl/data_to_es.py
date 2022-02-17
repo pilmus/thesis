@@ -68,6 +68,10 @@ def doc_generator(reader, year):
             yield_dict["_index"] = 'semanticscholar2019'
             yield_dict['year'] = doc.get("year")
 
+        elif year == 'test':
+            yield_dict["_index"] = 'testidx2'
+            yield_dict['year'] = doc.get("year")
+
         elif year == 2020:
             yield_dict["_index"] = 'semanticscholar2020'
             yield_dict["sources"] = doc.get("sources")
@@ -117,7 +121,7 @@ def index_file(raw, year):
             progress.update(1)
             successes += ok
 
-
-es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-index_files(2020)
-print("I'm done.")
+if __name__ == '__main__':
+    es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
+    index_files(2020)
+    print("I'm done.")

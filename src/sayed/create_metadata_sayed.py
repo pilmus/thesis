@@ -58,7 +58,21 @@ def extract_metadata(df):
     df['num_hclass_L'] = hclasses['L']
     df['num_hclass_H'] = hclasses['H']
 
-    return df[['paper_sha','min_hindex','avg_hindex','min_authorpapers', 'avg_authorpapers', 'max_authorpapers','min_i10index','avg_i10index','max_i10index','min_numcitations','avg_numcitations','max_numcitations','num_hclass_L','num_hclass_H']]
+    return df[['paper_sha',
+               'min_hindex',
+               'avg_hindex',
+               'max_hindex',
+               'min_authorpapers',
+               'avg_authorpapers',
+               'max_authorpapers',
+               'min_i10index',
+               'avg_i10index',
+               'max_i10index',
+               'min_numcitations',
+               'avg_numcitations',
+               'max_numcitations',
+               'num_hclass_L',
+               'num_hclass_H']]
 
 
 p = pd.read_csv(papers_file)

@@ -1,0 +1,126 @@
+{
+  "validation": {
+    "params": {
+      "keywords": "python"
+    },
+    "index": "semanticscholar2020"
+  },
+  "featureset": {
+    "name": "features_sayed",
+    "features": [
+      {
+        "name": "title_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "title": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "abstract_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "abstract": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "entities_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "entities": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "venue_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "venue": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "journal_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "journalName": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "authors_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "author_names": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "fields_of_study_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "fields_of_study": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "in_citations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "num_in_citations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      },
+      {
+        "name": "out_citations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "num_out_citations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      }
+    ]
+  }
+}
