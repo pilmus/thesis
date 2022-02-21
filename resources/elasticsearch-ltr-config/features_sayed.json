@@ -58,7 +58,7 @@
         ],
         "template": {
           "match": {
-            "sources": "{{keywords}}"
+            "sources_text": "{{keywords}}"
           }
         }
 
@@ -70,7 +70,7 @@
         ],
         "template": {
           "match": {
-            "fields_of_study": "{{keywords}}"
+            "fields_of_study_text": "{{keywords}}"
           }
         }
       },

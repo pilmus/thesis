@@ -8,7 +8,7 @@ import jsonlines
 from elasticsearch import Elasticsearch
 
 logdir = 'resources/logs'
-
+es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
 
 def already_indexed(indexed_files):
     if not os.path.exists(indexed_files):
@@ -27,7 +27,7 @@ def get_mapping(year):
             "venue": {"type": "text"},
             "journalName": {"type": "text"},
             "author_names": {"type": "text"},
-            "author_ids": {"type": "keyword"},
+            "author_ids": {"type": "text"},
             "num_in_citations": {"type": "integer"},
             "num_out_citations": {"type": "integer"},
         }
@@ -37,9 +37,11 @@ def get_mapping(year):
         base_mapping["properties"]["year"] = {"type": "short"}
 
     elif year == 2020 or year == '2020subset':
-        base_mapping["properties"]["sources"] = {"type": "keyword"}
-        base_mapping["properties"]["fields_of_study"] = {"type": "keyword"}
+        base_mapping["properties"]["sources"] = {"type": "text"}
+        base_mapping["properties"]["fields_of_study"] = {"type": "text"}
     return base_mapping
+
+
 
 
 def doc_generator(reader, year):
@@ -74,8 +76,12 @@ def doc_generator(reader, year):
 
         elif year == 2020:
             yield_dict["_index"] = 'semanticscholar2020'
+
             yield_dict["sources"] = doc.get("sources")
+            yield_dict["sources_text"] = doc.get('sources'),
+
             yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
+            yield_dict["fields_of_study_text"] = doc.get('fieldsOfStudy')
 
         elif year == '2020subset':
             yield_dict["_index"] = 'semanticscholar2020subset'
@@ -83,6 +89,20 @@ def doc_generator(reader, year):
             yield_dict["fields_of_study"] = doc.get("fieldsOfStudy")
         else:
             print(f"Invalid year {year}.")
+
+        yield yield_dict
+
+
+def update_doc_generator(reader):
+    for doc in reader.iter(type=dict, skip_invalid=True):
+        yield_dict = {
+            "_op_type": 'update',
+            "_index": 'semanticscholar2020',
+            "_id": doc.get('id'),
+            "doc": {
+                "sources_text": doc.get('sources'),
+                "fields_of_study_text": doc.get('fieldsOfStudy')}
+        }
 
         yield yield_dict
 
@@ -111,6 +131,32 @@ def index_files(year):
                 fp.write(f"{raw}\n")
                 print(f"Indexed contents of {raw}.")
 
+def update_files():
+    rawspath = f'/mnt/d/corpus2020/'
+    raw_files = glob.glob(rawspath + "*")
+
+    print(f"Raw files: {raw_files}.")
+
+    indexed_filepath = os.path.join(logdir, f'updated_files_2020.txt')
+    indexed_files = already_indexed(indexed_filepath)
+
+    print(f"Already indexed: {indexed_files}.")
+    for raw in raw_files:
+        if raw not in indexed_files:
+            update_file(raw)
+
+            with open(indexed_filepath, "a") as fp:
+                fp.write(f"{raw}\n")
+                print(f"Indexed contents of {raw}.")
+
+def update_file(raw):
+    print(f"Updating contents of {raw}.")
+    with jsonlines.open(raw) as reader:
+        progress = tqdm.tqdm(unit="docs", total=1000000)
+        successes = 0
+        for ok, action in helpers.streaming_bulk(es, update_doc_generator(reader), chunk_size=3000):
+            progress.update(1)
+            successes += ok
 
 def index_file(raw, year):
     print(f"Indexing contents of {raw}.")
@@ -121,7 +167,9 @@ def index_file(raw, year):
             progress.update(1)
             successes += ok
 
+
 if __name__ == '__main__':
-    es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
-    index_files(2020)
+
+    # update_files()
+    update_file('/mnt/d/corpus2020/tempsource')
     print("I'm done.")

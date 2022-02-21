@@ -89,7 +89,7 @@ class FairRankingTask(object):
         #   to avoid iterating multiple times over a single ranking.
 
         """
-            Returns a dictionary mapping a group id to its normalized total esposure 
+            Returns a dictionary mapping a group id to its normalized total exposure
             in the given submission over a sequence of rankings
         """
 
@@ -112,7 +112,7 @@ class FairRankingTask(object):
         return dict([(g, exp / total) for g, exp in g_exps.items()])
 
     def groups_relevance(self, seq_id, submission):
-        #   The sums are aggregated differently than in the partcicipant instructions
+        #   The sums are aggregated differently than in the participant instructions
         #   to avoid iterating multiple times over a single ranking.
 
         """
