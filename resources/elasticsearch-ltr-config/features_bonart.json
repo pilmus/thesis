@@ -1,12 +1,13 @@
+check the field names!!!
 {
   "validation": {
     "params": {
       "keywords": "python"
     },
-    "index": "semanticscholar2019"
+    "index": "semanticscholar2019og"
   },
   "featureset": {
-    "name": "featureset_bonart",
+    "name": "features_bonart",
     "features": [
       {
         "name": "title_score",
@@ -26,7 +27,7 @@
         ],
         "template": {
           "match": {
-            "abstract": "{{keywords}}"
+            "paperAbstract": "{{keywords}}"
           }
         }
       },
@@ -93,13 +94,13 @@
         }
       },
       {
-        "name": "in_citations",
+        "name": "inCitations",
         "template": {
           "function_score": {
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "num_in_citations",
+                  "field": "inCitations",
                   "missing": 0
                 }
               }
@@ -111,13 +112,13 @@
         }
       },
       {
-        "name": "out_citations",
+        "name": "outCitations",
         "template": {
           "function_score": {
             "functions": [
               {
                 "field_value_factor": {
-                  "field": "num_out_citations",
+                  "field": "outCitations",
                   "missing": 0
                 }
               }

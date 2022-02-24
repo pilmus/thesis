@@ -10,7 +10,7 @@
                 {
                     "sltr": {
                         "_name": "logged_featureset_bonart",
-                        "featureset": "featureset_bonart",
+                        "featureset": "features_bonart",
                         "params": {
                             "keywords": "query"
                         }
@@ -22,7 +22,7 @@
     "ext": {
         "ltr_log": {
             "log_specs": {
-                "name": "log_bonart",
+                "name": "log_entry_bonart",
                 "named_query": "logged_featureset_bonart",
                 "missing_as_zero": true
             }
