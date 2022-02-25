@@ -3,11 +3,10 @@ import logging as log
 
 import pandas as pd
 import requests
-from elasticsearch import Elasticsearch, helpers
-from elasticsearch_dsl import Search, Q
-from pandas.io.json import json_normalize
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
 
-import src.bonart.utils.io as io
+import utils.io as io
 
 
 class Corpus():

@@ -31,8 +31,8 @@ for i in range(0, 1):
         SEQUENCE_TRAIN = os.path.join(train_dir, ts)
 
         corpus = Corpus('semanticscholar2019og')
-        ft = FeatureEngineer(corpus, fquery='config/featurequery_bonart.json',
-                             fconfig='config/features_bonart.json')
+        ft = FeatureEngineer(corpus, fquery='eltr-config/featurequery_bonart.json',
+                             fconfig='eltr-config/features_bonart.json')
 
         input_train = InputOutputHandler(corpus,
                                          fsequence=SEQUENCE_TRAIN,

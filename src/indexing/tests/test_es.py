@@ -5,8 +5,8 @@ import pytest
 from elasticsearch import Elasticsearch
 
 # todo: test for having initialized the featurestore
-from bonart.interface.corpus import Corpus
-from bonart.interface.features import FeatureEngineer
+from interface.corpus import Corpus
+from interface.features import FeatureEngineer
 from indexing.data_to_es import index_file, doc_generator
 
 
@@ -81,7 +81,7 @@ def test_doc_generator_index_name_updated(jsonl_reader, testidxname):
     print(dictt)
     assert dictt['_index'] == testidxname
 
-
+#todo: move this test
 def test_compare_bm25_scores_fewer_and_more_fields(es_index1, es_index2, featureengineer,
                                                    featureengineer_smaller):
     index_file('./testdoc.jsonl', 2019, idxname=es_index1)

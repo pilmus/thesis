@@ -8,9 +8,9 @@ There is a two-step procedure you can follow to remove such documents:
 
 This will result in dropping approximately 100 training queries.
 """
-from src.bonart.interface.corpus import Corpus
-from src.bonart.interface.iohandler import InputOutputHandler
-from src.bonart.utils import io
+from interface.corpus import Corpus
+from interface.iohandler import InputOutputHandler
+from utils import io
 
 corpus = Corpus('localhost','9200','semanticscholar2019')
 input = InputOutputHandler(corpus, fquery='resources/training/2019/fair-TREC-training-sample.json',fsequence="resources/training/2019/old/training-sequence-10.tsv")
