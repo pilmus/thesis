@@ -1,9 +1,10 @@
+change the field names!!!
 {
   "validation": {
     "params": {
       "keywords": "python"
     },
-    "index": "semanticscholar2020"
+    "index": "semanticscholar2020og"
   },
   "featureset": {
     "name": "features_ferraro",

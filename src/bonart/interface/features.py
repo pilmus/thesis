@@ -24,7 +24,6 @@ class FeatureEngineer():
         resp['qlength'] = len(queryterm)
         return resp
 
-
     @property
     def log_field_name(self):
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
@@ -36,7 +35,6 @@ class FeatureEngineer():
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
         features = features.reset_index(level=0)
         return features
-
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']

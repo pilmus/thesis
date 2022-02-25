@@ -22,7 +22,7 @@
     "ext": {
         "ltr_log": {
             "log_specs": {
-                "name": "log_ferraro",
+                "name": "log_entry_ferraro",
                 "named_query": "logged_featureset_ferraro",
                 "missing_as_zero": true
             }

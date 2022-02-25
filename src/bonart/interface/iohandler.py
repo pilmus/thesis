@@ -45,7 +45,7 @@ class InputOutputHandler:
 
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
-        return seq.drop_duplicates() #todo investigate if makes differene
+        return seq.drop_duplicates()  # todo investigate if makes differene
 
     def __unnest_query(self, query):
         ret = []
@@ -57,7 +57,7 @@ class InputOutputHandler:
                 "frequency": query.get("frequency"),
                 "qid": query.get("qid"),
                 "query": query.get("query")
-            })
+                })
         return ret
 
     def write_submission(self, model, outfile):

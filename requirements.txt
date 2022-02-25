@@ -11,10 +11,12 @@ elasticsearch-dsl==7.0.0
 fairsearchdeltr==1.0.2
 idna==2.8
 importlib-metadata==0.18
+ipython==7.31.1
 isort==4.3.21
 joblib==0.13.2
 jsonlines==1.2.0
 lazy-object-proxy==1.4.1
+matplotlib==3.4.3
 mccabe==0.6.1
 more-itertools==7.2.0
 numpy==1.16.4
@@ -35,6 +37,7 @@ requests==2.22.0
 scikit-learn==0.21.3
 scipy==1.3.0
 six==1.12.0
+tqdm==4.62.3
 urllib3==1.25.3
 wcwidth==0.1.7
 wrapt==1.11.2

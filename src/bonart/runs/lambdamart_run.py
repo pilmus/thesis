@@ -16,11 +16,11 @@ def main():
 
     parser.add_argument('-l', '--lambdamart-version', dest='lamb_vers')
 
-    parser.add_argument('--queries-train', default='resources/training/2020/TREC-Fair-Ranking-training-sample.json')
-    parser.add_argument('--sequence-train', default='resources/training/2020/training-sequence-1000.tsv')
+    parser.add_argument('--queries-train', default='TREC-Fair-Ranking-training-sample.json')
+    parser.add_argument('--sequence-train', default='training-sequence-1000.tsv')
 
-    parser.add_argument('--queries-eval', default='resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json')
-    parser.add_argument('--sequence-eval', default="resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv")
+    parser.add_argument('--queries-eval', default='TREC-Fair-Ranking-eval-sample.json')
+    parser.add_argument('--sequence-eval', default="TREC-Fair-Ranking-eval-seq.tsv")
 
     parser.add_argument('--features-train')
     parser.add_argument('--features-eval')
@@ -40,34 +40,46 @@ def main():
 
     corp = args.corpus
 
-    queries_train = args.queries_train
-    sequence_train = args.sequence_train
-    queries_eval = args.queries_eval
-    sequence_eval = args.sequence_eval
+    # queries_train = args.queries_train
+    # sequence_train = args.sequence_train
+    # queries_eval = args.queries_eval
+    # sequence_eval = args.sequence_eval
 
     features_train = args.features_train
     features_eval = args.features_eval
 
     load_model = args.load_model
-    sort_reverse = args.sort_reverse
 
     lversion = args.lamb_vers
 
-    if lversion =='ferraro':
+
+    if lversion == 'ferraro':
+        train_base = 'resources/training/2020/'
+        eval_base = 'resources/evaluation/2020/'
+
         fquery = 'resources/elasticsearch-ltr-config/featurequery_ferraro.json'
         fconfig = 'resources/elasticsearch-ltr-config/features_ferraro.json'
         model_dir = 'resources/models/2020/lm_ferraro'
+
+        sort_reverse = args.sort_reverse
         if not corp:
             corp = 'semanticscholar2020'
     elif lversion == 'bonart':
-        fquery = 'resources/elasticsearch-ltr-config/featurequery_bonart.json'
-        fconfig = 'resources/elasticsearch-ltr-config/features_bonart.json'
+        train_base = 'resources/training/2019/'
+        eval_base = 'resources/evaluation/2019/'
+
+        fquery = 'resources/elasticsearch-ltr-config/featurequery_bonart_og.json'
+        fconfig = 'resources/elasticsearch-ltr-config/features_bonart_og.json'
         model_dir = 'resources/models/2019/lm_bonart'
         if not corp:
-            corp = 'semanticscholar2019'
+            corp = 'semanticscholar2019og'
     else:
         raise ValueError(f"Invalid value for '-l', '--lambdamart-version': {lversion}.")
 
+    queries_train = os.path.join(train_base, args.queries_train)
+    sequence_train = os.path.join(train_base, args.sequence_train)
+    queries_eval = os.path.join(eval_base, args.queries_eval)
+    sequence_eval = os.path.join(eval_base, args.sequence_eval)
 
     print(corp)
 
