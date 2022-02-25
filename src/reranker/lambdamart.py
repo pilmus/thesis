@@ -94,10 +94,15 @@ class LambdaMartRandomization(LambdaMart):
     def __mean_diff(self, relevances):
         return (relevances[-1] - relevances[0]) / len(relevances)
 
-    def __randomize_apply(self, df):
-        pred_list = sorted(df.pred.to_list(), reverse=self.sort_reverse)
+    def __randomize_apply(self, df, randomizer=None):
+        if not randomizer:
+            randomizer = random.Random()
+
+        df = df.sort_values(by='pred', ascending=not self.sort_reverse)
+
+        pred_list = df.pred.to_list()
         mean_diff = self.__mean_diff(pred_list)
-        df.pred = df.apply(lambda row: row.pred + random.uniform(0, mean_diff), axis=1)
+        df.pred = df.apply(lambda row: row.pred + randomizer.uniform(0, mean_diff), axis=1)
 
         return df
 
