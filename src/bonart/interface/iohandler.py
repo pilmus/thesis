@@ -1,6 +1,7 @@
 from itertools import chain
 
 import pandas as pd
+from tqdm import tqdm
 
 import src.bonart.utils.io as io
 
@@ -28,24 +29,21 @@ class InputOutputHandler:
 
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
-        sequence_df = pd.read_csv(fsequence, names=['sid_q_num', 'qid'], dtype={'sid_q_num': 'str'}, sep=',',
-                                  engine='python')
-        if sequence_df.sid_q_num.str.contains('.', regex=False).any():
-            sequence_df[['sid', 'q_num']] = sequence_df.sid_q_num.str.split('.', expand=True)
-        else:
-            sequence_df['sid'] = '0'
-            sequence_df['q_num'] = sequence_df['sid_q_num']
-        sequence_df = sequence_df[['sid', 'q_num', 'qid']]
-
-        self.seq = sequence_df
+        self.seq = self.__read_sequence(fsequence)
         self.queries = pd.DataFrame(queries)
+
+    def __read_sequence(self, fsequence):
+        df = pd.read_csv(fsequence, names=["sid", "q_num", "qid"], sep='^|\.|,', engine='python')
+        if df.sid.isnull().all():
+            df['sid'] = 0
+        return df.reset_index(drop=True)
 
     def get_queries(self):
         return self.queries.drop_duplicates()
 
     def get_query_seq(self):
         seq = pd.merge(self.seq, self.queries, on="qid", how='left')
-        return seq.drop_duplicates()  # todo investigate if makes differene
+        return seq.drop_duplicates()  # dups can only happen with malformed query sequence file?
 
     def __unnest_query(self, query):
         ret = []
@@ -57,17 +55,20 @@ class InputOutputHandler:
                 "frequency": query.get("frequency"),
                 "qid": query.get("qid"),
                 "query": query.get("query")
-                })
+            })
         return ret
 
     def write_submission(self, model, outfile):
         """
         accepts a model and writes a jsonlines submission file.
         """
+        print("Writing submission...")
         model.predictions.sort_values(['sid', 'q_num', 'rank'], axis=0, inplace=True)
-        submission = model.predictions.groupby(['sid', 'q_num', 'qid']).apply(
+        tqdm.pandas()
+        submission = model.predictions.groupby(['sid', 'q_num', 'qid']).progress_apply(
             lambda df: pd.Series({'ranking': df['doc_id']}))
         submission = submission.reset_index()
-        submission.q_num = submission.sid.astype(str) + '.' + submission.q_num.astype(str)
-        submission = submission[['q_num', 'qid', 'ranking']]
+        q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
+        submission['q_num'] = q_num
+        submission.drop('sid', axis=1, inplace=True)
         submission.to_json(outfile, orient='records', lines=True)

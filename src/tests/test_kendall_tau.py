@@ -1,5 +1,4 @@
 import pandas as pd
-import pytest
 
 from evaluation.kendall_tau import kendalls_taus, to_ranking
 

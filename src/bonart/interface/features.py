@@ -33,7 +33,7 @@ class FeatureEngineer():
         tqdm.pandas()
         features = iohandler.get_query_seq().groupby('qid').progress_apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
-        features = features.reset_index(level=0)
+        features = features.reset_index(level=0) # brings the qid back as a column after been used to groupby
         return features
 
     def __features_from_response(self, docs):

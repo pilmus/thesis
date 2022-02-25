@@ -6,7 +6,7 @@ from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
 from src.bonart.reranker.deltr_ferraro import DeltrFerraro
 
-from src.evaluation.validate_run import validate
+from evaluation.validate_run import validate
 
 
 def main():

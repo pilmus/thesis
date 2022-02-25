@@ -1,10 +1,9 @@
 import argparse
-import os
 
 from src.bonart.interface.corpus import Corpus
 from src.bonart.interface.iohandler import InputOutputHandler
 from src.bonart.reranker.random_ranker import RandomRanker
-from src.evaluation.validate_run import validate
+from evaluation.validate_run import validate
 
 
 def main():

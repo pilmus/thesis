@@ -18,10 +18,10 @@ indexed_files_*.txt
 
 /resources/corpus/2019/
 /resources/corpus/2020/
-/resources/evaluation/2019/
-/resources/evaluation/2020/
-/resources/training/2019/
-/resources/training/2020/
+/evaluation/2019/
+/evaluation/2020/
+/src/training/2019/
+/src/training/2020/
 /resources/models/2019/
 /resources/models/2020/
 

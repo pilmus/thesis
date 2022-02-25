@@ -3,7 +3,7 @@ import os.path
 
 from src.bonart.reranker.lambdamart import LambdaMart
 from src.bonart.reranker.lambdamart import LambdaMartFerraro
-from src.evaluation.validate_run import validate
+from evaluation.validate_run import validate
 from src.bonart.interface.corpus import Corpus
 from src.bonart.interface.features import FeatureEngineer
 from src.bonart.interface.iohandler import InputOutputHandler
