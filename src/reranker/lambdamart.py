@@ -1,11 +1,10 @@
-import pickle
 import random
 
 import pyltr
 import pandas as pd
 from tqdm import tqdm
 
-import src.bonart.reranker.model as model
+import reranker.model as model
 
 
 class LambdaMart(model.RankerInterface):
@@ -40,7 +39,7 @@ class LambdaMart(model.RankerInterface):
         x = self.fe.get_feature_mat(inputhandler)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
-        training = x.q_num.drop_duplicates().sample(frac=frac, random_state=random_state) #todo: unfix random state?
+        training = x.q_num.drop_duplicates().sample(frac=frac, random_state=random_state)  # todo: unfix random state?
         x_train, y_train, qids_train = self.__data_helper(x.loc[x.q_num.isin(training)])
 
         x_val, y_val, qids_val = [None] * 3
@@ -49,8 +48,6 @@ class LambdaMart(model.RankerInterface):
             x_val, y_val, qids_val = self.__data_helper(x.loc[~x.q_num.isin(training)])
 
         return (x_train, y_train, qids_train, x_val, y_val, qids_val)
-
-
 
     def train(self, inputhandler, random_state=None):
         """
@@ -76,14 +73,15 @@ class LambdaMart(model.RankerInterface):
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred=pred)
         tqdm.pandas()
-        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False, method='first')
+        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
+                                                                           method='first')
         qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
         return pred
 
 
-class LambdaMartFerraro(LambdaMart):
+class LambdaMartRandomization(LambdaMart):
     """
     Extends Bonart's LambdaMart wrapper with a predict function for reproducing the results in
     Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
@@ -93,15 +91,18 @@ class LambdaMartFerraro(LambdaMart):
         super().__init__(featureengineer)
         self.sort_reverse = sort_reverse
 
+    def __mean_diff(self, relevances):
+        return (relevances[-1] - relevances[0]) / len(relevances)
+
     def __randomize_apply(self, df):
         pred_list = sorted(df.pred.to_list(), reverse=self.sort_reverse)
-        mean_diff = (pred_list[-1] - pred_list[0]) / len(pred_list)
+        mean_diff = self.__mean_diff(pred_list)
         df.pred = df.apply(lambda row: row.pred + random.uniform(0, mean_diff), axis=1)
 
         return df
 
-    def _predict(self, inputhandler, prepped_data=None):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1, prepped_data=prepped_data)
+    def _predict(self, inputhandler):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         pred = self.lambdamart.predict(x)
 
         qids = qids.assign(pred=pred)

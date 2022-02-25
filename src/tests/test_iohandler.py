@@ -5,9 +5,6 @@ from bonart.interface.iohandler import InputOutputHandler
 
 
 class TestingInputOutputHandler(InputOutputHandler):
-    def __init__(self):
-        pass
-
     def read_sequence(self, fsequence):
         return self._InputOutputHandler__read_sequence(fsequence)
 
