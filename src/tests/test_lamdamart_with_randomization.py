@@ -12,15 +12,16 @@ from reranker.lambdamart import LambdaMartRandomization
 
 
 class TestingLambdaMartRandomization(LambdaMartRandomization):
-    def __init__(self, sort_reverse=False):
+    def __init__(self, sort_reverse=False,random_state=None):
         self.sort_reverse = sort_reverse
+        self.random_state = random_state
         pass
 
     def mean_diff(self, relevances):
         return self._LambdaMartRandomization__mean_diff(relevances)
 
-    def randomize_apply(self, df, randomizer):
-        return self._LambdaMartRandomization__randomize_apply(df, randomizer)
+    def randomize_apply(self, df):
+        return self._LambdaMartRandomization__randomize_apply(df)
 
 
 def mean_diff(rels):
@@ -53,20 +54,59 @@ def test_mean_diff_with_set_list():
 
 
 def test_apply_randomizer_sort_reverse_false():
-    lm = TestingLambdaMartRandomization()
+    lm = TestingLambdaMartRandomization(random_state=0)
     rels = [0.1, 0.2, 0.5, 0.7, 0.9]
     df = pd.DataFrame({'pred': rels})
-    df_out = lm.randomize_apply(df, random.Random(0))
+    df_out = lm.randomize_apply(df)
     randomizer = random.Random(0)
     check_rels = [rel + randomizer.uniform(0, 0.8 / 5) for rel in rels]
     assert df_out.pred.to_list() == check_rels
 
 
 def test_apply_randomizer_sort_reverse_true():
-    lm = TestingLambdaMartRandomization(sort_reverse=True)
+    lm = TestingLambdaMartRandomization(sort_reverse=True,random_state=0)
     rels = [0.1, 0.2, 0.5, 0.7, 0.9]
     df = pd.DataFrame({'pred': rels})
-    df_out = lm.randomize_apply(df, random.Random(0))
+    df_out = lm.randomize_apply(df)
     randomizer = random.Random(0)
     check_rels = [rel + randomizer.uniform(0, -0.8 / 5) for rel in sorted(rels, reverse=True)]
     assert df_out.pred.to_list() == check_rels
+
+def test_apply_randomizer_both_ways():
+    rels = [0.1, 0.2, 0.5, 0.7, 0.9]
+
+    lm1 = TestingLambdaMartRandomization(sort_reverse=False, random_state=0)
+    df1 = pd.DataFrame({'pred': rels})
+    df_out1 = lm1.randomize_apply(df1)
+
+    lm2 = TestingLambdaMartRandomization(sort_reverse=True, random_state=0)
+    df2 = pd.DataFrame({'pred': rels})
+    df_out2 = lm2.randomize_apply(df2)
+
+    assert (df_out1.sort_index() != df_out2.sort_index()).all().all()
+
+def test_apply_randomizer_twice_sort_reverse_true():
+    rels = [0.1, 0.2, 0.5, 0.7, 0.9]
+
+    lm1 = TestingLambdaMartRandomization(sort_reverse=True, random_state=0)
+    df1 = pd.DataFrame({'pred': rels})
+    df_out1 = lm1.randomize_apply(df1)
+
+    lm2 = TestingLambdaMartRandomization(sort_reverse=True, random_state=0)
+    df2 = pd.DataFrame({'pred': rels})
+    df_out2 = lm2.randomize_apply(df2)
+
+    assert (df_out1.sort_index() == df_out2.sort_index()).all().all()
+
+def test_apply_randomizer_twice_sort_reverse_false():
+    rels = [0.1, 0.2, 0.5, 0.7, 0.9]
+
+    lm1 = TestingLambdaMartRandomization(sort_reverse=False, random_state=0)
+    df1 = pd.DataFrame({'pred': rels})
+    df_out1 = lm1.randomize_apply(df1)
+
+    lm2 = TestingLambdaMartRandomization(sort_reverse=False, random_state=0)
+    df2 = pd.DataFrame({'pred': rels})
+    df_out2 = lm2.randomize_apply(df2)
+
+    assert (df_out1.sort_index() == df_out2.sort_index()).all().all()

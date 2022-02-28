@@ -108,7 +108,7 @@ class LambdaMartYear(LambdaMart):
 
         return x
 
-    def _impute_mean(self, x):#todo: test
+    def _impute_mean(self, x):  # todo: test
         return x[x.year != 0].year.mean()
 
 
@@ -122,13 +122,11 @@ class LambdaMartRandomization(LambdaMart):
         super().__init__(featureengineer, random_state=random_state)
         self.sort_reverse = sort_reverse
 
-
     def __mean_diff(self, relevances):
         return (relevances[-1] - relevances[0]) / len(relevances)
 
-    def __randomize_apply(self, df, randomizer=None):
-        if not randomizer:
-            randomizer = random.Random()
+    def __randomize_apply(self, df):
+        randomizer = random.Random(self.random_state)
 
         df = df.sort_values(by='pred', ascending=not self.sort_reverse)
 
@@ -146,8 +144,7 @@ class LambdaMartRandomization(LambdaMart):
 
         tqdm.pandas()
         print("Applying randomization...")
-        randomizer = random.Random(self.random_state)
-        qids.groupby(['sid', 'q_num']).progress_apply(self.__randomize_apply, randomizer) #add randomizer here?
+        qids.groupby(['sid', 'q_num']).progress_apply(self.__randomize_apply)
 
         tqdm.pandas()
         print("Converting relevances to rankings...")
