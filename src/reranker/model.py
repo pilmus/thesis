@@ -14,21 +14,20 @@ class RankerInterface(ABC):
         super().__init__()
 
     @abstractmethod
-    def train(self, inputhandler, random_state=None, missing_value_strategy=None):
+    def train(self, inputhandler):
         """
         uses the labelled queries from the inputhandler to estimate a ranking model
         """
         pass
 
-    def predict(self, inputhandler, missing_value_strategy=None):
+    def predict(self, inputhandler):
         """
         uses the query sequences from the inputhandler to rerank the documents according to the trained model.
         must return a dataframe with columns [sid, q_num, qid, doc_id, rank]
         """
-        self.predictions = self._predict(inputhandler, missing_value_strategy=missing_value_strategy)[
-            ['sid', 'q_num', 'qid', 'doc_id', 'rank']]
+        self.predictions = self._predict(inputhandler)[['sid', 'q_num', 'qid', 'doc_id', 'rank']]
         return self.predictions
 
     @abstractmethod
-    def _predict(self, inputhandler, missing_value_strategy=None):
+    def _predict(self, inputhandler):
         pass

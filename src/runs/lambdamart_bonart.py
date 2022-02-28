@@ -6,13 +6,15 @@ from tqdm import tqdm
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
-from reranker.lambdamart import LambdaMart
+from reranker.lambdamart import LambdaMartYear
 
 train_dir = 'training/2019'
 eval_dir = 'evaluation/2019'
 for i in range(0, 1):
-    for rs in [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
-        for strat in [None, 'avg', 'dropzero']:
+    # for rs in [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]:
+    for rs in [0]:
+        # for strat in [None, 'avg', 'dropzero']:
+        for strat in [None, 'avg']:
             for ts in [
                 # 'training-sequence-1.tsv',
                 'training-sequence-full.tsv',
@@ -38,9 +40,9 @@ for i in range(0, 1):
                                                 fsequence=SEQUENCE_EVAL,
                                                 fquery=QUERIES_EVAL)
 
-                lambdamart = LambdaMart(ft, random_state=rs)
-                lambdamart.train(input_train, random_state=rs, missing_value_strategy=strat)
-                lambdamart.predict(input_test, missing_value_strategy=strat)
+                lambdamart = LambdaMartYear(ft, random_state=rs, missing_value_strategy=strat)
+                lambdamart.train(input_train)
+                lambdamart.predict(input_test)
 
                 input_test.write_submission(lambdamart, outfile=OUT)
 

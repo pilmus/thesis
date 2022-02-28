@@ -25,16 +25,11 @@ class FeatureEngineer:
     def log_field_name(self):
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
-    def get_feature_mat(self, iohandler, missing_value_strategy=None):
+    def get_feature_mat(self, iohandler):
         print("Getting features...")
         tqdm.pandas()
         features = iohandler.get_query_seq().groupby('qid').progress_apply(
             lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
-
-        if missing_value_strategy == 'dropzero':
-            features = features[features.year != 0]
-        elif missing_value_strategy == 'avg':
-            features.year = features.year.replace(0, features.year.mean())
 
         features = features.reset_index(level=0)  # brings the qid back as a column after having been used to groupby
 

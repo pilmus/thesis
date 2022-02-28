@@ -6,6 +6,7 @@ from tqdm import tqdm
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
+from reranker.lambdamart import LambdaMartYear
 
 
 @pytest.fixture
@@ -47,14 +48,15 @@ def test_replace_missing_years_with_zero():
                                       fsequence='sequence_missing_year.csv',
                                       fquery='test_for_missing_year_sample.json')
 
-    features = fe.get_feature_mat(inputhandler)
+    lm = LambdaMartYear(fe, random_state=None, missing_value_strategy=None)
+    features = lm._get_feature_mat(inputhandler)
     assert len(features.year) == 4
     assert features.year.iloc[1] == 0
     assert features.year.iloc[3] == 0
     es.indices.delete('test_missing_year_idx')
 
 
-def test_replace_missing_years_with_average():
+def test_impute_missing_years_with_mean():
     es = Elasticsearch()
     index_file('test_for_missing_year_corpus.jsonl', idxname='test_missing_year_idx')
     corpus = Corpus('test_missing_year_idx')
@@ -65,10 +67,12 @@ def test_replace_missing_years_with_average():
                                       fsequence='sequence_missing_year.csv',
                                       fquery='test_for_missing_year_sample.json')
 
-    features = fe.get_feature_mat(inputhandler, missing_value_strategy='avg')
+    lm = LambdaMartYear(fe, random_state=None, missing_value_strategy='avg')
+    features = lm._get_feature_mat(inputhandler)
+
     assert len(features.year) == 4
-    assert features.year.iloc[1] == 1011
-    assert features.year.iloc[3] == 1011
+    assert features.year.iloc[1] == 2022
+    assert features.year.iloc[3] == 2022
     es.indices.delete('test_missing_year_idx')
 
 
@@ -83,9 +87,9 @@ def test_drop_missing_years():
                                       fsequence='sequence_missing_year.csv',
                                       fquery='test_for_missing_year_sample.json')
 
-    features = fe.get_feature_mat(inputhandler, missing_value_strategy='dropzero')
+    lm = LambdaMartYear(fe, random_state=None, missing_value_strategy='dropzero')
+    features = lm._get_feature_mat(inputhandler)
     assert len(features.year) == 2
     assert features.year.iloc[0] == 2022
     assert features.year.iloc[1] == 2022
     es.indices.delete('test_missing_year_idx')
-
