@@ -35,8 +35,8 @@ class LambdaMart(model.RankerInterface):
         x.drop(['q_num', 'doc_id', 'relevance', 'qid'], inplace=True, axis=1)
         return (x, y, qids)
 
-    def _prepare_data(self, inputhandler, frac=0.66, random_state=None):
-        x = self.fe.get_feature_mat(inputhandler)
+    def _prepare_data(self, inputhandler, frac=0.66, random_state=None, missing_value_strategy=None):
+        x = self.fe.get_feature_mat(inputhandler, missing_value_strategy=missing_value_strategy)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
         training = x.q_num.drop_duplicates().sample(frac=frac, random_state=random_state)  # todo: unfix random state?
@@ -49,7 +49,7 @@ class LambdaMart(model.RankerInterface):
 
         return (x_train, y_train, qids_train, x_val, y_val, qids_val)
 
-    def train(self, inputhandler, random_state=None):
+    def train(self, inputhandler, random_state=None, missing_value_strategy=None):
         """
         X : array_like, shape = [n_samples, n_features] Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
@@ -60,15 +60,15 @@ class LambdaMart(model.RankerInterface):
         """
 
         x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66,
-                                                                                  random_state=random_state)
+                                                                                  random_state=random_state,missing_value_strategy=missing_value_strategy)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
-    def _predict(self, inputhandler):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+    def _predict(self, inputhandler,missing_value_strategy=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,missing_value_strategy=missing_value_strategy)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred=pred)
@@ -106,8 +106,8 @@ class LambdaMartRandomization(LambdaMart):
 
         return df
 
-    def _predict(self, inputhandler):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+    def _predict(self, inputhandler,missing_value_strategy=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,missing_value_strategy=missing_value_strategy)
         pred = self.lambdamart.predict(x)
 
         qids = qids.assign(pred=pred)

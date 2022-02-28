@@ -40,7 +40,7 @@ for i in range(0, 1):
                                             fquery=QUERIES_EVAL)
 
             lambdamart = LambdaMartRandomization(ft, random_state=random_state)
-            lambdamart.train(input_train, random_state=random_state)
+            lambdamart.train(input_train, random_state=random_state,missing_value_strategy=strat)
             lambdamart.predict(input_test)
 
             input_test.write_submission(lambdamart, outfile=OUT)

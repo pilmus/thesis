@@ -26,7 +26,11 @@ class Corpus():
         requests.put(base + '_ltr')
         full_path = base + "_ltr/_featureset/" + feature_set['featureset']['name']
         head = {'Content-Type': 'application/json'}
-        resp = requests.post(full_path, data=json.dumps(feature_set), headers=head)
+        try:
+            resp = requests.post(full_path, data=json.dumps(feature_set), headers=head)
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise SystemExit(e)
         return resp
 
     def count_docs(self):
