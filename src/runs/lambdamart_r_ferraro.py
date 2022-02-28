@@ -2,7 +2,6 @@ import os
 
 from tqdm import tqdm
 
-
 # import src.evaluation.validate_run as validate
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
@@ -14,17 +13,17 @@ eval_dir = 'evaluation/2020'
 idxname = 'semanticscholar2020og'
 random_state = 0
 for i in range(0, 1):
-    for sort_reverse in [False,True]:
+    for sort_reverse in [False, True]:
         for ts in [
             'training-sequence-full.tsv',
-            ]:
-
+        ]:
             print(i, ts)
-            OUT = os.path.join(eval_dir,f"submission_lambdamart_r-{ts}-reverse-{sort_reverse}-seed-{random_state}.json")
-            QUERIES_EVAL = os.path.join(eval_dir,"TREC-Fair-Ranking-eval-sample.json")
-            SEQUENCE_EVAL = os.path.join(eval_dir,"TREC-Fair-Ranking-eval-seq.tsv")
+            OUT = os.path.join(eval_dir,
+                               f"submission_lambdamart_r-{ts}-reverse-{sort_reverse}-seed-{random_state}.json")
+            QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
+            SEQUENCE_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-seq.tsv")
 
-            QUERIES_TRAIN = os.path.join(train_dir,"TREC-Fair-Ranking-training-sample.json")
+            QUERIES_TRAIN = os.path.join(train_dir, "TREC-Fair-Ranking-training-sample.json")
             SEQUENCE_TRAIN = os.path.join(train_dir, ts)
 
             corpus = Corpus(idxname)
@@ -40,7 +39,7 @@ for i in range(0, 1):
                                             fquery=QUERIES_EVAL)
 
             lambdamart = LambdaMartRandomization(ft, random_state=random_state)
-            lambdamart.train(input_train, random_state=random_state,missing_value_strategy=strat)
+            lambdamart.train(input_train, random_state=random_state, missing_value_strategy=strat)
             lambdamart.predict(input_test)
 
             input_test.write_submission(lambdamart, outfile=OUT)

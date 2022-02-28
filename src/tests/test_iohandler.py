@@ -32,7 +32,6 @@ def hat_sequence():
     return 'hat_sequence.csv'
 
 
-
 def test_read_sequence_dot_sequence():
     ioh = TestingInputOutputHandler()
     df_dot = ioh.read_sequence('dot_sequence.csv')
@@ -43,6 +42,7 @@ def test_read_sequence_dot_sequence():
     assert (df_dot == df_comp).all().all()
     assert (df_com == df_comp).all().all()
     assert (df_hat == df_comp).all().all()
+
 
 def test_updated_read_sequence_same_as_old():
     ioh = TestingInputOutputHandler()

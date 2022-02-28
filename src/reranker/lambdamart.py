@@ -60,15 +60,17 @@ class LambdaMart(model.RankerInterface):
         """
 
         x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66,
-                                                                                  random_state=random_state,missing_value_strategy=missing_value_strategy)
+                                                                                  random_state=random_state,
+                                                                                  missing_value_strategy=missing_value_strategy)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
-    def _predict(self, inputhandler,missing_value_strategy=None):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,missing_value_strategy=missing_value_strategy)
+    def _predict(self, inputhandler, missing_value_strategy=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,
+                                                          missing_value_strategy=missing_value_strategy)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
         qids = qids.assign(pred=pred)
@@ -87,8 +89,8 @@ class LambdaMartRandomization(LambdaMart):
     Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
     """
 
-    def __init__(self, featureengineer, sort_reverse=False,random_state=None):
-        super().__init__(featureengineer,random_state=random_state)
+    def __init__(self, featureengineer, sort_reverse=False, random_state=None):
+        super().__init__(featureengineer, random_state=random_state)
         self.sort_reverse = sort_reverse
 
     def __mean_diff(self, relevances):
@@ -106,8 +108,9 @@ class LambdaMartRandomization(LambdaMart):
 
         return df
 
-    def _predict(self, inputhandler,missing_value_strategy=None):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,missing_value_strategy=missing_value_strategy)
+    def _predict(self, inputhandler, missing_value_strategy=None):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1,
+                                                          missing_value_strategy=missing_value_strategy)
         pred = self.lambdamart.predict(x)
 
         qids = qids.assign(pred=pred)
@@ -118,7 +121,8 @@ class LambdaMartRandomization(LambdaMart):
 
         tqdm.pandas()
         print("Converting relevances to rankings...")
-        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False, method='first')
+        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
+                                                                           method='first')
         qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
