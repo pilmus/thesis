@@ -3,7 +3,7 @@ from itertools import chain
 import pandas as pd
 from tqdm import tqdm
 
-import src.bonart.utils.io as io
+import utils.io as io
 
 
 class InputOutputHandler:

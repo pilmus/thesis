@@ -12,8 +12,13 @@ from interface.corpus import Corpus
 from interface.iohandler import InputOutputHandler
 from utils import io
 
-corpus = Corpus('localhost','9200','semanticscholar2019')
-input = InputOutputHandler(corpus, fquery='resources/training/2019/fair-TREC-training-sample.json',fsequence="resources/training/2019/old/training-sequence-10.tsv")
+idx_name = 'semanticscholar2020og'
+fseq = "training/2020/training-sequence-10.tsv"
+fq = 'training/2020/TREC-Fair-Ranking-training-sample.json'
+outfile = 'training/2020/TREC-Fair-Ranking-training-sample-cleaned.json'
+
+corpus = Corpus(idx_name)
+input = InputOutputHandler(corpus, fquery=fq, fsequence=fseq)
 
 queries = input.get_queries()
 
@@ -28,8 +33,8 @@ result_size = queries.groupby('qid').doc_id.count()
 
 queries_remove = result_size[result_size < 5].keys().to_list()
 
-queries_raw = io.read_jsonlines('resources/training/2019/fair-TREC-training-sample.json')
+queries_raw = io.read_jsonlines(fq)
 
 queries_raw = [query for query in queries_raw if query['qid'] not in queries_remove]
 
-io.write_jsonlines(queries_raw, 'resources/training/2019/fair-TREC-training-sample-cleaned_og-full_index.json')
+io.write_jsonlines(queries_raw, outfile)

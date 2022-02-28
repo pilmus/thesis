@@ -87,8 +87,8 @@ class LambdaMartRandomization(LambdaMart):
     Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
     """
 
-    def __init__(self, featureengineer, sort_reverse=False):
-        super().__init__(featureengineer)
+    def __init__(self, featureengineer, sort_reverse=False,random_state=None):
+        super().__init__(featureengineer,random_state=random_state)
         self.sort_reverse = sort_reverse
 
     def __mean_diff(self, relevances):
@@ -112,9 +112,13 @@ class LambdaMartRandomization(LambdaMart):
 
         qids = qids.assign(pred=pred)
 
-        qids.groupby(['sid', 'q_num']).apply(self.__randomize_apply)
+        tqdm.pandas()
+        print("Applying randomization...")
+        qids.groupby(['sid', 'q_num']).progress_apply(self.__randomize_apply)
 
-        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].apply(pd.Series.rank, ascending=False, method='first')
+        tqdm.pandas()
+        print("Converting relevances to rankings...")
+        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False, method='first')
         qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
