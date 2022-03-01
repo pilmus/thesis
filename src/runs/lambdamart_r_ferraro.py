@@ -11,17 +11,19 @@ from reranker.lambdamart import LambdaMart, LambdaMartRandomization
 train_dir = 'training/2020'
 eval_dir = 'evaluation/2020'
 idxname = 'semanticscholar2020og'
-random_state = 0
-for i in range(0, 1):
-    for rs in [0]:
-        for strat in [None]:
-            for sort_reverse in [False, True]:
+saved_features = 'src/interface/es-features-ferraro-sample-2020.csv'
+
+for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+    for strat in [None]:
+        for sort_reverse in [False, True]:
+            # for sort_reverse in [False]:
+            for sf in [saved_features]:
                 for ts in [
                     'training-sequence-full.tsv',
                 ]:
-                    print(i, rs, strat, ts)
-                    OUT = os.path.join(eval_dir,
-                                       f"submission_lambdamart_r-{i}-{ts}-strat-{strat}-seed-{rs}.json")
+                    print(rs, strat, ts)
+                    OUT = os.path.join(eval_dir, 'rawruns',
+                                       f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
                     SEQUENCE_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-seq.tsv")
 
@@ -30,7 +32,7 @@ for i in range(0, 1):
 
                     corpus = Corpus(idxname)
                     ft = FeatureEngineer(corpus, fquery='config/featurequery_ferraro_lmr.json',
-                                         fconfig='config/features_ferraro_lmr.json')
+                                         fconfig='config/features_ferraro_lmr.json', feature_mat=sf)
 
                     input_train = InputOutputHandler(corpus,
                                                      fsequence=SEQUENCE_TRAIN,

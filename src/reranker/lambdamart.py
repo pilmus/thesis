@@ -144,12 +144,12 @@ class LambdaMartRandomization(LambdaMart):
 
         tqdm.pandas()
         print("Applying randomization...")
-        qids.groupby(['sid', 'q_num']).progress_apply(self.__randomize_apply)
+        qids = qids.groupby(['sid', 'q_num'], as_index=False).progress_apply(self.__randomize_apply)
 
         tqdm.pandas()
         print("Converting relevances to rankings...")
-        qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
-                                                                           method='first')
+        qids.loc[:, 'rank'] = qids.groupby('sid')['pred'].progress_apply(pd.Series.rank, ascending=False,
+                                                                         method='first')
         qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])

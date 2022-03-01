@@ -1,0 +1,42 @@
+{
+  "validation": {
+    "params": {
+      "keywords": "python"
+    },
+    "index": "test_equiv_features_idx"
+  },
+  "featureset": {
+    "name": "features_test_equiv_features",
+    "features": [
+      {
+        "name": "title_score",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "title": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "inCitations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "inCitations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      }
+    ]
+  }
+}

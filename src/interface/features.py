@@ -7,11 +7,12 @@ import utils.io as io
 class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
-    def __init__(self, corpus, fquery, fconfig, init_ltr=True):
+    def __init__(self, corpus, fquery, fconfig, init_ltr=True,  feature_mat=None):
         self.corpus = corpus
         self.query = io.read_json(fquery)
         if init_ltr:
             corpus.init_ltr(fconfig)
+        self.feature_mat = feature_mat
 
     def __get_features(self, queryterm, doc_ids):
         self.query['query']['bool']['filter'][0]['terms']['_id'] = doc_ids
@@ -27,13 +28,19 @@ class FeatureEngineer:
 
     def get_feature_mat(self, iohandler):
         print("Getting features...")
-        tqdm.pandas()
-        features = iohandler.get_query_seq().groupby('qid').progress_apply(
-            lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
+        if self.feature_mat:
+            f = pd.read_csv(self.feature_mat,dtype={'doc_id':object})
+            qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
+            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right').dropna()
+            return feature_mat
+        else:
+            tqdm.pandas()
+            features = iohandler.get_query_seq().groupby('qid').progress_apply(
+                lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
 
-        features = features.reset_index(level=0)  # brings the qid back as a column after having been used to groupby
+            features = features.reset_index(level=0)  # brings the qid back as a column after having been used to groupby
 
-        return features
+            return features
 
     def __features_from_response(self, docs):
         docs = docs['hits']['hits']

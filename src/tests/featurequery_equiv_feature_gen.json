@@ -9,8 +9,8 @@
                 },
                 {
                     "sltr": {
-                        "_name": "logged_featureset_ferraro",
-                        "featureset": "features_ferraro",
+                        "_name": "logged_featureset_test_equiv_features",
+                        "featureset": "features_test_equiv_features",
                         "params": {
                             "keywords": "query"
                         }
@@ -22,8 +22,8 @@
     "ext": {
         "ltr_log": {
             "log_specs": {
-                "name": "log_entry_ferraro",
-                "named_query": "logged_featureset_ferraro",
+                "name": "log_entry_test_equiv_features",
+                "named_query": "logged_featureset_test_equiv_features",
                 "missing_as_zero": true
             }
         }

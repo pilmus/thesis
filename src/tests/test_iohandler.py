@@ -18,25 +18,25 @@ def read_sequence_og(fsequence):
 
 
 @pytest.fixture
-def dot_sequence():
-    return 'dot_sequence.csv'
+def seq_dot():
+    return 'seq_dot.csv'
 
 
 @pytest.fixture
-def comma_sequence():
-    return 'comma_sequence.csv'
+def seq_comma():
+    return 'seq_comma.csv'
 
 
 @pytest.fixture
-def hat_sequence():
-    return 'hat_sequence.csv'
+def seq_hat():
+    return 'seq_hat.csv'
 
 
-def test_read_sequence_dot_sequence():
+def test_read_sequence_seq_dot():
     ioh = TestingInputOutputHandler()
-    df_dot = ioh.read_sequence('dot_sequence.csv')
-    df_com = ioh.read_sequence('comma_sequence.csv')
-    df_hat = ioh.read_sequence('hat_sequence.csv')
+    df_dot = ioh.read_sequence('seq_dot.csv')
+    df_com = ioh.read_sequence('seq_comma.csv')
+    df_hat = ioh.read_sequence('seq_hat.csv')
     df_comp = pd.DataFrame({'sid': [0, 0, 0, 0, 0], 'q_num': [0, 1, 2, 3, 4], 'qid': [1, 2, 3, 4, 5]})
 
     assert (df_dot == df_comp).all().all()
@@ -46,5 +46,5 @@ def test_read_sequence_dot_sequence():
 
 def test_updated_read_sequence_same_as_old():
     ioh = TestingInputOutputHandler()
-    df_com = ioh.read_sequence('comma_sequence.csv')
-    assert (df_com == read_sequence_og('comma_sequence.csv')).all().all()
+    df_com = ioh.read_sequence('seq_comma.csv')
+    assert (df_com == read_sequence_og('seq_comma.csv')).all().all()
