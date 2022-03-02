@@ -1,4 +1,5 @@
 import os
+import sys
 
 from tqdm import tqdm
 
@@ -22,8 +23,10 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                     'training-sequence-full.tsv',
                 ]:
                     print(rs, strat, ts)
+                    # OUT = os.path.join(eval_dir, 'rawruns',
+                    #                    f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.json")
                     OUT = os.path.join(eval_dir, 'rawruns',
-                                       f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.json")
+                                       f"snerkle.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
                     SEQUENCE_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-seq.tsv")
 
@@ -42,11 +45,13 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    lambdamart = LambdaMartRandomization(ft, random_state=rs)
+                    # lambdamart = LambdaMartRandomization(ft, random_state=rs)
+                    lambdamart = LambdaMart(ft, random_state=0)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 
                     input_test.write_submission(lambdamart, outfile=OUT)
+                    sys.exit()
 
                     # args = validate.Args(queries=QUERIES_EVAL, query_sequence_file = SEQUENCE_EVAL, run_file=OUT)
                     # validate.main(args)

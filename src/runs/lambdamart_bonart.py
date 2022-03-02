@@ -1,4 +1,5 @@
 import os
+import sys
 
 from tqdm import tqdm
 
@@ -6,7 +7,7 @@ from tqdm import tqdm
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
-from reranker.lambdamart import LambdaMartYear
+from reranker.lambdamart import LambdaMartYear, LambdaMartRandomization
 
 train_dir = 'training/2019'
 eval_dir = 'evaluation/2019'
@@ -20,7 +21,8 @@ for i in range(0, 1):
                     'training-sequence-full.tsv',
                 ]:
                     print(i, rs, strat, ts)
-                    OUT = os.path.join(eval_dir, f"fairRuns/submission_lambdamart-{i}-{ts}-strat-{strat}-seed-{rs}blorple.json")
+                    # OUT = os.path.join(eval_dir, f"fairRuns/submission_lambdamart-{i}-{ts}-strat-{strat}-seed-{rs}blorple.json")
+                    OUT = os.path.join(eval_dir, f"fairRuns/snerkle.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "fair-TREC-evaluation-sample.json")
                     SEQUENCE_EVAL = os.path.join(eval_dir, "fair-TREC-evaluation-sequences.csv")
 
@@ -39,11 +41,13 @@ for i in range(0, 1):
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    lambdamart = LambdaMartYear(ft, random_state=rs, missing_value_strategy=strat)
+                    # lambdamart = LambdaMartYear(ft, random_state=rs, missing_value_strategy=strat)
+                    lambdamart = LambdaMartRandomization(ft, random_state=0)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 
                     input_test.write_submission(lambdamart, outfile=OUT)
+                    sys.exit()
 
                     # args = validate.Args(queries=QUERIES_EVAL, query_sequence_file = SEQUENCE_EVAL, run_file=OUT)
                     # validate.main(args)

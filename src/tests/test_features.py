@@ -227,3 +227,48 @@ def test_same_output_for_large_featureset_semanticscholar2019og(datafiles):
     assert (on_the_fly_features_test.reset_index(drop=True) == preload_features_test[
         on_the_fly_features_test.columns].reset_index(
         drop=True)).all().all()
+
+@pytest.mark.datafiles('../../')
+def test_same_output_for_large_featureset_semanticscholar2019og(datafiles):
+    root = str(datafiles)
+    corp = 'semanticscholar2019og'
+
+    fquery = os.path.join(root,'config/featurequery_bonart.json')
+    fconfig = os.path.join(root,'config/features_bonart.json')
+
+    seq_train = os.path.join(root,'training/2019/training-sequence-full.tsv')
+    queries_train = os.path.join(root,'training/2019/fair-TREC-training-sample-cleaned.json')
+
+    seq_test = os.path.join(root,'evaluation/2019/fair-TREC-evaluation-sequences.csv')
+    queries_test = os.path.join(root,'evaluation/2019/fair-TREC-evaluation-sample.json')
+
+    saved_features = os.path.join(root,'src/interface/es-features-bonart-sample-cleaned-2019.csv')
+
+    corpus = Corpus(corp)
+    ft_otf = FeatureEngineer(corpus, fquery=fquery,
+                             fconfig=fconfig)
+    ioh_train = InputOutputHandler(corpus,
+                                   fsequence=seq_train,
+                                   fquery=queries_train)
+    ioh_test = InputOutputHandler(corpus,
+                                  fsequence=seq_test,
+                                  fquery=queries_test)
+
+    on_the_fly_features_train = ft_otf.get_feature_mat(ioh_train)
+    on_the_fly_features_test = ft_otf.get_feature_mat(ioh_test)
+
+    ft_preload = FeatureEngineer(corpus, fquery=fquery, fconfig=fconfig, feature_mat=saved_features)
+    preload_features_train = ft_preload.get_feature_mat(ioh_train)
+    preload_features_test = ft_preload.get_feature_mat(ioh_test)
+
+    assert set(on_the_fly_features_train.columns) == set(preload_features_train.columns)
+
+    assert set(on_the_fly_features_test.columns) == set(preload_features_test.columns)
+
+    assert (on_the_fly_features_train.reset_index(drop=True) == preload_features_train[
+        on_the_fly_features_train.columns].reset_index(
+        drop=True)).all().all()
+
+    assert (on_the_fly_features_test.reset_index(drop=True) == preload_features_test[
+        on_the_fly_features_test.columns].reset_index(
+        drop=True)).all().all()

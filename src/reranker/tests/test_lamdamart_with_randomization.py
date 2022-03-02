@@ -8,6 +8,7 @@ from elasticsearch import Elasticsearch
 
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
+from interface.iohandler import InputOutputHandler
 from reranker.lambdamart import LambdaMartRandomization
 
 
@@ -32,7 +33,7 @@ def mean_diff(rels):
     return s
 
 
-@pytest.mark.datafiles('../../config')
+@pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
 def test_feature_matrix_contains_correct_columns(datafiles):
     config = str(datafiles)
     corpus = Corpus('semanticscholar2020og')
@@ -133,21 +134,50 @@ def test_apply_randomizer_twice_sort_reverse_false():
     assert (df_out1.sort_index() == df_out2.sort_index()).all().all()
 
 
-def test_difference_between_reverse_and_not_is_twice_the_random_number():
-    rels = [0.1, 0.2, 0.5, 0.7, 0.9]
+@pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
+def test_train_and_predict_on_same_toy_example_perfect_result(datafiles):
+    pass
+    # config = str(datafiles)
+    # queries = "sample-test.jsonl"
+    # sequence = "seq-test.tsv"
+    #
+    #
+    # corpus = Corpus('semanticscholar2020og')
+    # ft = FeatureEngineer(corpus, fquery=os.path.join(config,'featurequery_ferraro_lmr.json'),
+    #                      fconfig=os.path.join(config,'/features_ferraro_lmr.json'), feature_mat=sf)
+    #
+    # input_train = InputOutputHandler(corpus,
+    #                                  fsequence=sequence,
+    #                                  fquery=queries)
+    #
+    #
+    # lambdamart = LambdaMartRandomization(ft, random_state=0)
+    # lambdamart.train(ioh)
+    # lambdamart.predict(ioh)
 
-    df1 = pd.DataFrame({'pred': rels})
-    df2 = pd.DataFrame({'pred': rels})
 
-    lm = TestingLambdaMartRandomization(sort_reverse=False, random_state=0)
-    lmr = TestingLambdaMartRandomization(sort_reverse=True, random_state=0)
+def test_predict_reverse_and_not_different_rankings():
+    root = '/mnt/c/Users/maaik/Documents/thesis'
+    queries = 'sample-test-2020-two-rel-two-not.jsonl'
+    seq = 'seq-test-2020.tsv'
+    corpus = Corpus('semanticscholar2020og')
+    sf = os.path.join(root, 'src/interface/es-features-ferraro-sample-2020.csv')
+    ft = FeatureEngineer(corpus, fquery=os.path.join(root, 'config', 'featurequery_ferraro_lmr.json'),
+                         fconfig=os.path.join(root, 'config', 'features_ferraro_lmr.json'), feature_mat=sf)
 
-    dfout1 = lm.randomize_apply(df1)
-    dfout2 = lmr.randomize_apply(df2)
+    ioh = InputOutputHandler(corpus,
+                                                     fsequence=seq,
+                                                     fquery=queries)
 
-    mdiff = mean_diff(rels)
+    lm = LambdaMartRandomization(ft, random_state=0)
+    lm.train(ioh)
+    lm.predict(ioh)
+    p = lm.predictions
 
-    r = random.Random(0)
-    rlist = [r.uniform(0, mdiff) for i in range(0, len(rels))]
+    lmr = LambdaMartRandomization(ft, random_state=0, sort_reverse=True)
+    lmr.train(ioh)
+    lmr.predict(ioh)
+    p_rev = lmr.predictions
 
-    lm.mean_diff(sorted(rels, reverse=False))
+    assert (p == p_rev).all().all()
+

@@ -66,7 +66,7 @@ class LambdaMart(model.RankerInterface):
         x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
-            x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
+        x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
@@ -125,14 +125,16 @@ class LambdaMartRandomization(LambdaMart):
     def __mean_diff(self, relevances):
         return (relevances[-1] - relevances[0]) / len(relevances)
 
+    def __randomizer(self, row, addition):
+        return row + addition
+
     def __randomize_apply(self, df):
         randomizer = random.Random(self.random_state)
-
         df = df.sort_values(by='pred', ascending=not self.sort_reverse)
 
         pred_list = df.pred.to_list()
         mean_diff = self.__mean_diff(pred_list)
-        df.pred = df.apply(lambda row: row.pred + randomizer.uniform(0, mean_diff), axis=1)
+        df.pred = df.pred.apply(lambda row: self.__randomizer(row, randomizer.uniform(0, mean_diff)))
 
         return df
 
@@ -150,6 +152,7 @@ class LambdaMartRandomization(LambdaMart):
         print("Converting relevances to rankings...")
         qids.loc[:, 'rank'] = qids.groupby('sid')['pred'].progress_apply(pd.Series.rank, ascending=False,
                                                                          method='first')
+
         qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
