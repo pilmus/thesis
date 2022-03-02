@@ -1,14 +1,13 @@
-#for grouping in mix_down mix_up mixed_group
-#do
-for file in resources/evaluation/2020/runfiles/lambdamart_ferraro/*_[12]*
+cd /mnt/c/Users/maaik/Documents/thesis/evaluation || return
+
+
+for file in 2020/runfiles/submission_lambdamart_r-training-sequence-full.tsv-rev-*
   do
     [ -e "$file" ] || continue
     filename="$(basename -- $file)"
     filename="${filename/.tsv/""}"
-#    IFS='.' read -r -a array <<< "$file"
-    echo resources/evaluation/2020/eval_output/lambdamart_ferraro/"$filename"_s.tsv
-#    echo src/evaluation/twenty_twenty/eval/expeval.py "resources/evaluation/2020/merged-annotations-groups-mixed_group-qrels.tsv" "$file" -G -C -U "resources/evaluation/2020/eval_output/deltr_gammas/$filename.tsv"
-    python src/evaluation/twenty_twenty/eval/expeval.py "resources/evaluation/2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv" "$file" -G -C -U -S > resources/evaluation/2020/eval_output/lambdamart_ferraro/"$filename"_s.tsv
-    python src/evaluation/twenty_twenty/eval/expeval.py "resources/evaluation/2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv" "$file" -G -C -U > resources/evaluation/2020/eval_output/lambdamart_ferraro/"$filename".tsv
+    echo python 2020/eval/expeval.py 2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv "$file" -G -C -U -S \> 2020/eval_output/"$filename"_s.tsv
+    python 2020/eval/expeval.py "2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv" "$file" -G -C -U -S > 2020/eval_output/"$filename"_s.tsv
+    python 2020/eval/expeval.py "2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv" "$file" -G -C -U > 2020/eval_output/"$filename".tsv
 done
 #done
