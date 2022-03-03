@@ -16,19 +16,21 @@ saved_features = 'src/interface/es-features-ferraro-sample-2020.csv'
 
 for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
     for strat in [None]:
-        for sort_reverse in [False, True]:
-            # for sort_reverse in [False]:
+        for sort_reverse in [True, False]:
             for sf in [saved_features]:
                 for ts in [
                     'training-sequence-full.tsv',
                 ]:
                     print(rs, strat, ts)
+
                     # OUT = os.path.join(eval_dir, 'rawruns',
-                    #                    f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.json")
+                    #                    f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.tsv")
+
                     OUT = os.path.join(eval_dir, 'rawruns',
-                                       f"snerkle.json")
+                                       f"reversed_banana.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
                     SEQUENCE_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-seq.tsv")
+                    # SEQUENCE_EVAL = 'src/reranker/tests/seq-test-eval-2020-double-first-double-second.tsv'
 
                     QUERIES_TRAIN = os.path.join(train_dir, "TREC-Fair-Ranking-training-sample.json")
                     SEQUENCE_TRAIN = os.path.join(train_dir, ts)
@@ -45,8 +47,8 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    # lambdamart = LambdaMartRandomization(ft, random_state=rs)
-                    lambdamart = LambdaMart(ft, random_state=0)
+                    lambdamart = LambdaMartRandomization(ft, random_state=rs, sort_reverse=sort_reverse)
+                    # lambdamart = LambdaMart(ft, random_state=0)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 

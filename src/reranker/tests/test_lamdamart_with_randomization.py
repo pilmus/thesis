@@ -33,18 +33,9 @@ class TestingLMRPrediction(LambdaMartRandomization):
         super().__init__(featureengineer,random_state=0)
         self.sort_reverse = sort_reverse
 
-    def mean_diff(self, relevances):
-        return self._LambdaMartRandomization__mean_diff(relevances)
 
-    def _mean_diffs_apply(self, df):
-        df = df.sort_values(by='pred', ascending=not self.sort_reverse)
-        preds = df.pred.to_list()
-        # pred = df.iloc[0].pred
-        md = self.mean_diff(preds)
-        df['mean_diff'] = md
-        return df
 
-    def train(self, inputhandler):
+    def train(self, inputhandler,n):
         """
         X : array_like, shape = [n_samples, n_features] Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
@@ -61,42 +52,7 @@ class TestingLMRPrediction(LambdaMartRandomization):
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
-    def __randomization_apply_q_num_level(self,df):
-        id_df = df.groupby('q_num',as_index=False).apply(lambda x: x.reset_index(drop = True)).reset_index(level=1)
 
-
-    def __randomization_apply(self,df):
-        df = df.groupby('q_num').apply()
-
-    def __inspect(self,df):
-        md = df.mean_diff.iloc[0]
-        if self.random_state is not None:
-            rng = random.Random(self.random_state + df.level_0.iloc[0])
-        else:
-            rng = random.Random()
-        df['aug'] = df.apply(lambda row: rng.uniform(0,md),axis=1)
-        df['aug_pred'] = df.apply(lambda row: row.pred + row.aug, axis = 1)
-        return df
-
-    def predict(self,inputhandler):
-        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
-        pred = self.lambdamart.predict(x)
-
-        qids = qids.assign(pred=pred)
-        qids = qids.groupby(['sid', 'q_num'], as_index=False).apply(self._mean_diffs_apply)
-
-        print("Applying randomization...")
-        tqdm.pandas()
-        qids = qids.groupby(['sid', 'q_num'], as_index=False).apply(lambda x: x.reset_index(drop=True)).reset_index(level=0).groupby(['sid','q_num']).progress_apply(self.__inspect)
-
-
-        tqdm.pandas()
-        print("Converting relevances to rankings...")
-        qids["rank"] = qids.groupby(['sid', 'q_num']).aug_pred.progress_apply(pd.Series.rank, method='first', ascending=False)
-
-        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
-                        how='left', on=['sid', 'q_num', 'doc_id'])
-        return pred
 
 
 
@@ -135,7 +91,8 @@ def test_pred():
     lmrev.train(ioht)
     lmrev.predict(iohe)
 
-
+def test_mean_diffs_assigns_same_mean_diff_to_same_qid_but_different_q_nums():
+    df = pd.DataFrame({'sid':[0,0,0,0],'q_num':[0,0,0,1,1,1,0,0,0,1,1,1],'doc_id':[1,2,3,4,5,6,1,2,3,4,5,6]})
 
 @pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
 def test_feature_matrix_contains_correct_columns(datafiles):
@@ -241,23 +198,7 @@ def test_apply_randomizer_twice_sort_reverse_false():
 @pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
 def test_train_and_predict_on_same_toy_example_perfect_result(datafiles):
     pass
-    # config = str(datafiles)
-    # queries = "sample-test.jsonl"
-    # sequence = "seq-test.tsv"
-    #
-    #
-    # corpus = Corpus('semanticscholar2020og')
-    # ft = FeatureEngineer(corpus, fquery=os.path.join(config,'featurequery_ferraro_lmr.json'),
-    #                      fconfig=os.path.join(config,'/features_ferraro_lmr.json'), feature_mat=sf)
-    #
-    # input_train = InputOutputHandler(corpus,
-    #                                  fsequence=sequence,
-    #                                  fquery=queries)
-    #
-    #
-    # lambdamart = LambdaMartRandomization(ft, random_state=0)
-    # lambdamart.train(ioh)
-    # lambdamart.predict(ioh)
+
 
 
 def test_predict_reverse_and_not_different_rankings():

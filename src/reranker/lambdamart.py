@@ -66,7 +66,7 @@ class LambdaMart(model.RankerInterface):
         x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
-        x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
+            x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
         return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
 
@@ -121,39 +121,45 @@ class LambdaMartRandomization(LambdaMart):
     def __init__(self, featureengineer, sort_reverse=False, random_state=None):
         super().__init__(featureengineer, random_state=random_state)
         self.sort_reverse = sort_reverse
+        self.mean_diff_dict = {}
 
     def __mean_diff(self, relevances):
         return (relevances[-1] - relevances[0]) / len(relevances)
 
-    def __randomizer(self, row, addition):
-        return row + addition
-
     def __randomize_apply(self, df):
-        randomizer = random.Random(self.random_state)
         df = df.sort_values(by='pred', ascending=not self.sort_reverse)
+        sid = df.sid.iloc[0]
+        if sid not in self.mean_diff_dict:
+            self.mean_diff_dict[sid] = self.__mean_diff(df.pred.to_list())
+        md = self.mean_diff_dict[sid]
 
-        pred_list = df.pred.to_list()
-        mean_diff = self.__mean_diff(pred_list)
-        df.pred = df.pred.apply(lambda row: self.__randomizer(row, randomizer.uniform(0, mean_diff)))
+        if self.random_state is not None:
+            rng = random.Random(self.random_state + df.q_num.iloc[0])
+        else:
+            rng = random.Random()
 
+        df['aug'] = df.apply(lambda row: rng.uniform(0, md), axis=1)
+        df['aug_pred'] = df.apply(lambda row: row.pred + row.aug, axis=1)
         return df
 
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+        print("Predicting values...")
+        tqdm.pandas()
         pred = self.lambdamart.predict(x)
 
         qids = qids.assign(pred=pred)
 
-        tqdm.pandas()
         print("Applying randomization...")
-        qids = qids.groupby(['sid', 'q_num'], as_index=False).progress_apply(self.__randomize_apply)
+        tqdm.pandas()
+        qids = qids.groupby(['sid', 'q_num']).progress_apply(self.__randomize_apply)
 
         tqdm.pandas()
         print("Converting relevances to rankings...")
-        qids.loc[:, 'rank'] = qids.groupby('sid')['pred'].progress_apply(pd.Series.rank, ascending=False,
-                                                                         method='first')
+        qids = qids.reset_index(drop=True)
+        qids["rank"] = qids.groupby(['sid', 'q_num']).aug_pred.progress_apply(pd.Series.rank, method='first',
+                                                                              ascending=False)
 
-        qids.drop('pred', inplace=True, axis=1)
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
         return pred
