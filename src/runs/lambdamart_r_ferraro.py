@@ -17,8 +17,7 @@ eval_seq = "TREC-Fair-Ranking-eval-seq-test.tsv"
 
 for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
     for strat in [None]:
-        for sort_reverse in [False, True]:
-            # for sort_reverse in [False]:
+        for sort_reverse in [True, False]:
             for sf in [saved_features]:
                 for ts in [
                     'training-sequence-full.tsv',
@@ -26,8 +25,6 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                     print(rs, strat, ts)
                     OUT = os.path.join(eval_dir, 'rawruns',
                                        f"submission_lambdamart_r-{ts}-{eval_seq}-rev-{sort_reverse}-seed-{rs}.json")
-                    # OUT = os.path.join(eval_dir, 'rawruns',
-                    #                    f"snerkle.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
                     SEQUENCE_EVAL = os.path.join(eval_dir, eval_seq)
 
@@ -46,8 +43,7 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    lambdamart = LambdaMartRandomization(ft, random_state=rs)
-                    # lambdamart = LambdaMart(ft, random_state=0)
+                    lambdamart = LambdaMartRandomization(ft, random_state=rs, sort_reverse=sort_reverse)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 

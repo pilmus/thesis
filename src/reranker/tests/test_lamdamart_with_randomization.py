@@ -3,8 +3,10 @@ import random
 
 import numpy as np
 import pandas as pd
+import pyltr
 import pytest
 from elasticsearch import Elasticsearch
+from tqdm import tqdm
 
 from interface.corpus import Corpus
 from interface.features import FeatureEngineer
@@ -25,6 +27,35 @@ class TestingLambdaMartRandomization(LambdaMartRandomization):
         return self._LambdaMartRandomization__randomize_apply(df)
 
 
+
+class TestingLMRPrediction(LambdaMartRandomization):
+    def __init__(self,featureengineer,sort_reverse=False):
+        super().__init__(featureengineer,random_state=0)
+        self.sort_reverse = sort_reverse
+
+
+
+    def train(self, inputhandler,n):
+        """
+        X : array_like, shape = [n_samples, n_features] Training vectors, where n_samples is the number of samples
+        and n_features is the number of features.
+        y : array_like, shape = [n_samples] Target values (integers in classification, real numbers in regression)
+        For classification, labels must correspond to classes.
+        qids : array_like, shape = [n_samples] Query ids for each sample. Samples must be grouped by query such that
+        all queries with the same qid appear in one contiguous block.
+        """
+
+        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
+
+        monitor = pyltr.models.monitors.ValidationMonitor(
+        x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=10)
+
+        return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
+
+
+
+
+
 def mean_diff(rels):
     s = 0
     for i in range(1, len(rels)):
@@ -32,6 +63,36 @@ def mean_diff(rels):
     s = s / len(rels)
     return s
 
+def test_pred():
+    root = '/mnt/c/Users/maaik/Documents/thesis'
+    qtrain = os.path.join(root,'training','2020','TREC-Fair-Ranking-training-sample.json')
+    strain = os.path.join(root,'training','2020','training-sequence-full.tsv')
+
+    qtest = os.path.join(root,'evaluation','2020','TREC-Fair-Ranking-eval-sample.json')
+    seqeval = 'seq-test-eval-2020-double-first-double-second.tsv'
+
+    corpus = Corpus('semanticscholar2020og')
+    sf = os.path.join(root, 'src/interface/es-features-ferraro-sample-2020.csv')
+    ft = FeatureEngineer(corpus, fquery=os.path.join(root, 'config', 'featurequery_ferraro_lmr.json'),
+                         fconfig=os.path.join(root, 'config', 'features_ferraro_lmr.json'), feature_mat=sf)
+
+    ioht = InputOutputHandler(corpus,
+                             fsequence=strain,
+                             fquery=qtrain)
+    iohe = InputOutputHandler(corpus,
+                             fsequence=seqeval,
+                             fquery=qtest)
+
+    lm = TestingLMRPrediction(ft)
+    lm.train(ioht)
+    lm.predict(iohe)
+
+    lmrev = TestingLMRPrediction(ft, sort_reverse=True)
+    lmrev.train(ioht)
+    lmrev.predict(iohe)
+
+def test_mean_diffs_assigns_same_mean_diff_to_same_qid_but_different_q_nums():
+    df = pd.DataFrame({'sid':[0,0,0,0],'q_num':[0,0,0,1,1,1,0,0,0,1,1,1],'doc_id':[1,2,3,4,5,6,1,2,3,4,5,6]})
 
 @pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
 def test_feature_matrix_contains_correct_columns(datafiles):
@@ -137,23 +198,7 @@ def test_apply_randomizer_twice_sort_reverse_false():
 @pytest.mark.datafiles('/mnt/c/Users/maaik/Documents/thesis/config')
 def test_train_and_predict_on_same_toy_example_perfect_result(datafiles):
     pass
-    # config = str(datafiles)
-    # queries = "sample-test.jsonl"
-    # sequence = "seq-test.tsv"
-    #
-    #
-    # corpus = Corpus('semanticscholar2020og')
-    # ft = FeatureEngineer(corpus, fquery=os.path.join(config,'featurequery_ferraro_lmr.json'),
-    #                      fconfig=os.path.join(config,'/features_ferraro_lmr.json'), feature_mat=sf)
-    #
-    # input_train = InputOutputHandler(corpus,
-    #                                  fsequence=sequence,
-    #                                  fquery=queries)
-    #
-    #
-    # lambdamart = LambdaMartRandomization(ft, random_state=0)
-    # lambdamart.train(ioh)
-    # lambdamart.predict(ioh)
+
 
 
 def test_predict_reverse_and_not_different_rankings():

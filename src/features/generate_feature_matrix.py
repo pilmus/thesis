@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from features import FeatureEngineer
+from features.features import FeatureEngineer
 from interface.corpus import Corpus
 from interface.iohandler import InputOutputHandler
 
