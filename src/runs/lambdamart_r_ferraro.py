@@ -4,15 +4,16 @@ import sys
 from tqdm import tqdm
 
 # import src.evaluation.validate_run as validate
+from features.features import FeatureEngineer
 from interface.corpus import Corpus
-from interface.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
 from reranker.lambdamart import LambdaMart, LambdaMartRandomization
 
 train_dir = 'training/2020'
 eval_dir = 'evaluation/2020'
 idxname = 'semanticscholar2020og'
-saved_features = 'src/interface/es-features-ferraro-sample-2020.csv'
+saved_features = 'src/features/es-features-ferraro-sample-2020.csv'
+eval_seq = "TREC-Fair-Ranking-eval-seq-test.tsv"
 
 for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
     for strat in [None]:
@@ -23,12 +24,12 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                     'training-sequence-full.tsv',
                 ]:
                     print(rs, strat, ts)
-                    # OUT = os.path.join(eval_dir, 'rawruns',
-                    #                    f"submission_lambdamart_r-{ts}-rev-{sort_reverse}-seed-{rs}.json")
                     OUT = os.path.join(eval_dir, 'rawruns',
-                                       f"snerkle.json")
+                                       f"submission_lambdamart_r-{ts}-{eval_seq}-rev-{sort_reverse}-seed-{rs}.json")
+                    # OUT = os.path.join(eval_dir, 'rawruns',
+                    #                    f"snerkle.json")
                     QUERIES_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-sample.json")
-                    SEQUENCE_EVAL = os.path.join(eval_dir, "TREC-Fair-Ranking-eval-seq.tsv")
+                    SEQUENCE_EVAL = os.path.join(eval_dir, eval_seq)
 
                     QUERIES_TRAIN = os.path.join(train_dir, "TREC-Fair-Ranking-training-sample.json")
                     SEQUENCE_TRAIN = os.path.join(train_dir, ts)
@@ -45,8 +46,8 @@ for rs in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    # lambdamart = LambdaMartRandomization(ft, random_state=rs)
-                    lambdamart = LambdaMart(ft, random_state=0)
+                    lambdamart = LambdaMartRandomization(ft, random_state=rs)
+                    # lambdamart = LambdaMart(ft, random_state=0)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 

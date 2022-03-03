@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from features import FeatureEngineer
 from interface.corpus import Corpus
-from interface.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
 
 
@@ -37,10 +37,18 @@ def get_es_features(corp, fquery, fconfig, seq, queries, outfile):
     return feat
 
 
+def get_doc_annotations(annotations):
+    annotations = pd.read_csv(annotations)
+    return annotations
+
+
+def merge_es_features_with_doc_annotations(es_features,doc_annotations,outfile):
+    esdf = pd.read_csv(es_features)
+    dadf = get_doc_annotations(doc_annotations)
+    merged = pd.merge(esdf,dadf, left_on='doc_id',right_on='id',how='left')
+    merged.to_csv(outfile,index=False)
+    return merged
+
+
 if __name__ == '__main__':
-    # get_es_features('semanticscholar2019og', 'config/featurequery_bonart.json', 'config/features_bonart.json',
-    #                 'src/interface/full-sample-cleaned-2019-seq.csv', 'src/interface/full-sample-cleaned-2019.jsonl',
-    #                 'src/interface/es-features-bonart-sample-cleaned-2019.csv')
-    get_es_features('semanticscholar2020og', 'config/featurequery_ferraro.json', 'config/features_ferraro.json',
-                    'src/interface/full-sample-2020-seq.csv', 'src/interface/full-sample-2020.json',
-                    'src/interface/es-features-ferraro-sample-2020.csv')
+    merge_es_features_with_doc_annotations('es-features-ferraro-sample-2020.csv', 'doc-annotations.csv','merged-features-ferraro-2020.csv')

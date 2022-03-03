@@ -30,4 +30,4 @@ indexed_files_*.txt
 
 
 *.tsv
-.~lock*
+./src/features/corpus-subset-for-queries.jsonl

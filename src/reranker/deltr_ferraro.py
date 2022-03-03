@@ -6,7 +6,7 @@ import pandas as pd
 from fairsearchdeltr import Deltr
 from tqdm import tqdm
 
-import src.bonart.reranker.model as model
+import reranker.model as model
 
 # class Deltr(LibDeltr):
 #     def _train_nn(self, tr, query_ids, feature_matrix, training_scores):
@@ -25,9 +25,10 @@ import src.bonart.reranker.model as model
 #         tr._exposure_diff = new_exposure_diff
 #
 #         return tr.train_nn(query_ids, feature_matrix, training_scores)
+from features.features import DeltrFeatureEngineer
 
 
-class DeltrFerraro(model.RankerInterface):
+class DeltrWrapper(model.RankerInterface):
     """
     Wrapper arround DELTR, contains two separate DELTR models trained on the same dataset whose scores are combined in the prediction phase.
     """
@@ -37,7 +38,7 @@ class DeltrFerraro(model.RankerInterface):
                     "in_citations", "journal_score", "out_citations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
+    def __init__(self, featureengineer: DeltrFeatureEngineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
         """
 
         :param featureengineer:

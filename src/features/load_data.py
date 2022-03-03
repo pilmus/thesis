@@ -46,11 +46,11 @@ def load_training_data(training_data_file):
 
 
 if __name__ == "__main__":
-    authors_file = "data/corpus-subset-for-queries.authors.csv"
-    papers_file = "data/corpus-subset-for-queries.papers.csv"
-    authors_papers_file = "data/corpus-subset-for-queries.paper_authors.csv"
-    corpus_data_file = "data/corpus-subset-for-queries.jsonl"
-    training_data_file = 'data/TREC-Fair-Ranking-training-sample.json'
+    authors_file = "corpus-subset-for-queries.authors.csv"
+    papers_file = "corpus-subset-for-queries.papers.csv"
+    authors_papers_file = "corpus-subset-for-queries.paper_authors.csv"
+    corpus_data_file = "corpus-subset-for-queries.jsonl"
+    training_data_file = '/mnt/c/Users/maaik/Documents/thesis/training/2020/TREC-Fair-Ranking-training-sample.json'
 
     authors = load_authors(authors_file)
     papers = load_papers(papers_file)

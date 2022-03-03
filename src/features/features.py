@@ -52,3 +52,15 @@ class FeatureEngineer:
             vec['doc_id'] = ids[i]
             result.append(vec)
         return pd.DataFrame.from_dict(result)
+
+
+class DeltrFeatureEngineer(FeatureEngineer):
+    def __init__(self, corpus, fquery, fconfig, doc_annotations, init_ltr=True, es_feature_mat=None):
+        super(DeltrFeatureEngineer, self).__init__(corpus, fquery, fconfig, init_ltr, es_feature_mat)
+        self.doc_annotations = pd.read_csv(doc_annotations).rename({'id':'doc_id'},axis=1)
+
+    def get_feature_mat(self, iohandler):
+        es_features = super().get_feature_mat(iohandler)
+        features = pd.merge(es_features,self.doc_annotations,on='doc_id',how='left')
+        features = features.dropna()
+        return features
