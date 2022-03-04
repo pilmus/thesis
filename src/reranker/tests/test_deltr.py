@@ -161,7 +161,7 @@ def test_deltr_wrapper_same_prediction_as_fairsearch_deltr(root, ft, doclevel_ma
     featt = deltr._prepare_data(ioht)
 
     iohe = InputOutputHandler(se, qe)
-    feate = deltr._prepare_data(iohe,has_judgment=False)
+    feate = deltr._prepare_data(iohe, has_judgment=False)
 
     deltr.train(ioht)
 
@@ -175,8 +175,8 @@ def test_deltr_wrapper_same_prediction_as_fairsearch_deltr(root, ft, doclevel_ma
     for sid in [0, 1]:
         for q_num in [0, 1]:
             out = fsdeltr.rank(feate[(feate.sid == sid) & (feate.q_num == q_num)][feate.columns[1:]])
-            assert preds[(preds.sid == sid) & (preds.q_num == q_num)].sort_values(by='rank').doc_id.to_list() == out.doc_id.to_list()
-
+            assert preds[(preds.sid == sid) & (preds.q_num == q_num)].sort_values(
+                by='rank').doc_id.to_list() == out.doc_id.to_list()
 
 
 def test_fairsearchdeltr_reproducible_with_seed():
@@ -272,6 +272,53 @@ def test_fairsearchdeltr_not_reproducible_when_seed_not_reset():
     assert (weights != weights2).all()
 
 
+def test_prepare_data_correctly_adds_h_class(doclevel_map):
+    root = '/mnt/c/Users/maaik/Documents/thesis'
+    qtrain = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
+    seqtrain = os.path.join(root, 'training/2020/training-sequence-full.tsv')
+
+    qeval = os.path.join(root, 'evaluation/2020/TREC-Fair-Ranking-eval-sample.json')
+    seqeval = os.path.join(root, 'evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv')
+
+    esf = os.path.join(root, 'src/features/es-features-ferraro-sample-2020.csv')
+
+    ft = AnnotationFeatureEngineer(doc_annotations=os.path.join(root, 'src/features/doc-annotations.csv'),
+                                   es_feature_mat=esf)
+
+    ioh_train = InputOutputHandler(seqtrain, qtrain)
+    ioh_eval = InputOutputHandler(seqeval, qeval)
+
+    deltr = Deltr(ft, 'DocHLevel', doclevel_map, gamma=1, num_iter=None)
+    feats_train = deltr._prepare_data(ioh_train)
+    feats_eval = deltr._prepare_data(ioh_eval, has_judgment=False)
+
+    assert len(feats_train) == 2049
+    assert len(feats_eval) == 2161 * 150
+
+    assert feats_train.columns.to_list() == ["q_num", "doc_id", "protected",
+                                             "title_score", "abstract_score", "entities_score",
+                                             "venue_score", "journal_score", "authors_score", "inCitations",
+                                             "outCitations",
+                                             "qlength",
+                                             "relevance"]
+    assert feats_eval.columns.to_list() == ["sid", "q_num", "doc_id", "protected",
+                                            "title_score", "abstract_score", "entities_score",
+                                            "venue_score", "journal_score", "authors_score", "inCitations",
+                                            "outCitations",
+                                            "qlength"]
+
+    assert set(feats_train.protected.to_list()) == {0, 1}
+    assert set(feats_eval.protected.to_list()) == {0, 1}
+
+    traincounts = Counter(feats_train.protected.to_list())
+    assert traincounts[1] == 1275
+    assert traincounts[0] == 774
+
+    evalcounts = Counter(feats_eval.protected.to_list())
+    assert evalcounts[1] == 1415 * 150
+    assert evalcounts[0] == 746 * 150
+
+
 def test_fairsearchdeltr_github_example_works():
     np.random.seed(0)
     # load some train data (this is just a sample - more is better)
@@ -313,50 +360,3 @@ def test_fairsearchdeltr_github_example_works():
     # use the model to rank the data
     res = dtr.rank(prediction_data)
     assert res.doc_id.to_list() == [11, 12, 7, 8, 9, 10]
-
-
-def test_prepare_data_correctly_adds_h_class(dochlevel_map):
-    root = '/mnt/c/Users/maaik/Documents/thesis'
-    qtrain = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
-    seqtrain = os.path.join(root, 'training/2020/training-sequence-full.tsv')
-
-    qeval = os.path.join(root, 'evaluation/2020/TREC-Fair-Ranking-eval-sample.json')
-    seqeval = os.path.join(root, 'evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv')
-
-    esf = os.path.join(root, 'src/features/es-features-ferraro-sample-2020.csv')
-
-    ft = AnnotationFeatureEngineer(doc_annotations=os.path.join(root, 'src/features/doc-annotations.csv'),
-                                   es_feature_mat=esf)
-
-    ioh_train = InputOutputHandler(seqtrain, qtrain)
-    ioh_eval = InputOutputHandler(seqeval, qeval)
-
-    deltr = Deltr(ft, 'DocHLevel', dochlevel_map, gamma=None, num_iter=None)
-    feats_train = deltr._prepare_data(ioh_train)
-    feats_eval = deltr._prepare_data(ioh_eval, has_judgment=False)
-
-    assert len(feats_train) == 2049
-    assert len(feats_eval) == 2161
-
-    assert feats_train.columns.to_list() == ["q_num", "doc_id", "protected",
-                                             "title_score", "abstract_score", "entities_score",
-                                             "venue_score", "journal_score", "authors_score", "inCitations",
-                                             "outCitations",
-                                             "qlength",
-                                             "relevance"]
-    assert feats_eval.columns.to_list() == ["q_num", "doc_id", "protected",
-                                            "title_score", "abstract_score", "entities_score",
-                                            "venue_score", "journal_score", "authors_score", "inCitations",
-                                            "outCitations",
-                                            "qlength"]
-
-    assert set(feats_train.protected.to_list()) == {0, 1}
-    assert set(feats_eval.protected.to_list()) == {0, 1}
-
-    traincounts = Counter(feats_train.protected.to_list())
-    assert traincounts[0] == 1623
-    assert traincounts[1] == 426
-
-    evalcounts = Counter(feats_eval.protected.to_list())
-    assert evalcounts[0] == 1415
-    assert evalcounts[1] == 746
