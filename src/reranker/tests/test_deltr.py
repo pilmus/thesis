@@ -288,7 +288,7 @@ def test_prepare_data_correctly_adds_h_class(doclevel_map):
     ioh_train = InputOutputHandler(seqtrain, qtrain)
     ioh_eval = InputOutputHandler(seqeval, qeval)
 
-    deltr = Deltr(ft, 'DocHLevel', doclevel_map, gamma=1, num_iter=None)
+    deltr = Deltr(ft, 'DocHLevel', doclevel_map, gamma1=1, num_iter=None)
     feats_train = deltr._prepare_data(ioh_train)
     feats_eval = deltr._prepare_data(ioh_eval, has_judgment=False)
 
