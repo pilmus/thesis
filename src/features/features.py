@@ -7,12 +7,17 @@ import utils.io as io
 class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
-    def __init__(self, corpus, fquery, fconfig, init_ltr=True,  feature_mat=None):
-        self.corpus = corpus
-        self.query = io.read_json(fquery)
-        if init_ltr:
-            corpus.init_ltr(fconfig)
-        self.feature_mat = feature_mat
+    def __init__(self, corpus, fquery, fconfig, init_ltr=True, feature_mat=None):
+        if corpus:
+            self.corpus = corpus
+            self.query = io.read_json(fquery)
+            if init_ltr:
+                corpus.init_ltr(fconfig)
+        if feature_mat:
+            self.feature_mat = feature_mat
+        if not feature_mat and not corpus:
+            raise ValueError(
+                f"You must either initialize a corpus, fquery, and fconfig or give a pre-generated feature matrix!")
 
     def __get_features(self, queryterm, doc_ids):
         self.query['query']['bool']['filter'][0]['terms']['_id'] = doc_ids
@@ -26,10 +31,10 @@ class FeatureEngineer:
     def log_field_name(self):
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
-    def get_feature_mat(self, iohandler):
+    def get_feature_mat(self, iohandler, *args, **kwargs):
         print("Getting features...")
         if self.feature_mat:
-            f = pd.read_csv(self.feature_mat,dtype={'doc_id':object})
+            f = pd.read_csv(self.feature_mat, dtype={'doc_id': object})
             qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
             feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right').dropna()
             return feature_mat
@@ -38,7 +43,8 @@ class FeatureEngineer:
             features = iohandler.get_query_seq().groupby('qid').progress_apply(
                 lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
 
-            features = features.reset_index(level=0)  # brings the qid back as a column after having been used to groupby
+            features = features.reset_index(
+                level=0)  # brings the qid back as a column after having been used to groupby
 
             return features
 
@@ -54,13 +60,18 @@ class FeatureEngineer:
         return pd.DataFrame.from_dict(result)
 
 
-class DeltrFeatureEngineer(FeatureEngineer):
-    def __init__(self, corpus, fquery, fconfig, doc_annotations, init_ltr=True, es_feature_mat=None):
-        super(DeltrFeatureEngineer, self).__init__(corpus, fquery, fconfig, init_ltr, es_feature_mat)
-        self.doc_annotations = pd.read_csv(doc_annotations).rename({'id':'doc_id'},axis=1)
+class AnnotationFeatureEngineer(FeatureEngineer):
+    def __init__(self, doc_annotations, corpus=None, fquery=None, fconfig=None, init_ltr=True, es_feature_mat=None):
+        super(AnnotationFeatureEngineer, self).__init__(corpus, fquery, fconfig, init_ltr, es_feature_mat)
+        self.doc_annotations = pd.read_csv(doc_annotations).rename({'id': 'doc_id'}, axis=1)
 
-    def get_feature_mat(self, iohandler):
+    def get_feature_mat(self, iohandler, annotation_features=None,*args,**kwargs):
+        if not annotation_features:
+            annotation_features = ['doc_id']
+        else:
+            annotation_features = ['doc_id'] + annotation_features
         es_features = super().get_feature_mat(iohandler)
-        features = pd.merge(es_features,self.doc_annotations,on='doc_id',how='left')
+        doc_annotations = self.doc_annotations[annotation_features]
+        features = pd.merge(es_features, doc_annotations, on='doc_id', how='left')
         features = features.dropna()
         return features

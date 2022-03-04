@@ -12,7 +12,7 @@ class InputOutputHandler:
     provided Corpus object."""
 
     def __init__(self,
-                 corpus,
+
                  fsequence,
                  fquery):
         """
@@ -25,7 +25,7 @@ class InputOutputHandler:
         generated with eval_sample_annotated.py)
         """
 
-        self.corpus = corpus
+
 
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))

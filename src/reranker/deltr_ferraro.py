@@ -25,7 +25,7 @@ import reranker.model as model
 #         tr._exposure_diff = new_exposure_diff
 #
 #         return tr.train_nn(query_ids, feature_matrix, training_scores)
-from features.features import DeltrFeatureEngineer
+from features.features import AnnotationFeatureEngineer
 
 
 class DeltrWrapper(model.RankerInterface):
@@ -38,7 +38,7 @@ class DeltrWrapper(model.RankerInterface):
                     "in_citations", "journal_score", "out_citations", "title_score",
                     "venue_score", "qlength"]
 
-    def __init__(self, featureengineer: DeltrFeatureEngineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
+    def __init__(self, featureengineer: AnnotationFeatureEngineer, group_file, group_name, standardize=False, alpha=0.25, iter_nums=5):
         """
 
         :param featureengineer:
