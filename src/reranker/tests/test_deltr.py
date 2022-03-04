@@ -45,22 +45,6 @@ def doclevel_map():
     return {'L': 1, 'Mixed': 1, 'H': 0}
 
 
-def test_train_deltr_with_small_sequence(root, ft, doclevel_map):
-    q = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
-    s = 'seq-test-eval-2020-double-first-double-second.tsv'
-
-    pr = 'DocHLevel'
-
-    iter = 5
-    gamma = 0
-    rs = 0
-
-    deltr = Deltr(ft, pr, doclevel_map, gamma, iter, rs)
-
-    ioh = InputOutputHandler(s, q)
-    ft.get_feature_mat(ioh, [pr])
-
-
 def test_gamma_zero_notis_gamma_one_exposure_on_non_protected():
     num_iter = 10
     pr = 'gender'
@@ -139,7 +123,7 @@ def test_deltr_wrapper_same_outcome_as_testing_straight_deltr():
     assert (w1 == w2).all()
 
 
-def test_deltr_wrapper_same_outcome_as_fairsearch_deltr(root,ft,doclevel_map):
+def test_deltr_wrapper_same_training_weights_as_fairsearch_deltr(root, ft, doclevel_map):
     num_iter = 5
     gamma = 1
     rs = 0
@@ -150,8 +134,6 @@ def test_deltr_wrapper_same_outcome_as_fairsearch_deltr(root,ft,doclevel_map):
     deltr = Deltr(ft, pr, doclevel_map, gamma, num_iter, random_state=rs)
     fsdeltr = fairsearchdeltr.Deltr("protected", gamma, num_iter, standardize=True)
 
-
-
     ioh = InputOutputHandler(s, q)
     features = deltr._prepare_data(ioh)
 
@@ -161,9 +143,39 @@ def test_deltr_wrapper_same_outcome_as_fairsearch_deltr(root,ft,doclevel_map):
     assert (w1 == w2).all()
 
 
+def test_deltr_wrapper_same_prediction_as_fairsearch_deltr(root, ft, doclevel_map):
+    num_iter = 1
+    gamma = 1
+    rs = 0
+    qt = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
+    st = 'seq-test-train-2020-double-first-double-second.tsv'
+    qe = os.path.join(root, 'evaluation/2020/TREC-Fair-Ranking-eval-sample.json')
+    se = 'seq-test-eval-2020-double-first-double-second.tsv'
 
+    pr = 'DocHLevel'
 
+    deltr = Deltr(ft, pr, doclevel_map, gamma, num_iter, random_state=rs)
+    fsdeltr = fairsearchdeltr.Deltr("protected", gamma, num_iter, standardize=True)
 
+    ioht = InputOutputHandler(st, qt)
+    featt = deltr._prepare_data(ioht)
+
+    iohe = InputOutputHandler(se, qe)
+    feate = deltr._prepare_data(iohe,has_judgment=False)
+
+    deltr.train(ioht)
+
+    np.random.seed(rs)
+    fsdeltr.train(featt)
+
+    preds = deltr.predict(iohe)
+
+    preds = preds.dropna()
+
+    for sid in [0, 1]:
+        for q_num in [0, 1]:
+            out = fsdeltr.rank(feate[(feate.sid == sid) & (feate.q_num == q_num)][feate.columns[1:]])
+            assert preds[(preds.sid == sid) & (preds.q_num == q_num)].sort_values(by='rank').doc_id.to_list() == out.doc_id.to_list()
 
 
 

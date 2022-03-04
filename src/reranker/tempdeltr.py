@@ -12,7 +12,7 @@ class Deltr(model.RankerInterface):
     Wrapper arround the Deltr algorithm.
     """
 
-    def __init__(self, featureengineer: AnnotationFeatureEngineer, protected_feature, group_mapping, gamma, num_iter,
+    def __init__(self, featureengineer: AnnotationFeatureEngineer, protected_feature, group_mapping, gamma, num_iter=5,
                  random_state=None):
         super().__init__(featureengineer)
         # setup the DELTR object
@@ -29,7 +29,6 @@ class Deltr(model.RankerInterface):
 
     def __apply_grouping(self, value):
         return self.group_mapping[value]
-        # return 1
 
     def _prepare_data(self, inputhandler, has_judgment=True):
         """
@@ -38,31 +37,37 @@ class Deltr(model.RankerInterface):
         column_order = ["q_num", "doc_id", "protected",
                         "title_score", "abstract_score", "entities_score",
                         "venue_score", "journal_score", "authors_score", "inCitations", "outCitations",
-                                                                                        "qlength"]
+                        "qlength"]
 
-        features = self.fe.get_feature_mat(inputhandler, [self.protected_feature])
-        data = inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']]
-        data = pd.merge(data, features, how='left', on=['qid', 'doc_id'])
-
-        data.dropna(inplace=True)  # drop missing values as some doc_ids are not in the corpus
+        x = self.fe.get_feature_mat(inputhandler, [self.protected_feature])
+        y = inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']]
+        x = pd.merge(x, y, how='left', on=['qid', 'doc_id'])
 
         tqdm.pandas()
-        data['protected'] = data[self.protected_feature].progress_apply(self.__apply_grouping)
+        x['protected'] = x[self.protected_feature].progress_apply(self.__apply_grouping)
 
         if not has_judgment:
-            data.drop('relevance', axis=1, inplace=True)
+            x.drop('relevance', axis=1, inplace=True)
+            column_order = ['sid'] + column_order  # if we're in eval mode we're gonna need the sid
         else:
             column_order.append("relevance")
 
-
-        data = data.reindex(columns=column_order)  # protected variables has to be at third position, somehow...
-        return (data.drop_duplicates())
+        x = x.reindex(columns=column_order)  # protected variables has to be at third position, somehow...
+        return (x.drop_duplicates())
 
     def train(self, inputhandler):
         np.random.seed(self.random_state)
         data = self._prepare_data(inputhandler)
         weights = self.dtr.train(data)
         return weights
+
+    def __apply_rank(self, df, has_judgment=False):
+        ranking_columns = df.columns[1:]
+        ranking = self.dtr.rank(df[ranking_columns])
+        assert len(df) == len(ranking)
+        assert (df.protected.to_list() == ranking.protected.to_list())
+        df = pd.merge(df, ranking, on=['doc_id', 'protected'])
+        return df
 
     def _predict(self, inputhandler):
         """
@@ -72,12 +77,13 @@ class Deltr(model.RankerInterface):
         """
 
         data = self._prepare_data(inputhandler, has_judgment=False)
-        data = data.groupby(['sid', 'q_num']).apply(self.dtr.rank, has_judgment=False)
-        data.reset_index(inplace=True, level=0)
+        data = data.groupby(['sid', 'q_num']).apply(self.__apply_rank, has_judgment=False)
+        data.reset_index(inplace=True, drop=True)
         data['rank'] = data.groupby(['sid', 'q_num'])['judgement'].apply(pd.Series.rank, ascending=False,
                                                                          method='first')
 
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], data,
-                        how='left', on=['sid', 'q_num', 'doc_id'])
+                        how='left', on=['sid', 'q_num',
+                                        'doc_id'])  # query seq is in first here b/c we want to rank each item for each query
 
         return pred

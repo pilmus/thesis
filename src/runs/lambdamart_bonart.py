@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 # import src.evaluation.validate_run as validate
 from interface.corpus import Corpus
-from interface.features import FeatureEngineer
+from features.features import FeatureEngineer
 from interface.iohandler import InputOutputHandler
 from reranker.lambdamart import LambdaMartYear, LambdaMartRandomization
 
@@ -16,7 +16,7 @@ for i in range(0, 1):
     for rs in [0]:
         # for strat in [None, 'avg', 'dropzero']:
         for strat in [None]: # strat applies to missing year imputation strategy
-            for fm in ['src/interface/es-features-bonart-sample-cleaned-2019.csv']:
+            for fm in ['src/features/es-features-bonart-sample-cleaned-2019.csv']:
                 for ts in [
                     'training-sequence-full.tsv',
                 ]:
@@ -33,16 +33,16 @@ for i in range(0, 1):
                     ft = FeatureEngineer(corpus, fquery='config/featurequery_bonart.json',
                                          fconfig='config/features_bonart.json',feature_mat=fm)
 
-                    input_train = InputOutputHandler(corpus,
+                    input_train = InputOutputHandler(
                                                      fsequence=SEQUENCE_TRAIN,
                                                      fquery=QUERIES_TRAIN)
 
-                    input_test = InputOutputHandler(corpus,
+                    input_test = InputOutputHandler(
                                                     fsequence=SEQUENCE_EVAL,
                                                     fquery=QUERIES_EVAL)
 
-                    # lambdamart = LambdaMartYear(ft, random_state=rs, missing_value_strategy=strat)
-                    lambdamart = LambdaMartRandomization(ft, random_state=0)
+                    lambdamart = LambdaMartYear(ft, random_state=rs, missing_value_strategy=strat)
+                    # lambdamart = LambdaMartRandomization(ft, random_state=0)
                     lambdamart.train(input_train)
                     lambdamart.predict(input_test)
 
