@@ -10,7 +10,7 @@ import fairsearchdeltr
 from features.features import AnnotationFeatureEngineer
 from interface.corpus import Corpus
 from interface.iohandler import InputOutputHandler
-from reranker.tempdeltr import Deltr
+from reranker.deltr import Deltr
 
 
 class TestingDeltr(Deltr):
@@ -124,7 +124,7 @@ def test_deltr_wrapper_same_outcome_as_testing_straight_deltr():
 
 
 def test_deltr_wrapper_same_training_weights_as_fairsearch_deltr(root, ft, doclevel_map):
-    num_iter = 5
+    num_iter = 10
     gamma = 1
     rs = 0
     q = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
@@ -143,8 +143,83 @@ def test_deltr_wrapper_same_training_weights_as_fairsearch_deltr(root, ft, docle
     assert (w1 == w2).all()
 
 
+def test_deltr_wrapper_two_rankers_one_gamma_same_training_weights(root, ft, doclevel_map):
+    num_iter = 10
+    gamma1 = 1
+    gamma2 = gamma1
+    rs = 0
+    qt = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
+    st = 'seq-test-train-2020-double-first-double-second.tsv'
+
+    pr = 'DocHLevel'
+
+    deltr = Deltr(ft, pr, doclevel_map, gamma1, num_iter, random_state=rs, gamma2=gamma2, alpha=0.5)
+
+    ioht = InputOutputHandler(st, qt)
+
+    w1, w2 = deltr.train(ioht)
+
+    assert (w1 == w2).all()
+
+
+class TestingDoubleDeltr(Deltr):
+    def _prepare_data(self, data, has_judgment=False):
+        return data
+
+
+def test_deltr_wrapper_two_rankers_two_gammas_different_training_weights(root, ft, doclevel_map):
+    num_iter = 10
+    gamma1 = 0
+    gamma2 = 1
+    rs = 0
+    qt = 'sample-test-2020-train-flipped-rels-for-deltr.json'
+    st = 'seq-test-train-2020-double-first-double-second.tsv'
+
+    train_data_raw = """q_id,doc_id,protected,score,judgment
+                      1,1,0,0.962650646167003,1
+                      1,2,1,0.940172822166108,0.1
+                      """
+    train_data = pd.read_csv(StringIO(train_data_raw))
+
+    deltr = TestingDoubleDeltr(ft, "gender", doclevel_map, gamma1, num_iter, random_state=rs, gamma2=gamma2, alpha=0.5)
+
+    w1, w2 = deltr.train(train_data)
+
+    assert (w1 != w2).all()
+
+
+def test_deltr_wrapper_two_rankers_two_gammas_half_alpha_merge_rankings(root, ft, doclevel_map):
+    num_iter = 10
+    gamma1 = 0
+    gamma2 = 1
+    rs = 0
+
+    train_data_raw = """q_id,doc_id,protected,score,judgment
+                         1,1,0,0.962650646167003,1
+                         1,2,1,0.940172822166108,0.1
+                         """
+    train_data = pd.read_csv(StringIO(train_data_raw))
+
+    prediction_data_raw = """sid,q_num,doc_id,protected,score
+            0,1,7,0,0.9645
+            0,1,8,0,0.9524
+            0,1,9,0,0.9285
+            0,1,10,0,0.8961
+            0,1,11,1,0.8911
+            0,1,12,1,0.8312
+            """
+    prediction_data = pd.read_csv(StringIO(prediction_data_raw))
+
+    deltr = TestingDoubleDeltr(ft, "gender", doclevel_map, gamma1, num_iter, random_state=rs, gamma2=gamma2, alpha=0.5)
+
+    w1, w2 = deltr.train(train_data)
+    deltr.predict(prediction_data)
+
+    assert (w1 != w2).all()
+
+
 def test_deltr_wrapper_same_prediction_as_fairsearch_deltr(root, ft, doclevel_map):
-    num_iter = 1
+    num_iter = 10
     gamma = 1
     rs = 0
     qt = os.path.join(root, 'training/2020/TREC-Fair-Ranking-training-sample.json')
@@ -353,6 +428,46 @@ def test_fairsearchdeltr_github_example_works():
     1,9,0,0.9285
     1,10,0,0.8961
     1,11,1,0.8911
+    1,12,1,0.8312
+    """
+    prediction_data = pd.read_csv(StringIO(prediction_data_raw))
+
+    # use the model to rank the data
+    res = dtr.rank(prediction_data)
+    assert res.doc_id.to_list() == [11, 12, 7, 8, 9, 10]
+
+
+def test_fairsearchdeltr_eval_data_with_missing_groups():
+    np.random.seed(0)
+    # load some train data (this is just a sample - more is better)
+    train_data_raw = """q_id,doc_id,gender,score,judgment
+        1,1,1,0.962650646167003,1
+        1,2,0,0.940172822166108,0.98
+        1,3,0,0.925288002880488,0.96
+        1,4,1,0.896143226020877,0.94
+        1,5,0,0.89180775633204,0.92
+        1,6,0,0.838704766545679,0.9
+        """
+    train_data = pd.read_csv(StringIO(train_data_raw))
+
+    # setup the DELTR object
+    protected_feature = "gender"  # column name of the protected attribute (index after query and document id)
+    gamma = 1  # value of the gamma parameter
+    number_of_iterations = 10  # number of iterations the training should run
+    standardize = True  # let's apply standardization to the features
+
+    # create the Deltr object
+    dtr = fairsearchdeltr.Deltr(protected_feature, gamma, number_of_iterations, standardize=standardize)
+
+    # train the model
+    dtr.train(train_data)
+
+    prediction_data_raw = """q_id,doc_id,gender,score
+    1,7,,0.9645
+    1,8,0,0.9524
+    1,9,,0.9285
+    1,10,0,0.8961
+    1,11,,0.8911
     1,12,1,0.8312
     """
     prediction_data = pd.read_csv(StringIO(prediction_data_raw))

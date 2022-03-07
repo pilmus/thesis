@@ -36,7 +36,7 @@ class FeatureEngineer:
         if self.feature_mat:
             f = pd.read_csv(self.feature_mat, dtype={'doc_id': object})
             qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
-            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right').dropna()
+            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'])
             return feature_mat
         else:
             tqdm.pandas()

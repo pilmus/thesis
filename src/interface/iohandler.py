@@ -7,25 +7,19 @@ import utils.io as io
 
 
 class InputOutputHandler:
-    """Interface between the provided training data and other modules. 
-    When initialized author information for each doc is fetched from the database via the
-    provided Corpus object."""
+    """Interface between the provided training data and other modules. """
 
     def __init__(self,
-
                  fsequence,
                  fquery):
         """
 
-        :param corpus:
         :param fsequence: training query sequence (e.g. training-sequence.tsv)
         :param fquery: training queries (e.g. fair-TREC-training-sample.json)
         :param fgroup: grouping file mapping a certain entity to a group. This can be author-to-group as in
         fair-TREC-sample-author-groups.csv or docid-to-group as in TREC-Fair-Ranking-eval-sample-groups.csv (
         generated with eval_sample_annotated.py)
         """
-
-
 
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
