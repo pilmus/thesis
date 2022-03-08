@@ -25,14 +25,14 @@ def f(x, k=0.7):
     return k * x
 
 
-def targexp_per_relgrade(N, s, gamma=0.5, u=0.7):
+def targexp_per_relgrade(N, s, gamma=0.5, k=0.7):
     """
     Compute the expected exposure for relevant and nonrelevant items given the total ranking length and the number of relevant documents in the ranking.
 
     :param N: The total ranking length.
     :param s: The number of relevant items in the ranking.
     :param gamma: The patience parameter.
-    :param u: The utility function. This is set to a single value because it is the value of k*x, where k=0.7 and x is
+    :param k: The utility function. This is set to a single value because it is the value of k*x, where k=0.7 and x is
     the relevance grade. Since we are working with binary relevance, this value will be either 0.7 or 0. In all
     situations where it would be 0, the expression it is in reduces to "1" in a multiplication, so it cancels out.
 
@@ -46,19 +46,31 @@ def targexp_per_relgrade(N, s, gamma=0.5, u=0.7):
             if s == 0:
                 targexp = 0
             else:
-                targexp = (1 - gamma ** s * (1 - u) ** s) / (s(1 - gamma * (1 - u)))
+                targexp = (1 - gamma ** s * (1 - k) ** s) / (s(1 - gamma * (1 - k)))
         elif rel == 0:
             if s == N:
                 targexp = 0
             else:
-                targexp = ((1 - u) ** s * (gamma ** s - gamma ** N)) / ((N - s) * (1 - gamma))
+                targexp = ((1 - k) ** s * (gamma ** s - gamma ** N)) / ((N - s) * (1 - gamma))
         else:
             raise ValueError(f'Only binary relevance supported.')
         targetExposurePerRelevanceLevel[rel] = targexp
     return targetExposurePerRelevanceLevel
 
 
-def targexp_document(document, rhos, mus, vs, N): #rhos do not have to be sorted
+def actexp_document(docid, rankdf, rhos, gamma=0.5, k=0.7):
+    rankpos = rankdf[rankdf.document == docid].iloc[0]['rank']
+
+    actexp = gamma ** (rankpos - 1)
+    for i in range(1, rankpos + 1):
+        doc_at_rank = rankdf[rankdf.rank == i].iloc[0]['document']
+        rho_at_rank = rhos[doc_at_rank]
+        actexp *= (1 - f(rho_at_rank, k=k))
+
+    return actexp
+
+
+def targexp_document(document, rhos, mus, vs, N):  # rhos do not have to be sorted
     rho = rhos[document]
 
     poibin_params = [v for k, v in rhos.items() if not k == document]
@@ -67,10 +79,6 @@ def targexp_document(document, rhos, mus, vs, N): #rhos do not have to be sorted
     for s in range(0, N):
         targexp += pb.pmf(s) * (rho * mus[s + 1] + (1 - rho) * vs[s])
     return targexp
-
-
-def actexp_document(docid, ranking, rhos):
-    pass
 
 
 #
@@ -121,63 +129,20 @@ def advantage_mean(authors, author_advantages):
     return sum([author_advantages[author] for author in authors]) / len(authors)
 
 
-def controller(sequence, rhos, theta):
-    qid = sequence.iloc[0].qid
-    sid = sequence.iloc[0].sid
-    docs = queries[queries.qid == qid]
-    #
-    # authors = load_author_list()
-    # documents = load_doclist()
-    docids = docs.doc_id.drop_duplicates().to_list()
-    author_to_doc_mapping, doc_to_author_mapping = sample_files_author_doc_mappings(docids)
-    authors = list(author_to_doc_mapping.keys())
-
-    # initialize advantage dict for all producers (id to advantage mapping)
-    author_advantages = {author_id: 0 for author_id in authors}
-
-    # initialize target expected exposure dict for all producers
-    author_targ_exps = {author_id: 0 for author_id in authors}
-
-    # initialize actual expected exposure dict for all producers
-    author_real_exps = {author_id: 0 for author_id in authors}
-
-    # initialize advantage dict for all documents (size = # docs x # iterations in sequence)
-    doc_advantages = np.zeros((len(sequence), len(docids)))
-
-    theta_mat = np.matrix([[theta], [1 - theta]])
-
-    for t in range(0, len(sequence)):
-        # for each document get the producers, take mean of the producer advantages (def advantage_mean(producer_advs))
-        for doc in docids:
-            doc_advantages[t][doc] = advantage_mean(doc_to_author_mapping[doc], author_advantages)
-
-        # compute the controller scores (h) --> don't have to save these, are re-computed each iteration (h[i,t] = theta * rho[i] +(1-theta)*Adv[i,t], i is the doc num)
-        cscores_term1 = np.vstack((rhos, -doc_advantages[t])).T
-        controller_scores = np.dot(cscores_term1, theta_mat)
-
-        # sort documents by computed h-scores, save ranking in later output df
-
-        for author in authors:
-            author_targ_exps[author][t] +=
-        # foreach producer
-        # # update actual expected exposure (AEE[p,t] = AEE[p,t-1] + )
-        # # update target expected exposure
-        # # update producer advantages ()
-        continue
-
-    pass
-
-
 def producer_advantage(actexp, targexp):
     expdiff = actexp - targexp
     return (expdiff ** 2) * math.copysign(1, expdiff)
 
 
+def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping,
+                     theta=0.9, gamma=0.5, k=0.7):
+    producers = list(producer_to_doc_mapping.keys())
+    documents = list(doc_to_producer_mapping.keys())
 
-def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping, producer_to_document_mapping, rhos,
-                     theta):
+    N = len(documents)
+    mus, vs = mus_vs(N)
+
     producer_advantages = {producer: [] for producer in producers}
-
     document_advantages = {document: [] for document in documents}
 
     producer_actual_expected_exposure = {producer: [] for producer in producers}
@@ -188,7 +153,7 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
         producer_actual_expected_exposure[producer][0] = 0
         producer_target_expected_exposure[producer][0] = 0
 
-    sequence_pd = pd.DataFrame(columns=['q_num', 'document', 'score', 'rank'])
+    sequence_df = pd.DataFrame(columns=['q_num', 'document', 'score', 'rank'])
 
     for t in range(1, 151):
         for document in documents:
@@ -204,15 +169,15 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
         hscore_df['rank'] = hscore_df.score.progress_apply(pd.Series.rank, ascending=False,
                                                            method='first')
 
-        sequence_pd = sequence_pd.append(hscore_df)
+        sequence_df = sequence_df.append(hscore_df)
         for producer in producers:
-            prod_docs = producer_to_document_mapping[producer]
+            prod_docs = producer_to_doc_mapping[producer]
             overlaplist = [doc for doc in prod_docs if doc in documents]
             new_actual_exp = 0
             new_target_exp = 0
             for doc in overlaplist:
-                new_actual_exp += actualexp_document()
-                new_target_exp += targexp_document()
+                new_actual_exp += actexp_document(doc, hscore_df, rhos, gamma, k)
+                new_target_exp += targexp_document(doc, rhos, mus, vs, N)
 
             producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[t - 1] + new_actual_exp
             producer_target_expected_exposure[producer][t] = producer_target_expected_exposure[t - 1] + new_target_exp
@@ -220,6 +185,7 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
             producer_advantages[producer][t + 1] = producer_advantages[producer][t] + [
                 producer_advantage(producer_actual_expected_exposure[producer][t],
                                    producer_target_expected_exposure[producer][t])]
+    return sequence_df
 
 
 if __name__ == '__main__':
@@ -230,4 +196,4 @@ if __name__ == '__main__':
 
     qseq = ioh.get_query_seq()
 
-    controller(qseq[qseq.sid == 0])
+    naive_controller(qseq[qseq.sid == 0])
