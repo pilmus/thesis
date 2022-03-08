@@ -1,3 +1,4 @@
+import math
 import sys
 
 import numpy as np
@@ -57,9 +58,10 @@ def targexp_per_relgrade(N, s, gamma=0.5, u=0.7):
     return targetExposurePerRelevanceLevel
 
 
-def targexp_document(i, rhos, mus, vs, N):
-    rho = rhos[i]
-    poibin_params = rhos[:i] + rhos[i + 1:]
+def targexp_document(document, rhos, mus, vs, N): #rhos do not have to be sorted
+    rho = rhos[document]
+
+    poibin_params = [v for k, v in rhos.items() if not k == document]
     pb = PoiBin(poibin_params)
     targexp = 0
     for s in range(0, N):
@@ -166,10 +168,14 @@ def controller(sequence, rhos, theta):
     pass
 
 
-THETA = 0.3
+def producer_advantage(actexp, targexp):
+    expdiff = actexp - targexp
+    return (expdiff ** 2) * math.copysign(1, expdiff)
 
 
-def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping, rhos):
+
+def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping, producer_to_document_mapping, rhos,
+                     theta):
     producer_advantages = {producer: [] for producer in producers}
 
     document_advantages = {document: [] for document in documents}
@@ -182,9 +188,7 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
         producer_actual_expected_exposure[producer][0] = 0
         producer_target_expected_exposure[producer][0] = 0
 
-    theta_mat = np.matrix([[THETA], [1 - THETA]])
-
-    sequence_pd = pd.DataFrame(columns=['q_num','document','score','rank'])
+    sequence_pd = pd.DataFrame(columns=['q_num', 'document', 'score', 'rank'])
 
     for t in range(1, 151):
         for document in documents:
@@ -193,12 +197,14 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
 
         hscores = {}
         for document in documents:
-            hscores[document] = THETA * rhos[document] - (1 - THETA) * document_advantages[document]
+            hscores[document] = theta * rhos[document] - (1 - theta) * document_advantages[document]
 
-        hscore_df = pd.DataFrame({'q_num':t-1,'document': list(hscores.keys()), 'score': list(hscores.values())})
+        hscore_df = pd.DataFrame({'q_num': t - 1, 'document': list(hscores.keys()), 'score': list(hscores.values())})
         tqdm.pandas()
         hscore_df['rank'] = hscore_df.score.progress_apply(pd.Series.rank, ascending=False,
                                                            method='first')
+
+        sequence_pd = sequence_pd.append(hscore_df)
         for producer in producers:
             prod_docs = producer_to_document_mapping[producer]
             overlaplist = [doc for doc in prod_docs if doc in documents]
@@ -211,7 +217,7 @@ def naive_controller(sequence_id, producers, documents, doc_to_producer_mapping,
             producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[t - 1] + new_actual_exp
             producer_target_expected_exposure[producer][t] = producer_target_expected_exposure[t - 1] + new_target_exp
 
-            producer_advantages[producer][t+1] = producer_advantages[producer][t] + [
+            producer_advantages[producer][t + 1] = producer_advantages[producer][t] + [
                 producer_advantage(producer_actual_expected_exposure[producer][t],
                                    producer_target_expected_exposure[producer][t])]
 
