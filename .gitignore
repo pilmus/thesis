@@ -32,3 +32,6 @@ indexed_files_*.txt
 *.tsv
 
 corpus-subset-for-queries.jsonl
+
+
+.~lock*
