@@ -27,15 +27,14 @@ from klettirenders.poibin.poibin import PoiBin
 
 
 def mus_vs_matrix(Nmin, Nmax, gamma=0.5, u=0.7):
-    mus = np.zeros(Nmax+1)
-    vs = np.zeros((Nmax+1, Nmax+1))
-    for N in range(Nmin, Nmax+1):
+    mus = np.zeros(Nmax + 1)
+    vs = np.zeros((Nmax + 1, Nmax + 1))
+    for N in range(Nmin, Nmax + 1):
         for s in range(0, N + 1):
-            # targexp_rel, targexp_irrel = targexp_per_relgrade(N, s, gamma, u)
-            # mus[N][s] = targexp_rel
-            vs[N][s] = targexp_irrel(N,s,gamma,u)
-    for s in range(0,Nmax + 1):
-        mus[s] = targexp_rel(s,gamma,u)
+            vs[N][s] = targexp_irrel(N, s, gamma, u)
+
+    for s in range(0, Nmax + 1):
+        mus[s] = targexp_rel(s, gamma, u)
     return mus, vs
 
 
@@ -43,13 +42,14 @@ def f(x, k=0.7):
     return k * x
 
 
-def targexp_rel(s,gamma=0.5,k=0.7):
+def targexp_rel(s, gamma=0.5, k=0.7):
     val = 0
     if s != 0:
         val = (1 - gamma ** s * (1 - k) ** s) / (s * (1 - gamma * (1 - k)))
     return val
 
-def targexp_irrel(N,s,gamma=0.5,k=0.7):
+
+def targexp_irrel(N, s, gamma=0.5, k=0.7):
     val = 0
     if s != N:
         val = ((1 - k) ** s * (gamma ** s - gamma ** N)) / ((N - s) * (1 - gamma))
@@ -71,10 +71,7 @@ def targexp_per_relgrade(N, s, gamma=0.5, k=0.7):
     grade
     """
 
-
-    return targexp_rel(s,gamma,k), targexp_irrel(N,s,gamma,k)
-
-
+    return targexp_rel(s, gamma, k), targexp_irrel(N, s, gamma, k)
 
 
 def actexp_document(docid, rankdf, rhos, gamma=0.5, k=0.7):
@@ -95,14 +92,16 @@ def actexp_documents(rankdf, rhos, gamma=0.5, k=0.7):
     actexps = {}
     for i in range(len(rankdf)):
         row = rankdf.iloc[i]
+        doc_at_rank = row.document
+        rho_at_rank = rhos[doc_at_rank]
+        factor = (1 - f(rho_at_rank, k=k))
+        mult_factors[i] = factor
         if i == 0:
-            mult_factors[i] = 1
+            actexps[row.document] = 1
         else:
-            doc_at_rank = row.document
-            rho_at_rank = rhos[doc_at_rank]
-            factor = (1 - f(rho_at_rank, k=k))
-            mult_factors[i] = factor
-        actexps[row.document] = gamma ** i * reduce(lambda x, y: x * y, mult_factors[0:i + 1])
+            prob_user_already_satisfied = reduce(lambda x, y: x * y, mult_factors[0:i])
+            prob_user_gives_up = gamma ** i
+            actexps[row.document] = prob_user_gives_up * prob_user_already_satisfied
 
     return actexps
 
@@ -139,7 +138,8 @@ def advantage_mean(producers, producer_advantages, t):
 
 def producer_advantage(actexp, targexp):
     expdiff = actexp - targexp
-    return (expdiff ** 2) * math.copysign(1, expdiff)
+    new_adv = (expdiff ** 2) * math.copysign(1, expdiff)
+    return new_adv
 
 
 def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus_all, vs_all,
@@ -153,10 +153,11 @@ def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus
     mus = mus_all
     vs = vs_all[N][:N + 1]
 
-    producer_advantages = {producer: [0] * 151 for producer in producers}
+    producer_advantages = {producer: [0] * 152 for producer in producers}
 
-    producer_actual_expected_exposure = {producer: [0] * 150 for producer in producers}
-    producer_target_expected_exposure = {} # target expected exposure doesn't depend on the actual ranking
+    producer_actual_expected_exposure = {producer: [0] * 151 for producer in producers}
+
+    document_advantages = {document: [0] * 151 for document in documents}
 
     print("Initializing target expected experience per document...")
     targexp_documents = {}
@@ -166,6 +167,7 @@ def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus
 
     print("Initializing producer advantage, actual expected exposure, target_expected_exposure...")
     # for producer in tqdm(producers):
+    producer_target_expected_exposure = {}  # target expected exposure doesn't depend on the actual ranking
     for producer in producers:
         producer_doclist = producer_to_doc_mapping[producer]
         producer_target_expected_exposure[producer] = sum([targexp_documents[doc] for doc in producer_doclist])
@@ -173,24 +175,24 @@ def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus
     sequence_df = pd.DataFrame(columns=['q_num', 'document', 'score', 'rank'])
 
     # for t in tqdm(range(0, 150)):
-    for t in range(0, 150):
+    for t in range(1, 151):
         print("Computing doc advantages...")
         t0 = time.time()
-        document_advantages = {}
+
         for document in documents:
             doc_producers = doc_to_producer_mapping[document]
-            document_advantages[document] = advantage_mean(doc_producers, producer_advantages, t)
+            document_advantages[document][t] = advantage_mean(doc_producers, producer_advantages, t)
         t1 = time.time()
         print(f"Doc advantages took {round(t1 - t0, 2)}s.")
 
         print("Computing hscores...")
         hscores = {}
         for document in documents:
-            hscores[document] = theta * rhos[document] + (1 - theta) * document_advantages[document]
+            hscores[document] = theta * rhos[document] - (1 - theta) * document_advantages[document][t]
         t2 = time.time()
         print(f"Hscores took {round(t2 - t1, 2)}s.")
 
-        hscore_df = pd.DataFrame({'q_num': t, 'document': list(hscores.keys()), 'score': list(hscores.values())})
+        hscore_df = pd.DataFrame({'q_num': t-1, 'document': list(hscores.keys()), 'score': list(hscores.values())})
         # tqdm.pandas()
         # according to text: ties broken randomly
         hscore_df['rank'] = hscore_df.score.rank(method='first', ascending=False)
@@ -199,7 +201,6 @@ def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus
         updated_doc_actexp = actexp_documents(hscore_df, rhos, gamma, k)
         t25 = time.time()
         print(f"Updating actual expected exposures for documents took {round(t25 - t2, 2)}s.")
-
 
         print("Updating expected exposures and advantages...")
         for producer in producers:
@@ -211,11 +212,12 @@ def naive_controller(rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus
                 new_actual_exp += updated_doc_actexp[doc]
                 # new_target_exp += targexp_documents[doc]
 
-            producer_actual_expected_exposure[producer][t] = new_actual_exp
+            producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[producer][
+                                                                 t - 1] + new_actual_exp
             # producer_target_expected_exposure[producer][t] = new_target_exp
 
-            producer_advantages[producer][t + 1] = producer_advantages[producer][t] + producer_advantage(
-                producer_actual_expected_exposure[producer][t], producer_target_expected_exposure[producer])
+            producer_advantages[producer][t + 1] = producer_advantage(producer_actual_expected_exposure[producer][t],
+                                                                      t * producer_target_expected_exposure[producer])
         t3 = time.time()
         print(f"Expeval etc. update took {round(t3 - t2, 2)}s.")
         sequence_df = sequence_df.append(hscore_df)
@@ -263,7 +265,8 @@ def author_doc_mapping(doc_author_mapping):
 
 def main():
     # queries = concat_sample_files()
-    seq = 'evaluation/2020/TREC-Fair-Ranking-eval-full-seq.tsv'
+    # seq = 'evaluation/2020/TREC-Fair-Ranking-eval-seq-first-q-only.tsv'
+    seq = 'evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv'
     q = 'evaluation/2020/TREC-Fair-Ranking-eval-sample.json'
     ioh = IOHandlerKR(seq, q)
 
@@ -305,12 +308,13 @@ def main():
     outdf = outdf[['sid', 'q_num', 'document', 'score', 'rank']]
     qseq = ioh.get_query_seq()[['sid', 'q_num', 'qid']]
     submission = pd.merge(outdf, qseq, on=['sid', 'q_num'], how='inner').drop_duplicates()
-    submission = submission.groupby(['sid', 'q_num', 'qid']).apply(lambda df: pd.Series({'ranking': df['document']}))
+    tqdm.pandas()
+    submission = submission.sort_values(by=['sid','q_num','rank']).groupby(['sid', 'q_num', 'qid']).progress_apply(lambda df: pd.Series({'ranking': df['document']}))
     submission = submission.reset_index()
     q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
     submission['q_num'] = q_num
     submission = submission.drop('sid', axis=1)
-    submission.to_json("nle_meta_9.json", orient='records', lines=True)
+    submission.to_json("nle_meta_9_evaluation_fix_output.json", orient='records', lines=True)
 
 
 if __name__ == '__main__':
