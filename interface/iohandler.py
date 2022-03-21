@@ -66,3 +66,22 @@ class InputOutputHandler:
         submission['q_num'] = q_num
         submission.drop('sid', axis=1, inplace=True)
         submission.to_json(outfile, orient='records', lines=True)
+
+
+class IOHandlerKR(InputOutputHandler):
+    def __init__(self, fsequence,
+                 fquery):
+        super(IOHandlerKR, self).__init__(fsequence, fquery)
+        self.seq = self.__read_sequence(fsequence)
+
+    def __read_sequence(self, fsequence):
+        df = pd.read_csv(fsequence, names=["sid", "q_num", "qid"], sep='^|\.|,', engine='python')
+        if df.sid.isnull().all():
+            df = pd.concat([df] * 150).sort_values(by='q_num')
+            df['sid'] = df['q_num']
+            df = df.groupby('qid', as_index=False).apply(lambda df: df.reset_index(drop=True).reset_index())
+            df = df.drop('q_num', axis=1)
+            df = df.rename({'index': 'q_num'}, axis=1)
+            df = df.astype({'sid': int})
+            df = df[['sid', 'q_num', 'qid']].sort_values(by=['sid', 'q_num'])
+        return df.reset_index(drop=True)

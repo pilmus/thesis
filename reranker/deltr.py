@@ -7,7 +7,7 @@ from fairsearchdeltr.deltr import prepare_data
 from fairsearchdeltr.trainer import Trainer, topp_prot, find_items_per_group_per_query, normalized_exposure
 from tqdm import tqdm
 
-import src.reranker.model as model
+import reranker.model as model
 from features.features import AnnotationFeatureEngineer
 
 

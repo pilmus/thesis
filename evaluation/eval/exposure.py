@@ -58,6 +58,8 @@ def expected(permutations, qrels, umType, p, u):
                 e_i = p ** (i)
             elif (umType == "gerr"):
                 e_i = p ** (i) * (1.0 - u) ** (relret)
+            else:
+                raise ValueError(f"Invalid umType specified:{umType}.")
 
             exposures[did] += (e_i / numSamples)
             if (did in qrels) and (qrels[did] > 0):
@@ -94,15 +96,15 @@ def target(qrels, umType, p, u, complete):
             relevanceLevelAccumulators[rel] = 1
     for k, v in relevanceLevelAccumulators.items():
         relevanceLevels.append([k, v])
-    relevanceLevels.sort(reverse=True)  # reverse == true so sort in descending order
+    relevanceLevels.sort(reverse=True)  # reverse == true to sort in desc order, so higher rels first
     #
     # compute { relevanceLevel : exposure }
     #
     b = 0  # numDominating
     targetExposurePerRelevanceLevel = {}
     for i in range(len(relevanceLevels)):
-        g = relevanceLevels[i][0]
-        m = relevanceLevels[i][1]
+        g = relevanceLevels[i][0] # rellevel
+        m = relevanceLevels[i][1] # num of docs of this level
         if (umType == "rbp"):
             te_g = (p ** (b) - p ** (b + m)) / (m * (1.0 - p))
         elif (umType == "gerr"):

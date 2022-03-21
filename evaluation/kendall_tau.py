@@ -9,7 +9,9 @@ tqdm.pandas()
 
 def compare_items_in_rankings(runfile1, runfile2):
     """Check if rankings contain same items for each qnum/qid combination."""
+    print(runfile1)
     df1 = pd.read_json(runfile1, lines=True, dtype={'q_num': str, 'qid': int})
+    print(runfile2)
     df2 = pd.read_json(runfile2, lines=True, dtype={'q_num': str, 'qid': int})
 
     df = pd.merge(df1, df2, on=['q_num', 'qid'], suffixes=['_1', '_2'])
@@ -49,14 +51,14 @@ def kendalls_taus(runfile1, runfile2):
 
 def main():
     parser = argparse.ArgumentParser(description='compare runs with kendalls tau correlation')
-    parser.add_argument('-b','--file1', dest='basefile', help='first file with runs')
-    parser.add_argument('-c','--file2', dest='compfile', help='second file with runs')
+    parser.add_argument('-b', '--file1', dest='basefile', help='first file with runs')
+    parser.add_argument('-c', '--file2', dest='compfile', help='second file with runs')
     parser.add_argument('-m', '--mean', dest='mean', action='store_true', help='print only the mean KT')
     args = parser.parse_args()
 
     basefile = args.basefile
     compfile = args.compfile
-    assert compare_items_in_rankings(basefile,compfile) == True
+    assert compare_items_in_rankings(basefile, compfile)
 
     ktdf = kendalls_taus(basefile, compfile)
     print(ktdf.kt_tau.mean())

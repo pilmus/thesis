@@ -245,11 +245,17 @@ def doc_to_author_mapping_from_es(docids, outfile):
     return mapping
 
 
-def get_doc_to_author_mapping(docids, mapping_file):
+def get_doc_to_author_mapping(docids, mapping_file,no_author_anonymous=False):
     with open(mapping_file) as fp:
         stored_mapping = json.load(fp)
-    mapping = {doc: stored_mapping.get(doc, []) for doc in docids}
+
+    if no_author_anonymous:
+        mapping = {doc: stored_mapping.get(doc, ['anonymous']) for doc in docids}
+    else:
+        mapping = {doc: stored_mapping.get(doc, []) for doc in docids}
+
     return mapping
+
 
 
 def author_doc_mapping(doc_author_mapping):
@@ -270,51 +276,54 @@ def main():
     q = 'evaluation/2020/TREC-Fair-Ranking-eval-sample.json'
     ioh = IOHandlerKR(seq, q)
 
-    estimated_relevances = pd.read_csv('klettirenders/relevances/Evaluation_rel_scores_model_A.csv')
-    qseq_with_relevances = pd.merge(ioh.get_query_seq(), estimated_relevances, on=['qid', 'doc_id', ],
-                                    how='left').sort_values(by=['sid', 'q_num']).reset_index(drop=True)
+    rel_scores = [('meta','klettirenders/relevances/Evaluation_rel_scores_model_A.csv'),('text','klettirenders/relevances/Evaluation_rel_scores_model_B.csv')]
+    for letter, rel_score in rel_scores:
+        for theta in [0.9,0.99]:
+            estimated_relevances = pd.read_csv(rel_score)
+            qseq_with_relevances = pd.merge(ioh.get_query_seq(), estimated_relevances, on=['qid', 'doc_id', ],
+                                            how='left').sort_values(by=['sid', 'q_num']).reset_index(drop=True)
 
-    # set the est relevance of each item that doesn't have an estimated relevance to 0
-    qseq_with_relevances = qseq_with_relevances.fillna(0)
+            # set the est relevance of each item that doesn't have an estimated relevance to 0
+            qseq_with_relevances = qseq_with_relevances.fillna(0)
 
-    docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
-    doc_to_author_mapping = get_doc_to_author_mapping(docids, 'klettirenders/mappings/evaluation_doc_to_author.json')
+            docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
+            doc_to_author_mapping = get_doc_to_author_mapping(docids, 'klettirenders/mappings/evaluation_doc_to_author.json',no_author_anonymous=True)
 
-    assert len(doc_to_author_mapping) == len(ioh.get_query_seq().doc_id.drop_duplicates())
+            assert len(doc_to_author_mapping) == len(ioh.get_query_seq().doc_id.drop_duplicates())
 
-    outdf = pd.DataFrame(columns=['sid', 'q_num', 'document', 'score', 'rank'])
+            outdf = pd.DataFrame(columns=['sid', 'q_num', 'document', 'score', 'rank'])
 
-    Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
-    Nmax = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().max()
+            Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
+            Nmax = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().max()
 
-    mus, vs = mus_vs_matrix(Nmin, Nmax)
+            mus, vs = mus_vs_matrix(Nmin, Nmax)
 
-    sids = qseq_with_relevances.sid.drop_duplicates().to_list()
-    for sid in tqdm(sids):
-        subdf = qseq_with_relevances[qseq_with_relevances.sid == sid]
+            sids = qseq_with_relevances.sid.drop_duplicates().to_list()
+            for sid in tqdm(sids):
+                subdf = qseq_with_relevances[qseq_with_relevances.sid == sid]
 
-        subdocids = subdf.doc_id.drop_duplicates().to_list()
-        sub_doc_to_author_mapping = {k: v for k, v in doc_to_author_mapping.items() if k in subdocids}
-        sub_author_to_doc_mapping = author_doc_mapping(sub_doc_to_author_mapping)
+                subdocids = subdf.doc_id.drop_duplicates().to_list()
+                sub_doc_to_author_mapping = {k: v for k, v in doc_to_author_mapping.items() if k in subdocids}
+                sub_author_to_doc_mapping = author_doc_mapping(sub_doc_to_author_mapping)
 
-        rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
-        rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
+                rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
+                rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
 
-        seq_df = naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs, verbose=False)
-        seq_df['sid'] = sid
+                seq_df = naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs, theta=0.99, verbose=False)
+                seq_df['sid'] = sid
 
-        outdf = outdf.append(seq_df[['sid', 'q_num', 'document', 'score', 'rank']])
+                outdf = outdf.append(seq_df[['sid', 'q_num', 'document', 'score', 'rank']])
 
-    outdf = outdf[['sid', 'q_num', 'document', 'score', 'rank']]
-    qseq = ioh.get_query_seq()[['sid', 'q_num', 'qid']]
-    submission = pd.merge(outdf, qseq, on=['sid', 'q_num'], how='inner').drop_duplicates()
-    tqdm.pandas()
-    submission = submission.sort_values(by=['sid','q_num','rank']).groupby(['sid', 'q_num', 'qid']).progress_apply(lambda df: pd.Series({'ranking': df['document']}))
-    submission = submission.reset_index()
-    q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
-    submission['q_num'] = q_num
-    submission = submission.drop('sid', axis=1)
-    submission.to_json("nle_meta_9_evaluation_fix_output.json", orient='records', lines=True)
+            outdf = outdf[['sid', 'q_num', 'document', 'score', 'rank']]
+            qseq = ioh.get_query_seq()[['sid', 'q_num', 'qid']]
+            submission = pd.merge(outdf, qseq, on=['sid', 'q_num'], how='inner').drop_duplicates()
+            tqdm.pandas()
+            submission = submission.sort_values(by=['sid','q_num','rank']).groupby(['sid', 'q_num', 'qid']).progress_apply(lambda df: pd.Series({'ranking': df['document']}))
+            submission = submission.reset_index()
+            q_num = [str(submission['sid'][i]) + "." + str(submission['q_num'][i]) for i in range(len(submission))]
+            submission['q_num'] = q_num
+            submission = submission.drop('sid', axis=1)
+            submission.to_json(f"nle_{letter}_{theta}_evaluation_anon_authors.json", orient='records', lines=True)
 
 
 if __name__ == '__main__':
