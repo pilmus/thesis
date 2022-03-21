@@ -2,10 +2,10 @@ import random
 
 from tqdm import tqdm
 
-from src.bonart.reranker.model import RankerInterface
+from app.reranking.src import model
 
 
-class RandomRanker(RankerInterface):
+class RandomRanker(model.RankerInterface):
 
     def __shuffle_group(self, group):
         group.loc[:, 'doc_id'] = random.sample(group['doc_id'].to_list(), len(group['doc_id']))

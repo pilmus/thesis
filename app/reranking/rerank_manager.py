@@ -1,15 +1,10 @@
-# inputs:
-# - application instance
-#       - ranker name
-#       - ranker arguments
-# - train and eval dataframes
 import inspect
 from enum import IntEnum
 
-from app.preprocessing.preprocessor import get_preprocessor
-from reranker.deltr import Deltr
-from reranker.lambdamart import LambdaMartYear, LambdaMartRandomization
-from reranker.random_ranker import RandomRanker
+from app.pre_processing.pre_processor import get_preprocessor
+from app.reranking.src.deltr import Deltr
+from app.reranking.src.lambdamart import LambdaMartYear, LambdaMartRandomization
+from app.reranking.src.random_shuffle import RandomRanker
 
 
 class Reranker(IntEnum):
@@ -47,5 +42,6 @@ def rerank(app_entry):
 
     preprocessor = get_preprocessor()
 
-    reranker.train(preprocessor)
-    reranker.predict(preprocessor)
+    reranker.train(preprocessor.ioht)
+    predictions = reranker.predict(preprocessor.iohe)
+    return predictions

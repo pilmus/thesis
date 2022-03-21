@@ -3,8 +3,7 @@ import random
 import pyltr
 import pandas as pd
 from tqdm import tqdm
-
-import reranker.model as model
+from app.reranking.src import model
 
 
 class LambdaMart(model.RankerInterface):
@@ -13,7 +12,7 @@ class LambdaMart(model.RankerInterface):
     """
 
     def __init__(self, featureengineer, random_state=None):
-        super().__init__(featureengineer)
+        super().__init__()
 
         self.metric = pyltr.metrics.NDCG(k=7)
 

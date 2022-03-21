@@ -1,0 +1,20 @@
+{
+  "lambdamart": {
+    "default.json": {
+      "index": "semanticscholar2019og",
+      "fquery": "config/featurequery_bonart.json",
+      "fconfig": "config/features_bonart.json",
+      "fsequence_train": "pre_processing/resources/training/2019/training-sequence-full.tsv",
+      "fquery_train": "pre_processing/resources/training/2019/fair-TREC-training-sample-cleaned.json",
+      "fsequence_eval": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
+      "fquery_eval": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
+      "outdir": "evaluation/resources/2019/jsonruns"
+    },
+    "seed0.json": {
+      "seed": 0
+    },
+    "training-sequence-10.json": {
+      "fsequence_train": "pre_processing/resources/training/2019/training-sequence-10.tsv"
+    }
+  }
+}

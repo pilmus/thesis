@@ -2,14 +2,16 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
+from app.pre_processing.pre_processor import get_preprocessor
+
 
 class RankerInterface(ABC):
     """
     This abstract class must be implemented by all training models
     """
 
-    def __init__(self, featureengineer):
-        self.fe = featureengineer
+    def __init__(self):
+        self.fe = get_preprocessor().fe
         self.predictions = pd.DataFrame(columns=['q_num', 'qid', 'doc_id', 'rank'])
         super().__init__()
 

@@ -3,12 +3,10 @@ from collections import Counter
 import fairsearchdeltr
 import numpy as np
 import pandas as pd
-from fairsearchdeltr.deltr import prepare_data
-from fairsearchdeltr.trainer import Trainer, topp_prot, find_items_per_group_per_query, normalized_exposure
 from tqdm import tqdm
 
-import reranker.model as model
-from features.features import AnnotationFeatureEngineer
+from app.pre_processing.src.features import AnnotationFeatureEngineer
+from app.reranking.src import model
 
 
 class Deltr(model.RankerInterface):
@@ -18,7 +16,7 @@ class Deltr(model.RankerInterface):
 
     def __init__(self, featureengineer: AnnotationFeatureEngineer, protected_feature, group_mapping, gamma1, num_iter=5,
                  random_state=None, gamma2=None, alpha=None):
-        super().__init__(featureengineer)
+        super().__init__()
         # setup the DELTR object
         # protected_feature = 'in_first'  # column name of the protected attribute (index after query and document id)
         number_of_iterations = num_iter  # number of iterations the training should run
