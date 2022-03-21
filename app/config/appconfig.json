@@ -8,7 +8,12 @@
       "fquery_train": "pre_processing/resources/training/2019/fair-TREC-training-sample-cleaned.json",
       "fsequence_eval": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
       "fquery_eval": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
-      "outdir": "evaluation/resources/2019/jsonruns"
+      "outdir": "evaluation/resources/2019/jsonruns",
+      "year": 2019,
+      "ref_run": "trec_run/fair_LambdaMART.json",
+      "qseq_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
+      "gt_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
+      "group_annot_dir": "evaluation/resources/2019/group_annotations"
     },
     "seed0": {
       "random_state": 0

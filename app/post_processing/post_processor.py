@@ -36,3 +36,7 @@ class PostProcessor():
         submission['q_num'] = q_num
         submission.drop('sid', axis=1, inplace=True)
         submission.to_json(self._outfile, orient='records', lines=True)
+
+    @property
+    def outfile(self):
+        return self._outfile

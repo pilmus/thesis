@@ -1,5 +1,6 @@
 import json
 
+from app.evaluation.evaluator import evaluate
 from app.pre_processing.pre_processor import get_preprocessor
 
 from app.post_processing.post_processor import get_postprocessor
@@ -66,6 +67,10 @@ class AppEntry:
 
         get_postprocessor().init(self)
         get_postprocessor().write_submission(predictions)
+
+        evaluate(self)
+
+
 
 
 def main():
