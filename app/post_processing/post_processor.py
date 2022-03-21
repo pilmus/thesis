@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-
 POSTPROCESSOR = None
 
 
@@ -21,7 +20,7 @@ class PostProcessor():
     def init(self, app_entry):
         self._app_entry = app_entry
         outdir = app_entry.get_argument('outdir')
-        self._outfile = os.path.join(outdir, self._app_entry.config)
+        self._outfile = os.path.join(outdir, f"{self._app_entry.reranker_name}_{self._app_entry.config}.json")
 
     def write_submission(self, predictions):
         """

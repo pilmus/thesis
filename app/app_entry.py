@@ -35,6 +35,10 @@ class AppEntry:
 
     def get_argument(self, paramk):
         paramv = self._paramd.get(self._reranker_name, None).get(self._config, None).get(paramk, None)
+        # print(paramk, paramv)
+        if paramv is None:
+            paramv = self._paramd.get(self._reranker_name, None).get('default', None).get(paramk, None)
+        # print(paramk, paramv)
         return paramv
 
     def run(self):
@@ -62,7 +66,6 @@ class AppEntry:
 
         get_postprocessor().init(self)
         get_postprocessor().write_submission(predictions)
-
 
 
 def main():

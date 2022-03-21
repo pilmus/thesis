@@ -34,6 +34,7 @@ def rerank(app_entry):
     paramd = {}
     for paramk in reranker_args.parameters.keys():
         paramd[paramk] = app_entry.get_argument(paramk)
+        # print(paramk, paramd[paramk])
 
     del paramd['self']
     print(paramd)
