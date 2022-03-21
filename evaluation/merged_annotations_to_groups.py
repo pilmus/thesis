@@ -2,6 +2,7 @@ import argparse
 
 import pandas as pd
 
+
 def merge_author_groups(df):
     levels = set(df.level.to_list())
     if 'Advanced' in levels and 'Developing' in levels:
@@ -17,16 +18,17 @@ def merge_author_groups(df):
         print("Then what even is left??")
     return df
 
+
 def group_mapping(mode):
     if mode == 'basic':
-     return {'Advanced': '2', 'Developing': '1', 'Mixed': '1|2', None: ''}
+        return {'Advanced': '2', 'Developing': '1', 'Mixed': '1|2', None: ''}
     elif mode == 'mixed_group':
         return {'Advanced': '2', 'Developing': '1', 'Mixed': '3', None: ''}
-    elif mode =='nomixed':
+    elif mode == 'nomixed':
         return {'Advanced': '2', 'Developing': '1', 'Mixed': '', None: ''}
     elif mode == 'mix_up':
         return {'Advanced': '2', 'Developing': '1', 'Mixed': '2', None: ''}
-    elif mode =='mix_down':
+    elif mode == 'mix_down':
         return {'Advanced': '2', 'Developing': '1', 'Mixed': '1', None: ''}
     else:
         raise ValueError(f"Illegal mode: {mode}.")
@@ -48,14 +50,11 @@ def main():
     eval = eval.explode('documents')
     eval[['doc_id', 'relevance']] = eval.documents.apply(pd.Series)
 
-
     merged = merged.explode('authors')
     merged = merged.reset_index(drop=True)
     merged['level'] = merged.authors.apply(lambda row: row.get('level'))
 
-
-
-    merged  = merged.groupby('id').apply(merge_author_groups)
+    merged = merged.groupby('id').apply(merge_author_groups)
 
     di = group_mapping(mode)
 
@@ -65,7 +64,7 @@ def main():
 
     docs_groups = pd.merge(eval, merged, how='left', left_on='doc_id', right_on='id')
 
-    docs_groups = docs_groups[['doc_id','group']]
+    docs_groups = docs_groups[['doc_id', 'group']]
     docs_groups = docs_groups.drop_duplicates()
     outfile = f'resources/evaluation/2020/merged-annotations-groups-{mode}.csv'
     docs_groups.to_csv(outfile, index=False)

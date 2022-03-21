@@ -53,7 +53,6 @@ def main():
     parser = argparse.ArgumentParser(description='compare runs with kendalls tau correlation')
     parser.add_argument('-b', '--file1', dest='basefile', help='first file with runs')
     parser.add_argument('-c', '--file2', dest='compfile', help='second file with runs')
-    parser.add_argument('-m', '--mean', dest='mean', action='store_true', help='print only the mean KT')
     args = parser.parse_args()
 
     basefile = args.basefile
@@ -66,24 +65,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-#
-# basefile = "resources/evaluation/2019/fairRuns/trec_run/fair_LambdaMART.json"
-# compfile = "resources/evaluation/2019/fairRuns/lambdamart_bonart_semanticscholar2019_1000_cleaned_og_2.json"
-# same = compare_items_in_rankings(basefile,
-#                                  compfile)
-# print(same)
-# #
-# # print('\t'.join(['min', 'max', 'mean']))
-# # # print('\t'.join([str(val) for val in find_ranklist_size(basefile)]))
-# #
-# ktdf = kendalls_taus(basefile, compfile)
-# #
-# # ktdf
-#
-#
-# print(kendalls_taus(basefile, compfile).kt_tau.mean())
-# print(kendalls_taus(compfile, basefile).kt_tau.mean())
-# print(kendalls_taus("resources/evaluation/2020/rawruns/trec_run/trec_run.LM-relevance.json",
-#                     "resources/evaluation/2020/rawruns/lambdamart_ferraro/lambdamart_semanticscholar2020_10000_seq_rev_False_2.json").kt_tau.mean())
-# print(kendalls_taus("resources/evaluation/2020/rawruns/trec_run/trec_run.Deltr-gammas.json",
-#                     "resources/evaluation/2020/rawruns/deltr_gammas/deltr_gammas-alpha-0.25-corpus-2020-grouping-all_low.json").kt_tau.mean())

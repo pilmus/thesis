@@ -2,7 +2,7 @@ import random
 
 from tqdm import tqdm
 
-from reranker.model import RankerInterface
+from src.bonart.reranker.model import RankerInterface
 
 
 class RandomRanker(RankerInterface):
