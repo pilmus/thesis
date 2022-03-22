@@ -25,8 +25,12 @@ class AppEntry:
     _paramd = None
     _reranker_name = None
     _config_name = None
+
     _incrementables = None
     _incrstate = None
+
+    _preproc_config = None
+
     _rankers = None
 
     def __init__(self):
@@ -42,12 +46,13 @@ class AppEntry:
 
         self.rankers = self._paramd.get('rankers', [])
         for ranker, configs in self.rankers.items():
-            for config, params in configs.items():
+            for config, params in configs['rerank_configs'].items():
                 for incrementable in self.incrementables:
                     incr_text = params.get(incrementable)
                     if incr_text is not None:
                         etext = f"params[incrementable] = {incr_text}"
                         exec(etext)
+
 
     def init_incrementables(self):
         """
@@ -67,11 +72,19 @@ class AppEntry:
 
     @property
     def configs(self):
+        return self.ranker.get("rerank_configs")
+
+    @property
+    def ranker(self):
         return self.rankers.get(self.reranker_name, None)
 
     @property
     def config_name(self):
         return self._config_name
+
+    @config_name.setter
+    def config_name(self,value):
+        self._config_name = value
 
     @property
     def config_incr_name(self):
@@ -82,8 +95,13 @@ class AppEntry:
         return base
 
     @property
+    def preproc_config(self):
+        return self.ranker.get("preproc_config")
+
+
+    @property
     def config(self):
-        return self.rankers.get(self.reranker_name, None).get(self.config_name, None)
+        return self.configs.get(self.config_name, None)
 
     @property
     def incrementables(self):
@@ -109,10 +127,12 @@ class AppEntry:
     def rankers(self, value):
         self._rankers = value
 
+
     @property
     def ranker_num(self):
         return Reranker[self._reranker_name.upper()].value
         # return Reranker.LAMBDAMART
+
 
     def get_argument(self, paramk):
         if paramk in self.incrementables:
@@ -120,7 +140,7 @@ class AppEntry:
             return self.incrstate[paramk]
         paramv = self.config.get(paramk, None)
         if paramv is None:
-            paramv = self.rankers.get(self._reranker_name, None).get('default', None).get(paramk, None)
+            paramv = self.configs.get('default', None).get(paramk, None)
         return paramv
 
     def run(self):
@@ -135,13 +155,13 @@ class AppEntry:
         self.reranker_name = Reranker(reranker_num).name.lower()
 
         print("Choose a configuration:")
-        config_list = list(self._paramd["rankers"].get(self._reranker_name, None).keys())
+        config_list = list(self.configs.keys())
         for i, config in enumerate(config_list):
             print(f"{i}: {config}")
 
         config_idx = int(input("$ ") or 0)
         config_name = config_list[config_idx]
-        self._config_name = config_name
+        self.config_name = config_name
 
         self.init_incrementables()
 
