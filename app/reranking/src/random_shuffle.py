@@ -20,8 +20,3 @@ class RandomRanker(model.RankerInterface):
     def train(self, inputhandler):
         pass
 
-    def load(self, path):
-        pass
-
-    def save(self, path):
-        pass

@@ -17,7 +17,7 @@ class Reranker(IntEnum):
 
 
 def rerank(app_entry):
-    reranker_num = app_entry.get_ranker()
+    reranker_num = app_entry.ranker_num
 
     rerankers = {1: RandomRanker,
                  2: LambdaMartYear,
@@ -46,3 +46,5 @@ def rerank(app_entry):
     reranker.train(preprocessor.ioht)
     predictions = reranker.predict(preprocessor.iohe)
     return predictions
+    # do a yield here? and then in the single run you just have a generator with only 1 return
+    # in multi-run, you can keep yielding until you're donee

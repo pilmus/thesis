@@ -20,7 +20,7 @@ class PostProcessor():
     def init(self, app_entry):
         self._app_entry = app_entry
         outdir = app_entry.get_argument('outdir')
-        self._outfile = os.path.join(outdir, f"{self._app_entry.reranker_name}_{self._app_entry.config}.json")
+        self._outfile = os.path.join(outdir, f"{self._app_entry.reranker_name}_{self._app_entry.config_incr_name}.json")
 
     def write_submission(self, predictions):
         """
