@@ -2,7 +2,7 @@ import itertools
 import json
 import sys
 
-from app.evaluation.evaluator import evaluate
+from app.evaluation.evaluator import evaluate, summarize
 from app.pre_processing.pre_processor import get_preprocessor
 
 from app.post_processing.post_processor import get_postprocessor
@@ -143,25 +143,38 @@ class AppEntry:
             paramv = self.configs.get('default', None).get(paramk, None)
         return paramv
 
-    def run(self):
 
+    def entry(self):
+        print("What do you want to do?")
+        print("0: Run")
+        print("1: Analyse")
+        choice = int(input("$ ") or 0)
+
+        if choice == 0:
+            self.run()
+        elif choice == 1:
+            self.analyze()
+        else:
+            raise ValueError(f"Invalid choice: {choice}.")
+
+    def common_logic(self):
         self.load_config('config/appconfig.json')
-
         print("Choose a ranker:")
         for reranker in Reranker:
             print(f"{reranker.value}: {reranker.name}")
-
         reranker_num = int(input("$ ") or 2)
         self.reranker_name = Reranker(reranker_num).name.lower()
-
         print("Choose a configuration:")
         config_list = list(self.configs.keys())
         for i, config in enumerate(config_list):
             print(f"{i}: {config}")
-
         config_idx = int(input("$ ") or 0)
         config_name = config_list[config_idx]
         self.config_name = config_name
+
+    def run(self):
+
+        self.common_logic()
 
         self.init_incrementables()
 
@@ -177,6 +190,7 @@ class AppEntry:
             get_postprocessor().write_submission(predictions)
 
             evaluate(self)
+        summarize(self)
         # to here
         # has to be repeated on a multirun
         # preprocessor is not repeated because we do multi-runs with e.g. different seeds, different params
@@ -184,9 +198,15 @@ class AppEntry:
         # is doable b/c you might want to run over a thousand parameters but not over a thousand input sequences in this case
 
 
+
+    def analyze(self):
+        self.common_logic()
+
+        summarize(self)
+
 def main():
     app_entry = AppEntry()
-    app_entry.run()
+    app_entry.entry()
 
 
 if __name__ == '__main__':

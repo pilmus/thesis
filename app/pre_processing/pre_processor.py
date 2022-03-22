@@ -29,42 +29,18 @@ class PreProcessor():
         preproc_config = app_entry.preproc_config
 
         preproc_components = {
-        "_corpus" : Corpus,
-        "_fe" : FeatureEngineer,
-        "_ioht" : IOHandler,
-        "_iohe" : IOHandler
+            "_corpus": Corpus,
+            "_fe": FeatureEngineer,
+            "_ioht": IOHandler,
+            "_iohe": IOHandler
         }
 
-
-        for k,v in preproc_config.items():
+        for k, v in preproc_config.items():
             component_class = preproc_components[k]
             component_params = []
             for val in v.values():
-                print(val)
                 component_params.append(eval(val))
-            setattr(self,k, component_class(*component_params))
-
-        #
-        #
-        # self._corpus = Corpus(app_entry.get_argument('index'))
-        #
-        # try:
-        #     self._fe = FeatureEngineer(self._corpus,
-        #                            app_entry.get_argument('fquery'),
-        #                            app_entry.get_argument('fconfig'),
-        #                            self.get_feature_mat())
-        # except Exception:
-        #     pass
-        #
-        # try:
-        #     self._ioht = IOHandler(app_entry.get_argument('fsequence_train'),
-        #                        app_entry.get_argument('fquery_train'))
-        #
-        # except Exception:
-        #     pass
-        #
-        # self._iohe = IOHandler(app_entry.get_argument('fsequence_eval'),
-        #                        app_entry.get_argument('fquery_eval'))
+            setattr(self, k, component_class(*component_params))
 
     def get_feature_mat(self):
         # either return feature matrix FILE or return None
