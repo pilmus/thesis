@@ -39,6 +39,9 @@
         "seed0-5": {
           "random_state": "list(range(0,5))"
         },
+        "seed0-1000": {
+          "random_state": "list(range(0,1000))"
+        },
         "training-sequence-10": {
           "fsequence_train": "pre_processing/resources/training/2019/training-sequence-10.tsv"
         }
@@ -58,7 +61,8 @@
           "ref_run": "trec_run/fair_random.jsonl",
           "qseq_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
           "gt_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
-          "group_annot_dir": "evaluation/resources/2019/group_annotations"
+          "group_annot_dir": "evaluation/resources/2019/group_annotations",
+          "random_state": "list([None])"
         },
         "seed0": {
           "random_state": "list([0])"
@@ -71,8 +75,8 @@
     "p_controller": {
       "preproc_config": {
         "_iohe": {
-          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
-          "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-full-seq.tsv\")",
+          "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
         }
       },
       "rerank_configs": {
@@ -80,12 +84,10 @@
           "outdir": "evaluation/resources/2020/jsonruns",
           "year": 2020,
           "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
-        },
-        "seed0": {
-          "random_state": "list([0])"
-        },
-        "seed0-1000": {
-          "random_state": "list(range(0,1000,1))"
+          "random_state": "list([None])",
+          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
+          "mapping": "reranking/resources/mappings/evaluation_doc_to_author.json",
+          "theta": 0.9
         }
       }
     }

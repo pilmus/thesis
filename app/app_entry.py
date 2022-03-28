@@ -146,13 +146,13 @@ class AppEntry:
 
     def entry(self):
         print("What do you want to do?")
-        print("0: Run")
-        print("1: Analyse")
-        choice = int(input("$ ") or 0)
+        print("1: Run")
+        print("2: Analyse")
+        choice = int(input("$ ") or 1)
 
-        if choice == 0:
+        if choice == 1:
             self.run()
-        elif choice == 1:
+        elif choice == 2:
             self.analyze()
         else:
             raise ValueError(f"Invalid choice: {choice}.")
@@ -167,9 +167,9 @@ class AppEntry:
         print("Choose a configuration:")
         config_list = list(self.configs.keys())
         for i, config in enumerate(config_list):
-            print(f"{i}: {config}")
-        config_idx = int(input("$ ") or 0)
-        config_name = config_list[config_idx]
+            print(f"{i+1}: {config}")
+        config_idx = int(input("$ ") or 1)
+        config_name = config_list[config_idx - 1]
         self.config_name = config_name
 
     def run(self):
@@ -181,6 +181,7 @@ class AppEntry:
         get_preprocessor().init(self)
 
         # from here
+        print(self.incrementables)
         for incrcombo in dict_product(self.incrementables):
             self.incrstate = incrcombo
 

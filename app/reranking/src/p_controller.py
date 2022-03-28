@@ -219,11 +219,12 @@ def author_doc_mapping(doc_author_mapping):
 
 
 class PController(model.RankerInterface):
-    def __init__(self, est_rel_file, mapping, theta):
+    def __init__(self, est_rel_file, mapping, theta, no_author_anonymous=False):
         super().__init__()
         self._est_rel_file = est_rel_file
         self._mapping = mapping
         self._theta = theta
+        self._no_author_anonymous = no_author_anonymous
 
     def naive_controller(self, rhos, doc_to_producer_mapping, producer_to_doc_mapping, mus_all, vs_all,
                          theta=0.9, gamma=0.5, k=0.7, verbose=True):
@@ -319,8 +320,8 @@ class PController(model.RankerInterface):
         qseq_with_relevances = qseq_with_relevances.fillna(0)
         docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
         doc_to_author_mapping = get_doc_to_author_mapping(docids,
-                                                          'klettirenders/mappings/evaluation_doc_to_author.json',
-                                                          no_author_anonymous=True)
+                                                          self._mapping,
+                                                          no_author_anonymous=self._no_author_anonymous)
         assert len(doc_to_author_mapping) == len(ioh.get_query_seq().doc_id.drop_duplicates())
         outdf = pd.DataFrame(columns=['sid', 'q_num', 'document', 'score', 'rank'])
         Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
@@ -337,13 +338,16 @@ class PController(model.RankerInterface):
             rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
             rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
 
-            seq_df = self.naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs, theta=0.99,
+            seq_df = self.naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs, theta=self._theta,
                                       verbose=False)
             seq_df['sid'] = sid
 
             outdf = outdf.append(seq_df[['sid', 'q_num', 'document', 'score', 'rank']])
         outdf = outdf[['sid', 'q_num', 'document', 'score', 'rank']]
         return outdf
+
+    def train(self, inputhandler):
+        pass
 
     def _predict(self, inputhandler):
        return self.rerank(inputhandler)
