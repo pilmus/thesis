@@ -140,17 +140,21 @@ class AppEntry:
         return paramv
 
     def entry(self):
-        print("What do you want to do?")
-        print("1: Run")
-        print("2: Analyse")
-        choice = int(input("$ ") or 1)
+        while True:
+            print("What do you want to do?")
+            print("1: Run")
+            print("2: Analyse")
+            print("3: Quit")
+            choice = int(input("$ ") or 1)
 
-        if choice == 1:
-            self.run()
-        elif choice == 2:
-            self.analyze()
-        else:
-            raise ValueError(f"Invalid choice: {choice}.")
+            if choice == 1:
+                self.run()
+            elif choice == 2:
+                self.analyze()
+            elif choice == 3:
+                sys.exit(0)
+            else:
+                raise ValueError(f"Invalid choice: {choice}.")
 
     def common_logic(self):
         self.load_config('config/appconfig.json')
