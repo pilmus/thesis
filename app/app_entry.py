@@ -2,7 +2,7 @@ import itertools
 import json
 import sys
 
-from app.evaluation.evaluator import evaluate, summarize
+from app.evaluation.evaluator import evaluate, summarize, compare_means
 from app.pre_processing.pre_processor import get_preprocessor
 
 from app.post_processing.post_processor import get_postprocessor
@@ -217,8 +217,18 @@ class AppEntry:
 
     def analyze(self):
         self.common_logic()
+        self.init_incrementables()
 
-        summarize(self)
+        print("Compare means?")
+        i = input("[y/n] ")
+        if i == 'y':
+            compare_means(self)
+
+        # kendall_tau(self)
+        print("Summarize?")
+        i = input("[y/n] ")
+        if i == 'y':
+            summarize(self)
 
 
 def main():

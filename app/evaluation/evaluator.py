@@ -3,6 +3,7 @@ import os.path
 
 import pandas as pd
 
+from app.evaluation.src.y2020.compare_run_means import compare_run_means
 from app.evaluation.src.y2020.eval.trec.json2qrels import json2qrels
 
 from app.evaluation.src.y2020.eval.expeval import expeval
@@ -40,9 +41,8 @@ def evaluate(app_entry):
         trec_format_runfile = os.path.join(trecruns_dir, tsv_name)
         json2runfile(os.path.join(jsonruns_dir, ref_run), trec_format_runfile, non_verbose=True)
 
-
-        outdir = os.path.join(os.path.dirname(jsonruns_dir),'eval_results')
-        outfile = os.path.join(outdir,tsv_name)
+        outdir = os.path.join(os.path.dirname(jsonruns_dir), 'eval_results')
+        outfile = os.path.join(outdir, tsv_name)
         expeval(qrels, trec_format_runfile, outfile,
                 complete=True,
                 groupEvaluation=True,
@@ -92,3 +92,35 @@ def summarize(app_entry):
         pass
     else:
         raise ValueError(f"Invalid year: {year}.")
+
+
+def compare_means(app_entry):
+    reranker = app_entry.reranker_name
+    config = app_entry.config_name
+    year = int(app_entry.get_argument('year'))
+
+    if year == 2020:
+        outdir = app_entry.get_argument("outdir")
+        eval_results = os.path.join(os.path.dirname(outdir), 'eval_results')
+
+        globfile = f"{reranker}_{config}*.tsv"
+
+        ref_run = app_entry.get_argument("ref_run")
+        runfiles = glob.glob(os.path.join(eval_results,globfile))
+
+
+
+        # runfile = os.path.basename(get_postprocessor().outfile)
+
+
+        # runfile_result = os.path.join(eval_results, f"{os.path.splitext(runfile)[0]}.tsv")
+        refrun_result = os.path.join(eval_results, f"{os.path.splitext(ref_run)[0]}.tsv")
+        compare_run_means(refrun_result, runfiles)
+    elif year == 2019:
+        raise NotImplementedError
+    else:
+        raise ValueError(f"Invalid year: {year}.")
+
+
+def kendall_tau(app_entry):
+    pass

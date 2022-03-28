@@ -14,22 +14,23 @@ def main():
 
     runs = args.eval_output_runs
     ref_run = args.reference_run
+    save = args.save
 
+    compare_run_means(ref_run, runs, save)
+
+
+def compare_run_means(ref_run, runs, save=None):
     df_ref = pd.read_csv(ref_run, sep='\t', names=['key', 'qid', 'value'])
     df_ref = df_ref.pivot(index='qid', columns='key', values='value')
     ref_mean = df_ref.difference.mean()
-
     print("\t".join(['mean', 'abs(meandiff)', 'refmean', 'file']))
-
     comp_dicts = []
     comp_dicts.append(
         {'mean': str(round(ref_mean, 3)),
          'abs(meandiff)': str(abs(round(ref_mean - ref_mean, 3))),
          'refmean': str(round(ref_mean, 3)),
          'file': os.path.basename(ref_run)})
-
     print("\t".join(comp_dicts[-1].values()))
-
     for run in runs:
         df = pd.read_csv(run, sep='\t', names=['key', 'qid', 'value'])
         df = df.pivot(index='qid', columns='key', values='value')
@@ -40,10 +41,9 @@ def main():
              'refmean': str(round(ref_mean, 3)),
              'file': os.path.basename(run)})
         print("\t".join(comp_dicts[-1].values()))
-
-    if args.save:
+    if save:
         df_comp = pd.DataFrame(comp_dicts)
-        df_comp.to_csv(args.save)
+        df_comp.to_csv(save)
 
 
 if __name__ == '__main__':
