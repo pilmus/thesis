@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from app.pre_processing.pre_processor import get_preprocessor
 from app.pre_processing.src.features import AnnotationFeatureEngineer
 from app.reranking.src import model
 
@@ -17,6 +18,7 @@ class Deltr(model.RankerInterface):
     def __init__(self, featureengineer: AnnotationFeatureEngineer, protected_feature, group_mapping, gamma1, num_iter=5,
                  random_state=None, gamma2=None, alpha=None):
         super().__init__()
+        self.fe = get_preprocessor().fe
         # setup the DELTR object
         # protected_feature = 'in_first'  # column name of the protected attribute (index after query and document id)
         number_of_iterations = num_iter  # number of iterations the training should run

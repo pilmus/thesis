@@ -11,7 +11,7 @@ class RankerInterface(ABC):
     """
 
     def __init__(self):
-        self.fe = get_preprocessor().fe
+
         self.predictions = pd.DataFrame(columns=['q_num', 'qid', 'doc_id', 'rank'])
         super().__init__()
 

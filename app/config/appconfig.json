@@ -67,6 +67,27 @@
           "random_state": "list(range(0,1000,1))"
         }
       }
+    },
+    "p_controller": {
+      "preproc_config": {
+        "_iohe": {
+          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
+          "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+        }
+      },
+      "rerank_configs": {
+        "default": {
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "year": 2020,
+          "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
+        },
+        "seed0": {
+          "random_state": "list([0])"
+        },
+        "seed0-1000": {
+          "random_state": "list(range(0,1000,1))"
+        }
+      }
     }
   }
 }

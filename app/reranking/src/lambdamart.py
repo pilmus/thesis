@@ -3,6 +3,8 @@ import random
 import pyltr
 import pandas as pd
 from tqdm import tqdm
+
+from app.pre_processing.pre_processor import get_preprocessor
 from app.reranking.src import model
 
 
@@ -13,7 +15,7 @@ class LambdaMart(model.RankerInterface):
 
     def __init__(self, featureengineer, random_state=None):
         super().__init__()
-
+        self.fe = get_preprocessor().fe
         self.metric = pyltr.metrics.NDCG(k=7)
 
         self.lambdamart = pyltr.models.LambdaMART(
