@@ -96,18 +96,20 @@ def actexp_documents(rankdf, rhos, gamma=0.5, k=0.7):
     actexps = {}
     for i in range(len(rankdf)):
         row = rankdf.iloc[i]
-        doc_at_rank = row.document
+        doc_at_rank = row.doc_id
         rho_at_rank = rhos[doc_at_rank]
         factor = (1 - f(rho_at_rank, k=k))
         mult_factors[i] = factor
         if i == 0:
-            actexps[row.document] = 1
+            actexps[row.doc_id] = 1
         else:
             prob_user_already_satisfied = reduce(lambda x, y: x * y, mult_factors[0:i])
             prob_user_gives_up = gamma ** i
-            actexps[row.document] = prob_user_gives_up * prob_user_already_satisfied
+            actexps[row.doc_id] = prob_user_gives_up * prob_user_already_satisfied
 
     return actexps
+
+
 #
 #
 def targexp_document(document, rhos, mus, vs, N):  # rhos do not have to be sorted
@@ -143,6 +145,8 @@ def producer_advantage(actexp, targexp):
     expdiff = actexp - targexp
     new_adv = (expdiff ** 2) * math.copysign(1, expdiff)
     return new_adv
+
+
 #
 #
 
@@ -256,7 +260,7 @@ class PController(model.RankerInterface):
             producer_doclist = producer_to_doc_mapping[producer]
             producer_target_expected_exposure[producer] = sum([targexp_documents[doc] for doc in producer_doclist])
 
-        sequence_df = pd.DataFrame(columns=['q_num', 'document', 'score', 'rank'])
+        sequence_df = pd.DataFrame(columns=['q_num', 'doc_id', 'score', 'rank'])
 
         # for t in tqdm(range(0, 150)):
         for t in range(1, 151):
@@ -277,10 +281,11 @@ class PController(model.RankerInterface):
             print(f"Hscores took {round(t2 - t1, 2)}s.")
 
             hscore_df = pd.DataFrame(
-                {'q_num': t - 1, 'document': list(hscores.keys()), 'score': list(hscores.values())})
+                {'q_num': t - 1, 'doc_id': list(hscores.keys()), 'score': list(hscores.values())})
             # tqdm.pandas()
             # according to text: ties broken randomly
-            hscore_df['rank'] = hscore_df.score.rank(method='first', ascending=False)
+            hscore_df['rank'] = hscore_df.score.rank(method='first',
+                                                     ascending=False)  # todo: move this out of the controller more to the output part
             hscore_df = hscore_df.astype({'rank': int})
 
             updated_doc_actexp = actexp_documents(hscore_df, rhos, gamma, k)
@@ -323,7 +328,7 @@ class PController(model.RankerInterface):
                                                           self._mapping,
                                                           no_author_anonymous=self._no_author_anonymous)
         assert len(doc_to_author_mapping) == len(ioh.get_query_seq().doc_id.drop_duplicates())
-        outdf = pd.DataFrame(columns=['sid', 'q_num', 'document', 'score', 'rank'])
+        outdf = pd.DataFrame(columns=['sid', 'q_num', 'doc_id', 'score', 'rank'])
         Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
         Nmax = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().max()
         mus, vs = mus_vs_matrix(Nmin, Nmax)
@@ -338,17 +343,23 @@ class PController(model.RankerInterface):
             rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
             rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
 
-            seq_df = self.naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs, theta=self._theta,
-                                      verbose=False)
+            seq_df = self.naive_controller(rhos, sub_doc_to_author_mapping, sub_author_to_doc_mapping, mus, vs,
+                                           theta=self._theta,
+                                           verbose=False)
             seq_df['sid'] = sid
 
-            outdf = outdf.append(seq_df[['sid', 'q_num', 'document', 'score', 'rank']])
-        outdf = outdf[['sid', 'q_num', 'document', 'score', 'rank']]
+            outdf = outdf.append(seq_df[['sid', 'q_num', 'doc_id', 'score', 'rank']])
+        outdf = outdf[['sid', 'q_num', 'doc_id', 'score', 'rank']]
+
         return outdf
 
     def train(self, inputhandler):
         pass
 
     def _predict(self, inputhandler):
-       return self.rerank(inputhandler)
+        rerankings = self.rerank(inputhandler)
 
+        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], rerankings,
+                        how='left', on=['sid', 'q_num', 'doc_id'])
+
+        return pred

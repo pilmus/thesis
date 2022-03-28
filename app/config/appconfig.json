@@ -5,22 +5,24 @@
   "rankers": {
     "lambdamart": {
       "preproc_config": {
-        "_corpus": {
-          "index": "str(\"semanticscholar2019og\")"
-        },
-        "_fe": {
-          "corpus": "self._corpus",
-          "fquery": "str(\"config/featurequery_bonart.json\")",
-          "fconfig": "str(\"config/features_bonart.json\")",
-          "feature_mat" : "self.get_feature_mat()"
-        },
-        "_ioht": {
-          "fsequence_train": "str(\"pre_processing/resources/training/2019/training-sequence-full.tsv\")",
-          "fquery_train": "str(\"pre_processing/resources/training/2019/fair-TREC-training-sample-cleaned.json\")"
-        },
-        "_iohe": {
-          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
-          "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+        "default": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2019og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart.json\")",
+            "fconfig": "str(\"config/features_bonart.json\")",
+            "feature_mat": "self.get_feature_mat()"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2019/training-sequence-full.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2019/fair-TREC-training-sample-cleaned.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+          }
         }
       },
       "rerank_configs": {
@@ -49,9 +51,11 @@
     },
     "random_shuffle": {
       "preproc_config": {
-        "_iohe": {
-          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
-          "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+        "default": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
+          }
         }
       },
       "rerank_configs": {
@@ -74,20 +78,31 @@
     },
     "p_controller": {
       "preproc_config": {
-        "_iohe": {
-          "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-full-seq.tsv\")",
-          "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+        "default": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
+        "short": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq-0-only.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
         }
       },
       "rerank_configs": {
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/merged-annotations-groups-mix_up-qrels.tsv",
           "year": 2020,
           "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
           "random_state": "list([None])",
           "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
           "mapping": "reranking/resources/mappings/evaluation_doc_to_author.json",
-          "theta": 0.9
+          "theta": 0.9,
+          "square": true
         }
       }
     }

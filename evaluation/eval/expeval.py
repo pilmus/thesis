@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 
 import data
@@ -30,13 +29,18 @@ def main():
     relfn = parameters["relfn"]  # qrel file name
     topfn = parameters["topfn"]  # the run file?
 
-    if destination and os.path.exists(destination):
-        os.remove(destination)
+    expeval(relfn, topfn, destination, binarize, complete, groupEvaluation, normalize, square, umPatience, umType,
+                umUtility, non_verbose)
 
+
+def expeval(qrels, runfile, outfile, binarize, complete, groupEvaluation, normalize, square, umPatience, umType,
+                umUtility, non_verbose):
+    if outfile and os.path.exists(outfile):
+        os.remove(outfile)
     #
     # get target exposures
     #
-    qrels, did2gids = data.read_qrels(relfn, binarize, complete)
+    qrels, did2gids = data.read_qrels(qrels, binarize, complete)
     targExp = {}
     disparity = {}
     relevance = {}
@@ -49,9 +53,8 @@ def main():
         disparity[qid] = disp
         relevance[qid] = rel
         difference[qid] = diff
-
     #
-    # aggregate exposures if group evaluation and replace queries missing groups 
+    # aggregate exposures if group evaluation and replace queries missing groups
     # with nulls
     #
     if groupEvaluation:
@@ -66,24 +69,23 @@ def main():
                 targExp[qid] = targ
                 disparity[qid] = disp
                 relevance[qid] = rel
-                difference[qid] = diff # overwrite individual diff with group diff
+                difference[qid] = diff  # overwrite individual diff with group diff
             else:
                 targExp[qid] = None
                 disparity[qid] = None
                 relevance[qid] = None
                 difference[qid] = None
-
     #
     # get expected exposures for the run
     #
-    permutations = data.read_topfile(topfn)
+    permutations = data.read_topfile(runfile)
     runExp = {}
     for qid, permutations_qid in permutations.items():
         if (qid in qrels):
             runExp[qid] = exposure.expected(permutations_qid, qrels[qid], umType,
                                             umPatience, umUtility)
     #
-    # aggregate exposures if group evaluation and replace queries missing groups 
+    # aggregate exposures if group evaluation and replace queries missing groups
     # with nulls
     #
     # at the end of the loop below, runExp contains the actual group exposures for each query
@@ -96,7 +98,6 @@ def main():
                 runExp[qid] = group.exposure(rexp, did2gids[qid], qrels[qid], complete)
             else:
                 runExp[qid] = None
-
     #
     # compute and print per-query metrics
     #
@@ -121,7 +122,7 @@ def main():
             r = runExp[qid]
             disparity[qid].compute(r)
             relevance[qid].compute(r)
-            difference[qid].compute(r,square)
+            difference[qid].compute(r, square)
         #
         # output
         #
@@ -129,8 +130,8 @@ def main():
             print("\t".join([disparity[qid].name, qid, disparity[qid].string(normalize)]))
             print("\t".join([relevance[qid].name, qid, relevance[qid].string(normalize)]))
             print("\t".join([difference[qid].name, qid, difference[qid].string(normalize)]))
-        if destination:
-            with open(destination, "a") as df:
+        if outfile:
+            with open(outfile, "a") as df:
                 df.write("\t".join([disparity[qid].name, qid, disparity[qid].string(normalize)]) + "\n")
                 df.write("\t".join([relevance[qid].name, qid, relevance[qid].string(normalize)]) + "\n")
                 df.write("\t".join([difference[qid].name, qid, difference[qid].string(normalize)]) + "\n")

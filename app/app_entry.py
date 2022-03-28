@@ -53,7 +53,6 @@ class AppEntry:
                         etext = f"params[incrementable] = {incr_text}"
                         exec(etext)
 
-
     def init_incrementables(self):
         """
         Set each incrementable to the list of the values it can take.
@@ -83,7 +82,7 @@ class AppEntry:
         return self._config_name
 
     @config_name.setter
-    def config_name(self,value):
+    def config_name(self, value):
         self._config_name = value
 
     @property
@@ -96,8 +95,7 @@ class AppEntry:
 
     @property
     def preproc_config(self):
-        return self.ranker.get("preproc_config")
-
+        return self._preproc_config
 
     @property
     def config(self):
@@ -127,12 +125,10 @@ class AppEntry:
     def rankers(self, value):
         self._rankers = value
 
-
     @property
     def ranker_num(self):
         return Reranker[self._reranker_name.upper()].value
         # return Reranker.LAMBDAMART
-
 
     def get_argument(self, paramk):
         if paramk in self.incrementables:
@@ -142,7 +138,6 @@ class AppEntry:
         if paramv is None:
             paramv = self.configs.get('default', None).get(paramk, None)
         return paramv
-
 
     def entry(self):
         print("What do you want to do?")
@@ -164,13 +159,35 @@ class AppEntry:
             print(f"{reranker.value}: {reranker.name}")
         reranker_num = int(input("$ ") or 2)
         self.reranker_name = Reranker(reranker_num).name.lower()
-        print("Choose a configuration:")
+
+        pre_configs = self.ranker.get('preproc_config')
+        prprp_keys = list(pre_configs.keys())
+        if len(prprp_keys) > 1:
+            print("Choose a preprocessing configuration:")
+            for i, pre_config in enumerate(prprp_keys):
+                print(f"{i + 1}: {pre_config}")
+
+            preproc_choice = int((input("$ ") or 1))
+            prpr_key = prprp_keys[preproc_choice - 1]
+            self._preproc_config = pre_configs[prpr_key]
+        else:
+            print("Using default preprocessing configuration.")
+            self._preproc_config = next(iter(pre_configs.values()))
+
+
+
         config_list = list(self.configs.keys())
-        for i, config in enumerate(config_list):
-            print(f"{i+1}: {config}")
-        config_idx = int(input("$ ") or 1)
-        config_name = config_list[config_idx - 1]
-        self.config_name = config_name
+
+        if len(config_list) > 1:
+            print("Choose a configuration:")
+            for i, config in enumerate(config_list):
+                print(f"{i + 1}: {config}")
+            config_idx = int(input("$ ") or 1)
+            config_name = config_list[config_idx - 1]
+            self.config_name = config_name
+        else:
+            print("Using default ranker configuration.")
+            self.config_name = config_list[0]
 
     def run(self):
 
@@ -198,12 +215,11 @@ class AppEntry:
         # if you want to do multi runs with different pre-processing steps you should make a different configuration
         # is doable b/c you might want to run over a thousand parameters but not over a thousand input sequences in this case
 
-
-
     def analyze(self):
         self.common_logic()
 
         summarize(self)
+
 
 def main():
     app_entry = AppEntry()

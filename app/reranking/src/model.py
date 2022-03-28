@@ -27,7 +27,8 @@ class RankerInterface(ABC):
         uses the query sequences from the inputhandler to rerank the documents according to the trained model.
         must return a dataframe with columns [sid, q_num, qid, doc_id, rank]
         """
-        self.predictions = self._predict(inputhandler)[['sid', 'q_num', 'qid', 'doc_id', 'rank']]
+        predictions = self._predict(inputhandler)
+        self.predictions = predictions[['sid', 'q_num', 'qid', 'doc_id', 'rank']]
         return self.predictions
 
     @abstractmethod
