@@ -23,6 +23,25 @@
             "fsequence_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv\")",
             "fquery_eval": "str(\"pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json\")"
           }
+        },
+        "2020": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart.json\")",
+            "fconfig": "str(\"config/features_bonart.json\")",
+            "feature_mat": "self.get_feature_mat()"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
         }
       },
       "rerank_configs": {

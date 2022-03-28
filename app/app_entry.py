@@ -25,11 +25,13 @@ class AppEntry:
     _paramd = None
     _reranker_name = None
     _config_name = None
+    _basename = None
 
     _incrementables = None
     _incrstate = None
 
     _preproc_config = None
+    _preproc_config_name = None
 
     _rankers = None
 
@@ -81,13 +83,17 @@ class AppEntry:
     def config_name(self):
         return self._config_name
 
+    @property
+    def preproc_config_name(self):
+        return self._preproc_config_name
+
     @config_name.setter
     def config_name(self, value):
         self._config_name = value
 
     @property
     def config_incr_name(self):
-        base = self.config_name
+        base = self.basename
         for k, v in self.incrstate.items():
             base = f"{base}_{k}={v}"
 
@@ -128,7 +134,14 @@ class AppEntry:
     @property
     def ranker_num(self):
         return Reranker[self._reranker_name.upper()].value
-        # return Reranker.LAMBDAMART
+
+    @property
+    def basename(self):
+        return self._basename
+
+    @basename.setter
+    def basename(self, value):
+        self._basename = value
 
     def get_argument(self, paramk):
         if paramk in self.incrementables:
@@ -176,7 +189,9 @@ class AppEntry:
             self._preproc_config = pre_configs[prpr_key]
         else:
             print("Using default preprocessing configuration.")
+            prpr_key = prprp_keys[0]
             self._preproc_config = next(iter(pre_configs.values()))
+        self._preproc_config_name = prpr_key
 
 
 
@@ -192,6 +207,8 @@ class AppEntry:
         else:
             print("Using default ranker configuration.")
             self.config_name = config_list[0]
+
+        self.basename = f"{self.preproc_config_name}_{self.config_name}"
 
     def run(self):
 
@@ -212,7 +229,7 @@ class AppEntry:
             get_postprocessor().write_submission(predictions)
 
             evaluate(self)
-        summarize(self)
+        self.analyze_logic()
         # to here
         # has to be repeated on a multirun
         # preprocessor is not repeated because we do multi-runs with e.g. different seeds, different params
@@ -223,11 +240,13 @@ class AppEntry:
         self.common_logic()
         self.init_incrementables()
 
+        self.analyze_logic()
+
+    def analyze_logic(self):
         print("Compare means?")
         i = input("[y/n] ")
         if i == 'y':
             compare_means(self)
-
         # kendall_tau(self)
         print("Summarize?")
         i = input("[y/n] ")
