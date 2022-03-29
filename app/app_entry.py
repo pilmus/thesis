@@ -166,7 +166,7 @@ class AppEntry:
             elif choice == 3:
                 sys.exit(0)
             else:
-                raise ValueError(f"Invalid choice: {choice}.")
+                print(f"Invalid choice: {choice}.")
 
     def common_logic(self):
         self.load_config('config/appconfig.json')
