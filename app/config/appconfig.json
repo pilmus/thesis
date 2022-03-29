@@ -1,9 +1,9 @@
 {
-  "incrementables": [
-    "random_state"
-  ],
   "rankers": {
     "lambdamart": {
+      "incrementables": [
+        "random_state"
+      ],
       "preproc_config": {
         "default": {
           "_corpus": {
@@ -69,6 +69,9 @@
       }
     },
     "random_shuffle": {
+      "incrementables": [
+        "random_state"
+      ],
       "preproc_config": {
         "default": {
           "_iohe": {
@@ -96,6 +99,9 @@
       }
     },
     "p_controller": {
+      "incrementables": [
+        "theta"
+      ],
       "preproc_config": {
         "default": {
           "_iohe": {
@@ -117,11 +123,25 @@
           "qrels": "evaluation/resources/2020/qrels/merged-annotations-groups-mix_up-qrels.tsv",
           "year": 2020,
           "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
-          "random_state": "list([None])",
           "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
           "mapping": "reranking/resources/mappings/evaluation_doc_to_author.json",
-          "theta": 0.9,
+          "theta": "[0.9]",
           "square": false
+        },
+        "nle_meta_9_1": {
+        },
+        "nle_meta_99_1": {
+          "theta": "[0.99]",
+          "ref_run": "trec_run/trec_run.NLE_META_99_1.json"
+        },
+        "nle_text_9_1": {
+          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
+          "ref_run": "trec_run/trec_run.NLE_TEXT_9_1.json"
+        },
+        "nle_text_99_1": {
+          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
+          "theta": "[0.99]",
+          "ref_run": "trec_run/trec_run.NLE_TEXT_99_1.json"
         }
       }
     }

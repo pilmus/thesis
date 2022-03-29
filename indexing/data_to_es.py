@@ -60,6 +60,29 @@ def doc_generator(reader, year, idxname=None):
         yield yd
 
 
+def update_generator(reader, field, year, idxname=None):
+    for doc in reader.iter(type=dict, skip_invalid=True):
+
+        yd = {"_op_type": "update",
+              "_index": 'semanticscholar2019og',
+              "_id": doc.get('id'),
+              "_source":{'doc':{field: doc.get(field)}}
+              }
+
+        if year == 2019:
+            pass
+        elif year == 2020:
+            yd["_index"] = "semanticscholar2020og"
+
+        else:
+            raise ValueError(f"Invalid year: {year}.")
+
+        if idxname:
+            yd["_index"] = idxname
+
+        yield yd
+
+
 def index_files(year):
     rawspath = f'/mnt/d/corpus{year}/'
     raw_files = glob.glob(rawspath + "*")
@@ -88,3 +111,19 @@ def index_file(raw, year, idxname=None):
         for ok, action in helpers.streaming_bulk(es, doc_generator(reader, year, idxname=idxname), chunk_size=2000):
             progress.update(1)
             successes += ok
+
+
+def update_file(raw, field, year, idxname=None):
+    print(f"Updating contents of {raw}.")
+    es = Elasticsearch([{'host': 'localhost', 'port': '9200', 'timeout': 300}])
+    with jsonlines.open(raw) as reader:
+        progress = tqdm.tqdm(unit="docs", total=1000000)
+        successes = 0
+        for ok, action in helpers.streaming_bulk(es, update_generator(reader, field, year, idxname=idxname),
+                                                 chunk_size=2000):
+            progress.update(1)
+            successes += ok
+
+
+def update_files():
+    pass

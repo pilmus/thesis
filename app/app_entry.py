@@ -42,26 +42,25 @@ class AppEntry:
         with open(filename, 'r') as fp:
             self._paramd = json.load(fp)
 
-        self.incrementables = {}
-        for incrementable in self._paramd.get("incrementables", []):
-            self.incrementables[incrementable] = None
-
         self.rankers = self._paramd.get('rankers', [])
-        for ranker, configs in self.rankers.items():
-            for config, params in configs['rerank_configs'].items():
-                for incrementable in self.incrementables:
-                    incr_text = params.get(incrementable)
-                    if incr_text is not None:
-                        etext = f"params[incrementable] = {incr_text}"
-                        exec(etext)
 
     def init_incrementables(self):
         """
         Set each incrementable to the list of the values it can take.
         :return:
         """
+
+        self.incrementables = {}
+
+        for incrementable in self.ranker.get("incrementables", []):
+            self.incrementables[incrementable] = None
+
         for incrementable in self.incrementables:
-            self.incrementables[incrementable] = self.config.get(incrementable)
+            incr_text = self.config.get(incrementable)
+            if incr_text is None:
+                incr_text = self.configs['default'][incrementable]
+            etext = f"self.incrementables[incrementable] = {incr_text}"
+            exec(etext)
 
     @property
     def reranker_name(self):
@@ -193,8 +192,6 @@ class AppEntry:
             self._preproc_config = next(iter(pre_configs.values()))
         self._preproc_config_name = prpr_key
 
-
-
         config_list = list(self.configs.keys())
 
         if len(config_list) > 1:
@@ -243,6 +240,12 @@ class AppEntry:
         self.analyze_logic()
 
     def analyze_logic(self):
+        # todo add evaluate
+        # print("Evaluate?")
+        # i = input("[y/n] ")
+        # if i == 'y':
+        #
+
         print("Compare means?")
         i = input("[y/n] ")
         if i == 'y':
