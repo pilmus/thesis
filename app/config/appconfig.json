@@ -120,7 +120,7 @@
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/merged-annotations-groups-mix_up-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv",
           "year": 2020,
           "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
           "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",

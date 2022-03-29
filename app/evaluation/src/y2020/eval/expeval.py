@@ -1,8 +1,3 @@
-
-
-#
-# 
-#
 import math
 import os
 

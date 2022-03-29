@@ -16,7 +16,7 @@ def main():
     non_verbose = args.non_verbose
     args_runid = args.run_id
 
-    json2runfile(args_runid, destination, non_verbose, runfile)
+    json2runfile(runfile, destination, non_verbose, args_runid)
 
 
 def json2runfile(runfile, destination, non_verbose, args_runid=None):
