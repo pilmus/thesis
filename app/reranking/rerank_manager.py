@@ -11,7 +11,8 @@ from app.reranking.src.random_shuffle import RandomRanker
 class Reranker(IntEnum):
     RANDOM_SHUFFLE = 1
     LAMBDAMART = 2
-    P_CONTROLLER = 3
+    LAMBDAMART2020 = 3
+    P_CONTROLLER = 4
     # LAMBDAMART_R = 3
     # DELTR = 4
     # COORD_ASCENT = 6
@@ -22,7 +23,8 @@ def rerank(app_entry):
 
     rerankers = {1: RandomRanker,
                  2: LambdaMartYear,
-                 3: PController
+                 3: LambdaMartYear,
+                 4: PController
                  # 3: LambdaMartRandomization,
                  # 4: Deltr,
                  # 5: PController,
