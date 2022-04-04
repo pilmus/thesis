@@ -19,18 +19,18 @@ def main():
     complete = args.complete
     destination = args.destination
     not_verbose = args.not_verbose
-    json2qrels(complete, destination, groupfn, not_verbose, relfn)
+    json2qrels(relfn, groupfn, complete, destination, not_verbose)
 
 
-def json2qrels(complete, destination, groupfn, not_verbose, relfn):
+def json2qrels(ground_truth_relevance, grouping_file, destination, complete, not_verbose):
     did2gids = {}
-    with open(groupfn, "r") as fp:
+    with open(grouping_file, "r") as fp:
         for row in csv.reader(fp, delimiter=','):
             did2gids[row[0]] = "|".join(row[1:])
     if destination:
         if os.path.exists(destination):
             os.remove(destination)
-    with open(relfn, "r") as fp:
+    with open(ground_truth_relevance, "r") as fp:
         for line in fp:
             data = json.loads(line.strip())
             qid = "%d" % data["qid"]

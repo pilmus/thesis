@@ -122,9 +122,6 @@
       }
     },
     "p_controller": {
-      "incrementables": [
-        "theta"
-      ],
       "preproc_config": {
         "default": {
           "_iohe": {
@@ -137,6 +134,12 @@
             "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq-0-only.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
           }
+        },
+        "train": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
         }
       },
       "rerank_configs": {
@@ -148,13 +151,13 @@
           "ref_run": "trec_run/trec_run.NLE_META_9_1.json",
           "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
           "mapping": "reranking/resources/mappings/evaluation_doc_to_author.json",
-          "theta": "[0.9]",
+          "theta": 0.9,
           "square": false
         },
         "nle_meta_9_1": {
         },
         "nle_meta_99_1": {
-          "theta": "[0.99]",
+          "theta": 0.99,
           "ref_run": "trec_run/trec_run.NLE_META_99_1.json"
         },
         "nle_text_9_1": {
@@ -163,8 +166,28 @@
         },
         "nle_text_99_1": {
           "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
-          "theta": "[0.99]",
+          "theta": 0.99,
           "ref_run": "trec_run/trec_run.NLE_TEXT_99_1.json"
+        },
+        "nle_meta_9_1_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.9
+        },
+        "nle_meta_99_1_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.99
+        },
+        "nle_text_9_1_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.9
+        },
+        "nle_text_99_1_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.99
         }
       }
     }

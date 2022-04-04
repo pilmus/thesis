@@ -1,8 +1,12 @@
 import itertools
 import json
+import os.path
 import sys
 
+import pandas as pd
+
 from app.evaluation.evaluator import evaluate, summarize, compare_means
+from app.pre_pre_processing.src.merged_annotations_to_groups import annotations_to_groups, MappingMode, Grouping
 from app.pre_processing.pre_processor import get_preprocessor
 
 from app.post_processing.post_processor import get_postprocessor
@@ -152,21 +156,30 @@ class AppEntry:
         return paramv
 
     def entry(self):
+        paths = [("Run",self.run),("Prepare",self.prepare),("Analyse",self.analyze),("Quit",self.quit)]
         while True:
             print("What do you want to do?")
-            print("1: Run")
-            print("2: Analyse")
-            print("3: Quit")
+            for i, path in enumerate(paths):
+                print(f"{i+1}: {path[0]}")
             choice = int(input("$ ") or 1)
 
-            if choice == 1:
-                self.run()
-            elif choice == 2:
-                self.analyze()
-            elif choice == 3:
-                sys.exit(0)
-            else:
-                print(f"Invalid choice: {choice}.")
+            choice = choice - 1
+
+            if choice > len(paths):
+                print(f"Invalid choice: {choice + 1}.")
+
+
+            path_method = paths[choice][1]
+            path_method()
+            #
+            # if choice == 1:
+            #     self.run()
+            # elif choice == 2:
+            #     self.analyze()
+            # elif choice == 3:
+            #     sys.exit(0)
+            # else:
+
 
     def common_logic(self):
         self.load_config('config/appconfig.json')
@@ -233,11 +246,79 @@ class AppEntry:
         # if you want to do multi runs with different pre-processing steps you should make a different configuration
         # is doable b/c you might want to run over a thousand parameters but not over a thousand input sequences in this case
 
+    def prepare(self):
+        print("What do you want to prepare?")
+        print(f"1: Qrels file")
+        choice = int(input("$ ") or 1)
+
+        if choice == 1:
+            valid_training_sample = False
+            while not valid_training_sample:
+                print("Enter the path to the training sample")
+                training_sample = str(input("$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+                valid_training_sample = os.path.exists(training_sample)
+
+            valid_eval_sample = False
+            while not valid_eval_sample:
+                print("Enter the path to the evaluation sample")
+                eval_sample = str(input("$ (default: pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json)") or "pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
+                valid_eval_sample = os.path.exists(eval_sample)
+
+            valid_doc_annotations = False
+            while not valid_doc_annotations:
+                print("Enter the path to the document annotations")
+                doc_annotations = str(input("$ (default: pre_pre_processing/resources/doc-annotations.csv)") or "pre_pre_processing/resources/doc-annotations.csv")
+                valid_doc_annotations = os.path.exists(doc_annotations)
+
+            valid_gm = False
+            while not valid_gm:
+                print("Choose a grouping")
+                for grouping_mode in Grouping:
+                    print(f"{grouping_mode.value}: {grouping_mode.name}")
+                gm_val = int(input("$ ") or 1)
+                gm = Grouping(gm_val).name.lower()
+                valid_gm =  Grouping.has_value(gm_val)
+
+            valid_mm = False
+            while not valid_mm:
+                for mapping_mode in MappingMode:
+                    print("Choose a mapping mode")
+                    print(f"{mapping_mode.value}: {mapping_mode.name}")
+                mm_val = int(input("$ ") or 1)
+                mm = MappingMode(mm_val).name.lower()
+                valid_mm =  MappingMode.has_value(mm_val)
+
+
+
+
+            grouping = annotations_to_groups(training_sample,eval_sample,doc_annotations,gm, mm)
+
+            outfile = f"full-annotations-{mm}.csv"
+
+
+            valid_outdir = False
+            while not valid_outdir:
+                print("Enter the save location of the grouping file")
+                outdir = str(input("$ (default: evaluation/resources/2020/groupings)") or "evaluation/resources/2020/groupings")
+                valid_outdir = os.path.exists(outdir)
+
+            outfile = os.path.join(outdir,outfile)
+
+            grouping.to_csv(outfile,index=False)
+
+
+            # tdf = pd.read_json(training_sample, lines=True)
+            # edf = pd.read_json(eval_sample, lines=True)
+            # adf = pd.read_csv(doc_annotations)
+
     def analyze(self):
         self.common_logic()
         self.init_incrementables()
 
         self.analyze_logic()
+
+    def quit(self):
+        sys.exit(0)
 
     def analyze_logic(self):
         # todo add evaluate
