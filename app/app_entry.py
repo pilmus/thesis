@@ -6,6 +6,7 @@ import sys
 import pandas as pd
 
 from app.evaluation.evaluator import evaluate, summarize, compare_means
+from app.evaluation.src.y2020.eval.trec.json2qrels import json2qrels
 from app.pre_pre_processing.src.merged_annotations_to_groups import annotations_to_groups, MappingMode, Grouping
 from app.pre_processing.pre_processor import get_preprocessor
 
@@ -156,18 +157,17 @@ class AppEntry:
         return paramv
 
     def entry(self):
-        paths = [("Run",self.run),("Prepare",self.prepare),("Analyse",self.analyze),("Quit",self.quit)]
+        paths = [("Run", self.run), ("Prepare", self.prepare), ("Analyse", self.analyze), ("Quit", self.quit)]
         while True:
             print("What do you want to do?")
             for i, path in enumerate(paths):
-                print(f"{i+1}: {path[0]}")
+                print(f"{i + 1}: {path[0]}")
             choice = int(input("$ ") or 1)
 
             choice = choice - 1
 
             if choice > len(paths):
                 print(f"Invalid choice: {choice + 1}.")
-
 
             path_method = paths[choice][1]
             path_method()
@@ -179,7 +179,6 @@ class AppEntry:
             # elif choice == 3:
             #     sys.exit(0)
             # else:
-
 
     def common_logic(self):
         self.load_config('config/appconfig.json')
@@ -248,26 +247,30 @@ class AppEntry:
 
     def prepare(self):
         print("What do you want to prepare?")
-        print(f"1: Qrels file")
-        choice = int(input("$ ") or 1)
+        print(f"1: Group mapping file")
+        print(f"2: Qrels")
+        choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
             valid_training_sample = False
             while not valid_training_sample:
                 print("Enter the path to the training sample")
-                training_sample = str(input("$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+                training_sample = str(input(
+                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
                 valid_training_sample = os.path.exists(training_sample)
 
             valid_eval_sample = False
             while not valid_eval_sample:
                 print("Enter the path to the evaluation sample")
-                eval_sample = str(input("$ (default: pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json)") or "pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
+                eval_sample = str(input(
+                    "$ (default: pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json)") or "pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
                 valid_eval_sample = os.path.exists(eval_sample)
 
             valid_doc_annotations = False
             while not valid_doc_annotations:
                 print("Enter the path to the document annotations")
-                doc_annotations = str(input("$ (default: pre_pre_processing/resources/doc-annotations.csv)") or "pre_pre_processing/resources/doc-annotations.csv")
+                doc_annotations = str(input(
+                    "$ (default: pre_pre_processing/resources/doc-annotations.csv)") or "pre_pre_processing/resources/doc-annotations.csv")
                 valid_doc_annotations = os.path.exists(doc_annotations)
 
             valid_gm = False
@@ -276,8 +279,8 @@ class AppEntry:
                 for grouping_mode in Grouping:
                     print(f"{grouping_mode.value}: {grouping_mode.name}")
                 gm_val = int(input("$ ") or 1)
-                gm = Grouping(gm_val).name.lower()
-                valid_gm =  Grouping.has_value(gm_val)
+                gm = Grouping(gm_val).name
+                valid_gm = Grouping.has_value(gm_val)
 
             valid_mm = False
             while not valid_mm:
@@ -286,30 +289,47 @@ class AppEntry:
                     print(f"{mapping_mode.value}: {mapping_mode.name}")
                 mm_val = int(input("$ ") or 1)
                 mm = MappingMode(mm_val).name.lower()
-                valid_mm =  MappingMode.has_value(mm_val)
+                valid_mm = MappingMode.has_value(mm_val)
 
+            grouping = annotations_to_groups(training_sample, eval_sample, doc_annotations, gm, mm)
 
-
-
-            grouping = annotations_to_groups(training_sample,eval_sample,doc_annotations,gm, mm)
-
-            outfile = f"full-annotations-{mm}.csv"
-
+            outfile = f"full-annotations-{gm}-{mm}.csv"
 
             valid_outdir = False
             while not valid_outdir:
                 print("Enter the save location of the grouping file")
-                outdir = str(input("$ (default: evaluation/resources/2020/groupings)") or "evaluation/resources/2020/groupings")
+                outdir = str(
+                    input("$ (default: evaluation/resources/2020/groupings)") or "evaluation/resources/2020/groupings")
                 valid_outdir = os.path.exists(outdir)
 
-            outfile = os.path.join(outdir,outfile)
+            outfile = os.path.join(outdir, outfile)
 
-            grouping.to_csv(outfile,index=False)
+            grouping.to_csv(outfile, index=False)
+        elif choice == 2:
+            valid_sample = False
+            while not valid_sample:
+                print("Enter the path to the ground truth file")
+                sample = str(input(
+                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+                valid_sample = os.path.exists(sample)
 
+            valid_grouping = False
+            while not valid_grouping:
+                print("Enter the path to grouping file")
+                grouping = str(input(
+                    "$ (default: evaluation/resources/2020/groupings/full-annotations-mixed_group.csv)") or "evaluation/resources/2020/groupings/full-annotations-mixed_group.csv")
+                valid_grouping = os.path.exists(grouping)
 
-            # tdf = pd.read_json(training_sample, lines=True)
-            # edf = pd.read_json(eval_sample, lines=True)
-            # adf = pd.read_csv(doc_annotations)
+            valid_outdir = False
+            while not valid_outdir:
+                print("Enter the path to the outdir")
+                outdir = str(input(
+                    "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
+                valid_outdir = os.path.exists(outdir)
+
+            outfile = f"{os.path.splitext(grouping)[0]}-qrels.tsv"
+
+            json2qrels(sample, grouping, outfile, complete=True,not_verbose=False)
 
     def analyze(self):
         self.common_logic()

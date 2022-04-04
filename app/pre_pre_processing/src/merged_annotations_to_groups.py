@@ -17,8 +17,8 @@ class MappingMode(IntEnum):
         return value in set(item.value for item in MappingMode)
 
 class Grouping(IntEnum):
-    HLevel = 1
-    Level = 2
+    DocHLevel = 1
+    DocLevel = 2
 
     @classmethod
     def has_value(cls, value):
@@ -26,9 +26,9 @@ class Grouping(IntEnum):
 
 
 def group_mapping(grouping, mode):
-    if grouping == 'hlevel':
+    if grouping == 'DocHLevel':
         keys = ["H","L","Mixed",None]
-    elif grouping == "level":
+    elif grouping == "DocLevel":
         keys = ["Advanced","Developing","Mixed",None]
     else:
         raise ValueError(f"Illegal grouping: {grouping}.")
@@ -69,13 +69,13 @@ def annotations_to_groups(training_sample, eval_sample, annotations, grouping, m
 
     sdf = pd.concat([tdf,edf])
 
-    mdf = pd.merge(sdf,adf[['doc_id','DocHLevel']],how='left')
+    mdf = pd.merge(sdf,adf[['doc_id',grouping]],how='left')
     mdf = mdf.replace({np.nan: None})
 
     mapping = group_mapping(grouping, mode)
 
 
-    mdf['group'] = mdf.DocHLevel.apply(lambda row: mapping[row])
+    mdf['group'] = mdf[grouping].apply(lambda row: mapping[row])
 
     return mdf[['doc_id','group']]
 
