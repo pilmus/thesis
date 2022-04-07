@@ -169,29 +169,53 @@
           "theta": 0.99,
           "ref_run": "trec_run/trec_run.NLE_TEXT_99_1.json"
         },
-        "nle_meta_9_1_train": {
+        "nle_meta_9_1_train_hlevel": {
           "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "mapping": "reranking/resources/mappings/training_doc_to_author.json",
           "theta": 0.9,
-          "qrels": "evaluation/resources/2020/qrels/full-annotations-hlevel-mixed_group-qrels.tsv"
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv"
         },
-        "nle_meta_99_1_train": {
+        "nle_meta_99_1_train_hlevel": {
           "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "mapping": "reranking/resources/mappings/training_doc_to_author.json",
           "theta": 0.99,
-          "qrels": "evaluation/resources/2020/qrels/full-annotations-hlevel-mixed_group-qrels.tsv"
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv"
         },
-        "nle_text_9_1_train": {
+        "nle_text_9_1_train_hlevel": {
           "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
           "mapping": "reranking/resources/mappings/training_doc_to_author.json",
           "theta": 0.9,
-          "qrels": "evaluation/resources/2020/qrels/full-annotations-hlevel-mixed_group-qrels.tsv"
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv"
         },
-        "nle_text_99_1_train": {
+        "nle_text_99_1_train_hlevel": {
           "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
           "mapping": "reranking/resources/mappings/training_doc_to_author.json",
           "theta": 0.99,
-          "qrels": "evaluation/resources/2020/qrels/full-annotations-hlevel-mixed_group-qrels.tsv"
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv"
+        },
+        "nle_meta_9_1_train_level": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.9,
+          "qrels": "evaluation/resources/2020/qrels/train-DocLevel-mixed_group-qrels.tsv"
+        },
+        "nle_meta_99_1_train_level": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.99,
+          "qrels": "evaluation/resources/2020/qrels/train-DocLevel-mixed_group-qrels.tsv"
+        },
+        "nle_text_9_1_train_level": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.9,
+          "qrels": "evaluation/resources/2020/qrels/train-DocLevel-mixed_group-qrels.tsv"
+        },
+        "nle_text_99_1_train_level": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "mapping": "reranking/resources/mappings/training_doc_to_author.json",
+          "theta": 0.99,
+          "qrels": "evaluation/resources/2020/qrels/train-DocLevel-mixed_group-qrels.tsv"
         }
       }
     }

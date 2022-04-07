@@ -218,12 +218,11 @@ class AppEntry:
             self.config_name = config_list[0]
 
         self.basename = f"{self.preproc_config_name}_{self.config_name}"
+        self.init_incrementables()
 
     def run(self):
 
         self.common_logic()
-
-        self.init_incrementables()
 
         get_preprocessor().init(self)
 
@@ -238,7 +237,7 @@ class AppEntry:
             get_postprocessor().write_submission(predictions)
 
             evaluate(self)
-        self.analyze_logic()
+        # self.analyze_logic()
         # to here
         # has to be repeated on a multirun
         # preprocessor is not repeated because we do multi-runs with e.g. different seeds, different params
@@ -333,7 +332,7 @@ class AppEntry:
 
     def analyze(self):
         self.common_logic()
-        self.init_incrementables()
+
 
         self.analyze_logic()
 
@@ -342,10 +341,14 @@ class AppEntry:
 
     def analyze_logic(self):
         # todo add evaluate
-        # print("Evaluate?")
-        # i = input("[y/n] ")
-        # if i == 'y':
-        #
+        print("Evaluate?")
+        i = input("[y/n] ")
+        if i == 'y':
+            get_preprocessor().init(self)
+            for incrcombo in dict_product(self.incrementables):
+                self.incrstate = incrcombo
+                get_postprocessor().init(self)
+                evaluate(self)
 
         print("Compare means?")
         i = input("[y/n] ")

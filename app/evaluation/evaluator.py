@@ -32,7 +32,6 @@ def evaluate(app_entry):
         eval2019.evaluate(qseq_file, gt_file, level_annot_file, "level", outdir, run_files=[runfile, ref_run])
         eval2019.evaluate(qseq_file, gt_file, h_index_4_annot_file, "h_index_4", outdir, run_files=[runfile, ref_run])
     elif year == 2020: #todo: add preproc config name to outfiles
-        ref_run = app_entry.get_argument("ref_run")
         jsonruns_dir = app_entry.get_argument("outdir")
         trecruns_dir = app_entry.get_argument("trecruns_dir")
         qrels = app_entry.get_argument("qrels")
