@@ -1,17 +1,23 @@
 import itertools
+import json
 import math
 
 import pandas as pd
+from tqdm import tqdm
 
 from app.reranking.src import model
-from app.reranking.src.p_controller import actexp_documents, targexp_document
+from app.reranking.src.p_controller import actexp_documents, targexp_document, mus_vs_matrix, \
+    invert_key_to_list_mapping, f
 
 
 def util_ranking(rankdf, rhos, gamma=0.5, k=0.7):
-    """Compute the utility for this ranking as given in eq 8 of Biega2021 todo:change name"""
+    """Compute the utility for this ranking as given in eq 8 of Biega2021 todo:change name
+    gamma and k are set as in kletti and renders
+    """
+    # confirmed correct until here
     actexps = actexp_documents(rankdf, rhos, gamma, k)
     for doc, actexp in actexps.items():
-        actexps[doc] = actexp * rhos[doc]
+        actexps[doc] = actexp * f(rhos[doc])
 
     return sum(actexps.values())
 
@@ -26,17 +32,24 @@ def small_delta(document_authors, document_author_actual_expected_exposures, doc
     """Compute the small delta value. Computed as the sum of E_p - E_p* for all producers of this document i"""
     total = 0
     for author in document_authors:
-        total += exposure_disparity(document_author_actual_expected_exposures[author][t],
-                                    document_author_target_expected_exposures[author][t])
+        total += exposure_disparity(document_author_actual_expected_exposures[author][t -1],
+                                    (t - 1) * document_author_target_expected_exposures[author])
 
     return total
 
 
-def big_delta():
-    raise NotImplementedError
-
-
 # TODO: implement option for singleton document grouping
+
+def get_doc_to_group_mapping(docids, _grouping, missing_group_strategy):
+    with open(_grouping) as fp:
+        mapping = json.load(fp)
+
+    if missing_group_strategy == 'ignore':
+        mapping = {doc: mapping.get(doc, []) for doc in docids}
+    else:
+        raise ValueError('Invalid missing group strategy: ', missing_group_strategy)
+    return mapping
+
 
 class MRFR(model.RankerInterface):
 
@@ -71,9 +84,7 @@ class MRFR(model.RankerInterface):
         mus = mus_all
         vs = vs_all[N][:N + 1]
 
-        producer_accumulated_exposure_difference = {producer: [0] * 151 for producer in producers}
 
-        producer_actual_expected_exposure = {producer: [0] * 151 for producer in producers}
         targexp_documents = {}
         for doc in documents:
             targexp_documents[doc] = targexp_document(doc, rhos, mus, vs,
@@ -86,11 +97,9 @@ class MRFR(model.RankerInterface):
 
         producer_actual_expected_exposure = {producer: [0] * 151 for producer in producers}
 
-        utilites = [0] * 151
+        utilities = [0] * 151
 
-
-
-        sequence_df = pd.DataFrame(columns=['q_num', 'doc_id', 'score', 'rank'])
+        sequence_df = pd.DataFrame(columns=['q_num', 'doc_id', 'rank'])
 
         for t in range(1, 151):
             phis = {doc: 0 for doc in documents}
@@ -99,7 +108,7 @@ class MRFR(model.RankerInterface):
                 phis[document] = rhos[document] - beta * small_delta(doc_producers, producer_actual_expected_exposure,
                                                                      producer_target_expected_exposure, t)
 
-            phis = dict(sorted(phis.items(), key=lambda phi: phi[1]))
+            phis = dict(sorted(phis.items(), key=lambda phi: phi[1], reverse=True))
             topKdocs = list(phis.keys())[:K]
             restdocs = list(phis.keys())[K:]
 
@@ -114,7 +123,7 @@ class MRFR(model.RankerInterface):
             candidate_actexps_documents = {}
             for i, c_ranking in candidate_rankings.items():
                 c_rankdf = pd.DataFrame({'rank': list(range(1, len(c_ranking) + 1)), 'doc_id': c_ranking})
-                candidate_utils[i] = (util_ranking(c_rankdf, rhos) + utilites[t - 1]) / t
+                candidate_utils[i] = (util_ranking(c_rankdf, rhos) + utilities[t - 1]) / t
                 candidate_actexps_documents[i] = actexp_documents(c_rankdf, rhos)
 
             candidate_actexps_authors = {}
@@ -132,7 +141,7 @@ class MRFR(model.RankerInterface):
             for i in candidate_rankings:
                 bigdelta = 0
                 for producer in producers:
-                    bigdelta += (candidate_actexps_authors[i][producers] + producer_actual_expected_exposure[producer][
+                    bigdelta += (candidate_actexps_authors[i][producer] + producer_actual_expected_exposure[producer][
                         t - 1] - t * producer_target_expected_exposure[producer]) ** 2
                 big_deltas[i] = math.sqrt(bigdelta)
 
@@ -143,15 +152,58 @@ class MRFR(model.RankerInterface):
 
             best_candidate = max(psis, key=psis.get)
 
-            candidate_rankings[i] #todo: convert into ranking
+            for producer in producers:
+                producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[producer][t-1] +  candidate_actexps_authors[best_candidate][producer]
 
+            utilities[t] = utilities[t-1] + candidate_utils[best_candidate]
 
-        def rerank(self, ioh):
-            rel_probs = pd.read_csv(self._relevance_probabilities)
-            qseq_with_relevances = pd.merge(ioh.get_query_seq(), rel_probs, on=['qid', 'doc_id'],
-                                            how='left').sort_values(
-                by=['sid', 'q_num']).reset_index(drop=True)
-            qseq_with_relevances = qseq_with_relevances.fillna(0)
-            docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
+            next_ranking = candidate_rankings[best_candidate]
+            rankdf = pd.DataFrame({'q_num': [t - 1] * N, 'doc_id': next_ranking, 'rank': list(range(1, N + 1))})
+            sequence_df = sequence_df.append(rankdf)
+        return sequence_df
 
-            grouping = self.get_grouping(docids, self._grouping)
+    def rerank(self, ioh):
+        rel_probs = pd.read_csv(self._relevance_probabilities)
+        qseq_with_relevances = pd.merge(ioh.get_query_seq(), rel_probs, on=['qid', 'doc_id'],
+                                        how='left').sort_values(
+            by=['sid', 'q_num']).reset_index(drop=True)
+        qseq_with_relevances = qseq_with_relevances.fillna(0)
+        docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
+
+        doc_to_group_mapping = get_doc_to_group_mapping(docids, self._grouping, missing_group_strategy='ignore')
+
+        outdf = pd.DataFrame(columns=['sid', 'q_num', 'doc_id', 'rank'])
+        Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
+        Nmax = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().max()
+        mus, vs = mus_vs_matrix(Nmin, Nmax)
+        sids = qseq_with_relevances.sid.drop_duplicates().to_list()
+        for sid in tqdm(sids):
+            subdf = qseq_with_relevances[qseq_with_relevances.sid == sid]
+
+            subdocids = subdf.doc_id.drop_duplicates().to_list()
+            sub_doc_to_group_mapping = {k: v for k, v in doc_to_group_mapping.items() if k in subdocids}
+            sub_group_to_doc_mapping = invert_key_to_list_mapping(sub_doc_to_group_mapping)
+
+            rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
+            rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
+
+            seq_df = self.rerank_loop(rhos, sub_doc_to_group_mapping, sub_group_to_doc_mapping, mus, vs, self._K,
+                                      self._beta, self._lambda)
+
+            seq_df['sid'] = sid
+
+            outdf = outdf.append(seq_df[['sid', 'q_num', 'doc_id', 'rank']])
+        outdf = outdf[['sid', 'q_num', 'doc_id', 'rank']]
+
+        return outdf
+
+    def train(self, inputhandler):
+        pass
+
+    def _predict(self, inputhandler):
+        rerankings = self.rerank(inputhandler)
+
+        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], rerankings, how='left',
+                        on=['sid', 'q_num', 'doc_id'])
+
+        return pred

@@ -1,0 +1,6 @@
+qid,doc_id,est_relevance
+1,doc1,1.0
+1,doc2,0.75
+1,doc3,0.5
+1,doc4,0.25
+1,doc5,0.0

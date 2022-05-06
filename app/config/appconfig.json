@@ -94,7 +94,7 @@
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/merged-annotations-groups-mixed_group-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
           "year": 2020,
           "square": false,
           "random_state": "list([None])"
@@ -315,6 +315,58 @@
           "mapping": "reranking/resources/mappings/doc_to_author.json",
           "theta": 0.99,
           "qrels": "evaluation/resources/2020/qrels/full-annotations-document-singleton-qrels.tsv"
+        }
+      }
+    },
+    "mrfr": {
+      "preproc_config": {
+        "default": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
+        "short": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq-0-only.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
+        "train": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
+        },
+        "toy": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/toy-sequence.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/toy-sample.json\")"
+          }
+        }
+      },
+      "rerank_configs": {
+        "default": {
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
+          "year": 2020,
+          "relevance_probabilities": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "grouping": "reranking/resources/mappings/evaluation_doc_to_author.json",
+          "K": 3,
+          "beta": 1,
+          "lambd": 1
+        },
+        "toy": {
+          "relevance_probabilities": "reranking/resources/relevances/toy_rel_scores.csv",
+          "grouping": "reranking/resources/mappings/toy_doc_to_group.json",
+          "K": 3,
+          "beta": 1,
+          "lambd": 1
+        },
+        "META": {
+          "relevance_probabilities": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "grouping": "reranking/resources/mappings/training_doc_to_author.json"
         }
       }
     }

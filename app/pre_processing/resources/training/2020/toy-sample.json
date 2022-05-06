@@ -1,0 +1,1 @@
+{"qid": 1, "query": "toy", "frequency": 1, "documents": [{"doc_id": "doc1", "relevance": 1}, {"doc_id": "doc2", "relevance": 1}, {"doc_id": "doc3", "relevance": 0}, {"doc_id": "doc4", "relevance": 0}, {"doc_id": "doc5", "relevance": 0}]}

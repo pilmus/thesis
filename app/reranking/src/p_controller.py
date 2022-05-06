@@ -185,15 +185,15 @@ def get_doc_to_author_mapping(docids, mapping_file, no_author_anonymous=False):
 #
 #
 #
-def author_doc_mapping(doc_author_mapping):
-    author_doc_mapping = {}
-    for docid, authorlist in doc_author_mapping.items():
-        for author in authorlist:
-            if author not in author_doc_mapping:
-                author_doc_mapping[author] = []
-            author_doc_mapping[author] = author_doc_mapping[author] + [docid]
+def invert_key_to_list_mapping(mapping):
+    inverted = {}
+    for k, valuelist in mapping.items():
+        for value in valuelist:
+            if value not in inverted:
+                inverted[value] = []
+            inverted[value] = inverted[value] + [k]
 
-    return author_doc_mapping
+    return inverted
 
 
 #
@@ -338,7 +338,7 @@ class PController(model.RankerInterface):
 
             subdocids = subdf.doc_id.drop_duplicates().to_list()
             sub_doc_to_author_mapping = {k: v for k, v in doc_to_author_mapping.items() if k in subdocids}
-            sub_author_to_doc_mapping = author_doc_mapping(sub_doc_to_author_mapping)
+            sub_author_to_doc_mapping = invert_key_to_list_mapping(sub_doc_to_author_mapping)
 
             rhos_df = subdf[['doc_id', 'est_relevance']].drop_duplicates()
             rhos = dict(zip(rhos_df.doc_id, rhos_df.est_relevance))
