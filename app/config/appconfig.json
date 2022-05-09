@@ -142,7 +142,7 @@
             "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
           }
         },
-        "train": {
+        "test": {
           "_corpus": {
             "index": "str(\"semanticscholar2020og\")"
           },
@@ -170,20 +170,16 @@
           "year": 2020,
           "square": false,
           "random_state": "list([None])",
-          "calibration_seq": "pre_processing/resources/training/2020/training-sequence-full_10.tsv",
-          "calibration_sample": "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_10.json",
-          "missing_value_strategy": "avg"
+          "missing_value_strategy": "avg",
+          "save_dir": "reranking/resources/saved_models",
+          "relevance_probabilities": "reranking/resources/relevances/mrfr_training.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "K": 3,
+          "beta": 1,
+          "lambd": 1
         },
         "seed0": {
           "random_state": "list([0])"
-        },
-        "platt0":{
-          "random_state": "list([0])",
-          "calib_mode":"platt"
-        },
-        "isotonic0":{
-          "random_state": "list([0])",
-          "calib_mode":"isotonic"
         }
       }
     },
@@ -436,6 +432,10 @@
         "META": {
           "relevance_probabilities": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "grouping": "reranking/resources/mappings/training_doc_to_author.json"
+        },
+        "LM_train": {
+          "relevance_probabilities": "reranking/resources/relevances/lm_mrfr_training.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json"
         }
       }
     }

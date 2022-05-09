@@ -1,3 +1,4 @@
+import pickle
 import random
 
 import numpy as np
@@ -12,13 +13,15 @@ from app.reranking.src import model
 
 from sklearn.calibration import IsotonicRegression
 
+from app.reranking.src.mrfr import MRFR
+
 
 class LambdaMart(model.RankerInterface):
     """
     Wrapper around the LambdaMart algorithm
     """
 
-    def __init__(self, featureengineer, random_state=None):
+    def __init__(self, featureengineer, random_state=None, save_dir=None):
         super().__init__()
         self.fe = get_preprocessor().fe
         self.metric = pyltr.metrics.NDCG(k=7)
@@ -34,6 +37,8 @@ class LambdaMart(model.RankerInterface):
             verbose=1,
             random_state=random_state)
         self.random_state = random_state
+        self.save_dir = save_dir
+        self.train_ioh = None
 
     def __data_helper(self, x):
         x = x.sort_values('q_num')
@@ -69,12 +74,19 @@ class LambdaMart(model.RankerInterface):
         all queries with the same qid appear in one contiguous block.
         """
 
+        self.train_ioh = inputhandler
+
         x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
 
-        return self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
+        self.lambdamart.fit(x_train, y_train, qids_train['q_num'], monitor)
+
+        if self.save_dir:
+            self.save()
+
+
 
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
@@ -88,6 +100,14 @@ class LambdaMart(model.RankerInterface):
         pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
                         how='left', on=['sid', 'q_num', 'doc_id'])
         return pred
+
+    def save(self,fitted):
+        savename = f"{self.__class__.__name__ }_{self.random_state}_{self.train_ioh}"
+        with open(savename, 'wb') as handle:
+            pickle.dump(self.lambdamart, handle)
+
+    def load(self):
+        pass
 
 
 class LambdaMartYear(LambdaMart):
@@ -130,57 +150,47 @@ class LambdaMartYear(LambdaMart):
 
 
 class LambdaMartMRFR(LambdaMartYear):
-    def __init__(self, featureengineer, random_state, missing_value_strategy, calibration_seq, calibration_sample,
-                 calib_mode):
+    def __init__(self, featureengineer, random_state, missing_value_strategy,relevance_probabilities,grouping,K,beta,lambd):
         super().__init__(featureengineer, random_state, missing_value_strategy)
-        self._calibration_ioh = IOHandler(calibration_seq, calibration_sample)
-        if calib_mode not in ['isotonic', 'platt']:
-            raise ValueError('Invalid calibrator: ', calib_mode)
-        self._calib_mode = calib_mode
-        self._calibrator = None
+        self.relevance_probabilities = relevance_probabilities
+        self.grouping = grouping
+        self.K = K
+        self.beta = beta
+        self._lambda = lambd
 
-    def train(self, inputhandler):
-        super(LambdaMartMRFR, self).train(inputhandler)
-        self.calibrate()
 
-    def calibrate(self):
-        x_calib, y_calib, qids_calib, _, _, _ = self._prepare_data(self._calibration_ioh, frac=1)
-        pred = self.lambdamart.predict(x_calib)
-        qids_calib = qids_calib.assign(pred=pred)
-        tqdm.pandas()
-        qids_calib.loc[:, 'rank'] = qids_calib.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
-                                                                                       method='first')
-        pred = pd.merge(self._calibration_ioh.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']],
-                        qids_calib,
-                        how='left', on=['sid', 'q_num', 'doc_id'])
-        # pred = pred.sort_values(by=['qid','doc_id','pred'])
 
-        X = np.array(pred['pred'])
-        y = np.array(pred['relevance'])
-
-        if self._calib_mode == 'isotonic':
-            self._calibrator = IsotonicRegression(out_of_bounds='clip', y_min=y.min(), y_max=y.max())
-        elif self._calib_mode == 'platt':
-            self._calibrator = PlattCalibrator(log_odds=True)
-
-        self._calibrator.fit(X, y)
 
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
-        qids = qids.assign(pred=pred)
-        tqdm.pandas()
-        qids.loc[:, 'rank'] = qids.groupby(['sid','q_num'])['pred'].progress_apply(pd.Series.rank, ascending=False,
-                                                                           method='first')
-        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
-                        how='left', on=['sid', 'q_num', 'doc_id'])
+        qids = qids.assign(est_relevance=pred)
+        est_rels = pd.merge(inputhandler.get_query_seq()[['sid', 'qid','doc_id']].drop_duplicates(),qids)[['qid','doc_id','est_relevance']].drop_duplicates()
+
+        # normalize relevance
+        # est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(lambda x: (x - x.mean()) / x.std())
+        est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(lambda x: (x - x.min()) / (x.max() - x.min()))
+        est_rels = est_rels.sort_values(by=['qid', 'est_relevance'])
+
+        est_rels.to_csv(self.relevance_probabilities,index=False)
+
+        mrfr = MRFR(self.relevance_probabilities,self.grouping,self.K,self.beta,self._lambda)
+        outdf = mrfr.rerank(inputhandler)
+
+        predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], outdf, how='left',
+                        on=['sid', 'q_num', 'doc_id'])
+
+        # tqdm.pandas()
+        # qids.loc[:, 'rank'] = qids.groupby(['sid','q_num'])['pred'].progress_apply(pd.Series.rank, ascending=False,
+        #                                                                    method='first')
+        # pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
+        #                 how='left', on=['sid', 'q_num', 'doc_id'])
         # qids.drop('pred', inplace=True, axis=1)
 
-        est_rel = self._calibrator.predict(pred['pred'])
-        pred['est_rel'] = est_rel
 
-        return pred
+
+        return predictions
 
 
 class LambdaMartRandomization(LambdaMart):
