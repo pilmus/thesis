@@ -1,11 +1,16 @@
 import random
 
+import numpy as np
 import pyltr
 import pandas as pd
 from tqdm import tqdm
 
 from app.pre_processing.pre_processor import get_preprocessor
+from app.pre_processing.src.iohandler import IOHandler
+from app.reranking.prob_calibration.calibration_module.calibrator import PlattCalibrator
 from app.reranking.src import model
+
+from sklearn.calibration import IsotonicRegression
 
 
 class LambdaMart(model.RankerInterface):
@@ -89,28 +94,93 @@ class LambdaMartYear(LambdaMart):
     def __init__(self, featureengineer, random_state, missing_value_strategy):
         super().__init__(featureengineer, random_state)
         self.missing_value_strategy = missing_value_strategy
-        self.missing_value = None
+        self.missing_values = None
 
     def _get_feature_mat(self, inputhandler):
         x = self.fe.get_feature_mat(inputhandler)
         if self.missing_value_strategy == 'dropzero':
+            x = x.dropna()
             x = x[x.year != 0]
         elif self.missing_value_strategy == 'avg':
-            if not self.missing_value:
+            if not self.missing_values:
                 # this method is first encountered when training. we then want to set the "missing value" to the
                 # mean of the training set. when we second encounter this method, we don't change the method, but use
                 # the mean of the training set to impute the test set as well. https://stats.stackexchange.com/a/301353
-                self.missing_value = self._impute_mean(x)
-            x.year = x.year.replace(0, self.missing_value)
-        elif not self.missing_value:
-            pass
+                self.missing_values = self._impute_means(x)
+            for col in x.columns.to_list():
+                if col == 'doc_id':
+                    continue
+                x[col] = x[col].fillna(self.missing_values[col])
+            x.year = x.year.replace(0, self.missing_values['year'])
+
         else:
             raise ValueError(f"Invalid missing value strategy: {self.missing_value_strategy}")
 
         return x
 
-    def _impute_mean(self, x):  # todo: test
-        return x[x.year != 0].year.mean()
+    def _impute_means(self, x):  # todo: test
+        missing_values = {}
+        for col in x.columns.to_list():
+            if col == 'doc_id':
+                continue
+            # df[~df['Age'].isna()]
+            missing_values[col] = x[~x[col].isna()][col].mean()
+        # return x[x.year != 0].year.mean()
+        return missing_values
+
+
+class LambdaMartMRFR(LambdaMartYear):
+    def __init__(self, featureengineer, random_state, missing_value_strategy, calibration_seq, calibration_sample,
+                 calib_mode):
+        super().__init__(featureengineer, random_state, missing_value_strategy)
+        self._calibration_ioh = IOHandler(calibration_seq, calibration_sample)
+        if calib_mode not in ['isotonic', 'platt']:
+            raise ValueError('Invalid calibrator: ', calib_mode)
+        self._calib_mode = calib_mode
+        self._calibrator = None
+
+    def train(self, inputhandler):
+        super(LambdaMartMRFR, self).train(inputhandler)
+        self.calibrate()
+
+    def calibrate(self):
+        x_calib, y_calib, qids_calib, _, _, _ = self._prepare_data(self._calibration_ioh, frac=1)
+        pred = self.lambdamart.predict(x_calib)
+        qids_calib = qids_calib.assign(pred=pred)
+        tqdm.pandas()
+        qids_calib.loc[:, 'rank'] = qids_calib.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
+                                                                                       method='first')
+        pred = pd.merge(self._calibration_ioh.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id', 'relevance']],
+                        qids_calib,
+                        how='left', on=['sid', 'q_num', 'doc_id'])
+        # pred = pred.sort_values(by=['qid','doc_id','pred'])
+
+        X = np.array(pred['pred'])
+        y = np.array(pred['relevance'])
+
+        if self._calib_mode == 'isotonic':
+            self._calibrator = IsotonicRegression(out_of_bounds='clip', y_min=y.min(), y_max=y.max())
+        elif self._calib_mode == 'platt':
+            self._calibrator = PlattCalibrator(log_odds=True)
+
+        self._calibrator.fit(X, y)
+
+    def _predict(self, inputhandler):
+        x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
+        print("Predicting...")
+        pred = self.lambdamart.predict(x)
+        qids = qids.assign(pred=pred)
+        tqdm.pandas()
+        qids.loc[:, 'rank'] = qids.groupby(['sid','q_num'])['pred'].progress_apply(pd.Series.rank, ascending=False,
+                                                                           method='first')
+        pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
+                        how='left', on=['sid', 'q_num', 'doc_id'])
+        # qids.drop('pred', inplace=True, axis=1)
+
+        est_rel = self._calibrator.predict(pred['pred'])
+        pred['est_rel'] = est_rel
+
+        return pred
 
 
 class LambdaMartRandomization(LambdaMart):

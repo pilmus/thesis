@@ -3,7 +3,7 @@ from enum import IntEnum
 
 from app.pre_processing.pre_processor import get_preprocessor
 from app.reranking.src.deltr import Deltr
-from app.reranking.src.lambdamart import LambdaMartYear, LambdaMartRandomization
+from app.reranking.src.lambdamart import LambdaMartYear, LambdaMartRandomization, LambdaMartMRFR
 from app.reranking.src.mrfr import MRFR
 from app.reranking.src.p_controller import PController
 from app.reranking.src.random_shuffle import RandomRanker
@@ -15,6 +15,7 @@ class Reranker(IntEnum):
     LAMBDAMART2020 = 3
     P_CONTROLLER = 4
     MRFR = 5
+    LAMBDAMART_MRFR = 6
     # LAMBDAMART_R = 3
     # DELTR = 4
     # COORD_ASCENT = 6
@@ -27,7 +28,8 @@ def rerank(app_entry):
                  2: LambdaMartYear,
                  3: LambdaMartYear,
                  4: PController,
-                 5: MRFR
+                 5: MRFR,
+                 6: LambdaMartMRFR
                  # 3: LambdaMartRandomization,
                  # 4: Deltr,
                  # 5: PController,

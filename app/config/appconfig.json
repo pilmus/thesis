@@ -118,6 +118,75 @@
         }
       }
     },
+    "lambdamart_mrfr": {
+      "incrementables": [
+        "random_state"
+      ],
+      "preproc_config": {
+        "default": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020.json\")",
+            "fconfig": "str(\"config/features_bonart_2020.json\")",
+            "feature_mat": "self.get_feature_mat()"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
+        "train": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020.json\")",
+            "fconfig": "str(\"config/features_bonart_2020.json\")",
+            "feature_mat": "self.get_feature_mat()"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_90.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
+        }
+      },
+      "rerank_configs": {
+        "default": {
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
+          "year": 2020,
+          "square": false,
+          "random_state": "list([None])",
+          "calibration_seq": "pre_processing/resources/training/2020/training-sequence-full_10.tsv",
+          "calibration_sample": "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_10.json",
+          "missing_value_strategy": "avg"
+        },
+        "seed0": {
+          "random_state": "list([0])"
+        },
+        "platt0":{
+          "random_state": "list([0])",
+          "calib_mode":"platt"
+        },
+        "isotonic0":{
+          "random_state": "list([0])",
+          "calib_mode":"isotonic"
+        }
+      }
+    },
     "random_shuffle": {
       "incrementables": [
         "random_state"

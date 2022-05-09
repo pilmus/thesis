@@ -1,3 +1,4 @@
+import os.path
 from itertools import chain
 
 import pandas as pd
@@ -21,6 +22,8 @@ class IOHandler:
         generated with eval_sample_annotated.py)
         """
 
+        self.fsequence = fsequence
+        self.fquery = fquery
         queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
         self.seq = self.__read_sequence(fsequence)
@@ -52,8 +55,8 @@ class IOHandler:
             })
         return ret
 
-
-
+    def __str__(self):
+        return f"ioh_{os.path.splitext(os.path.basename(self.fsequence))[0]}_{os.path.splitext(os.path.basename(self.fquery))[0]}"
 
 class IOHandlerKR(IOHandler):
     def __init__(self, fsequence,

@@ -32,7 +32,7 @@ def small_delta(document_authors, document_author_actual_expected_exposures, doc
     """Compute the small delta value. Computed as the sum of E_p - E_p* for all producers of this document i"""
     total = 0
     for author in document_authors:
-        total += exposure_disparity(document_author_actual_expected_exposures[author][t -1],
+        total += exposure_disparity(document_author_actual_expected_exposures[author][t - 1],
                                     (t - 1) * document_author_target_expected_exposures[author])
 
     return total
@@ -84,11 +84,9 @@ class MRFR(model.RankerInterface):
         mus = mus_all
         vs = vs_all[N][:N + 1]
 
-
         targexp_documents = {}
         for doc in documents:
-            targexp_documents[doc] = targexp_document(doc, rhos, mus, vs,
-                                                      N)  # todo: precomputable for all docs in all rankings?
+            targexp_documents[doc] = targexp_document(doc, rhos, mus, vs, N)
 
         producer_target_expected_exposure = {}
         for producer in producers:
@@ -153,9 +151,10 @@ class MRFR(model.RankerInterface):
             best_candidate = max(psis, key=psis.get)
 
             for producer in producers:
-                producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[producer][t-1] +  candidate_actexps_authors[best_candidate][producer]
+                producer_actual_expected_exposure[producer][t] = producer_actual_expected_exposure[producer][t - 1] + \
+                                                                 candidate_actexps_authors[best_candidate][producer]
 
-            utilities[t] = utilities[t-1] + candidate_utils[best_candidate]
+            utilities[t] = utilities[t - 1] + candidate_utils[best_candidate]
 
             next_ranking = candidate_rankings[best_candidate]
             rankdf = pd.DataFrame({'q_num': [t - 1] * N, 'doc_id': next_ranking, 'rank': list(range(1, N + 1))})
