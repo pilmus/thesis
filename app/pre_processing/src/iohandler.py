@@ -4,7 +4,7 @@ from itertools import chain
 import pandas as pd
 from tqdm import tqdm
 
-import utils.io as io
+from app.utils.src import utils
 
 
 class IOHandler:
@@ -24,7 +24,7 @@ class IOHandler:
 
         self.fsequence = fsequence
         self.fquery = fquery
-        queries = io.read_jsonlines(fquery, handler=self.__unnest_query)
+        queries = utils.read_jsonlines(fquery, handler=self.__unnest_query)
         queries = list(chain.from_iterable(queries))
         self.seq = self.__read_sequence(fsequence)
         self.queries = pd.DataFrame(queries)

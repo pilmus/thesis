@@ -10,6 +10,9 @@ def read_json(file):
         dat = json.load(f)
     return dat
 
+def write_json(content, outfile):
+    with open(outfile, 'w') as fp:
+        json.dump(content, fp)
 
 def read_jsonlines(file, handler=lambda obj: obj):
     dat = []
@@ -18,10 +21,11 @@ def read_jsonlines(file, handler=lambda obj: obj):
             dat.append(handler(obj))
     return dat
 
-
 def write_jsonlines(array, file):
     with jsonlines.open(file, mode='w') as writer:
         writer.write_all(array)
+
+
 
 
 def invert_key_to_list_mapping(mapping):

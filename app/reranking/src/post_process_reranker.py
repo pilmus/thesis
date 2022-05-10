@@ -10,7 +10,7 @@ from tqdm import tqdm
 from app.reranking.poibin.poibin import PoiBin
 from app.reranking.src import model
 
-from app.utils.src.utils import invert_key_to_list_mapping, block_print, enable_print
+from app.utils.src.utils import invert_key_to_list_mapping, block_print, enable_print, write_json
 
 
 # todo: move methods below to appropriate location; something with making mappings
@@ -26,12 +26,13 @@ def doc_to_author_mapping_from_es(docids, outfile):
     es = Elasticsearch(timeout=500)
     res = es.search(index='semanticscholar2020og', body={'size': len(docids), 'query': {'ids': {'values': docids}}})
     mapping = res_to_doc_to_author_mapping(res)
-    with open(outfile, 'w') as fp:
-        json.dump(mapping, fp)
+    write_json(mapping, outfile)
     return mapping
 
 
-
+def doc_singleton_grouping(docids, outfile):
+    mapping = {doc: [doc] for doc in docids}
+    write_json(mapping, outfile)
 
 
 class PostProcessReranker(model.RankerInterface):
@@ -41,7 +42,7 @@ class PostProcessReranker(model.RankerInterface):
         self._grouping = grouping
         self._missing_group_strategy = missing_group_strategy
 
-    def get_doc_to_group_mapping(self,docids, mapping_file, missing_group_strategy):
+    def get_doc_to_group_mapping(self, docids, mapping_file, missing_group_strategy):
         with open(mapping_file) as fp:
             mapping = json.load(fp)
 
@@ -147,7 +148,7 @@ class PostProcessReranker(model.RankerInterface):
         docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
 
         doc_to_group_mapping = self.get_doc_to_group_mapping(docids, self._grouping,
-                                                        missing_group_strategy=self._missing_group_strategy)
+                                                             missing_group_strategy=self._missing_group_strategy)
 
         outdf = pd.DataFrame(columns=['sid', 'q_num', 'doc_id', 'rank'])
         Nmin = qseq_with_relevances.groupby(['sid', 'q_num']).doc_id.count().min()
@@ -215,9 +216,7 @@ class AdvantageController(PostProcessReranker):
         vs = vs_all[N][:N + 1]
 
         group_advantages = {group: [0] * 152 for group in groups}
-
         group_actual_expected_exposure = {group: [0] * 151 for group in groups}
-
         document_advantages = {document: [0] * 151 for document in documents}
 
         print("Initializing target expected experience per document...")
@@ -240,30 +239,29 @@ class AdvantageController(PostProcessReranker):
             for document in documents:
                 doc_groups = doc_to_group_mapping[document]
                 document_advantages[document][t] = self.advantage_mean(doc_groups, group_advantages, t)
+
             t1 = time.time()
             print(f"Doc advantages took {round(t1 - t0, 2)}s.")
-
             print("Computing hscores...")
+
             hscores = {}
             for document in documents:
-                hscores[document] = self._theta * rhos[document] - (1 - self._theta) * document_advantages[document][t]
+                hscores[document] = self.hscore(document, document_advantages, rhos, t)
+
             t2 = time.time()
             print(f"Hscores took {round(t2 - t1, 2)}s.")
 
             hscore_df = pd.DataFrame(
                 {'q_num': t - 1, 'doc_id': list(hscores.keys()), 'score': list(hscores.values())})
-
-            # according to text: ties broken randomly
             hscore_df['rank'] = hscore_df.score.rank(method='first',
                                                      ascending=False)
             hscore_df = hscore_df.sort_values(by='rank')
-            # hscore_df = hscore_df.astype({'rank': int})
-
             updated_doc_actexp = self.actexp_documents(hscore_df.doc_id.to_list(), rhos, gamma, k)
+
             t25 = time.time()
             print(f"Updating actual expected exposures for documents took {round(t25 - t2, 2)}s.")
-
             print("Updating expected exposures and advantages...")
+
             for group in groups:
                 prod_docs = group_to_doc_mapping[group]
                 new_actual_exp = 0
@@ -276,13 +274,24 @@ class AdvantageController(PostProcessReranker):
                 group_advantages[group][t + 1] = self.group_advantage(
                     group_actual_expected_exposure[group][t],
                     t * group_target_expected_exposure[group])
+
             t3 = time.time()
             print(f"Expeval etc. update took {round(t3 - t2, 2)}s.")
+
             sequence_df = sequence_df.append(hscore_df[['q_num', 'doc_id', 'rank']])
 
         if not verbose:
             enable_print()
         return sequence_df
+
+    def hscore(self, document, document_advantages, rhos, t, method):
+        base_hscore = self._theta * rhos[document] - (1 - self._theta) * document_advantages[document][t]
+        if method == 'linear':
+            return base_hscore
+        elif method == 'max':
+            return max(0, base_hscore)
+        else:
+            raise ValueError("Invalid hscore method: ", method)
 
 
 class MRFR(PostProcessReranker):

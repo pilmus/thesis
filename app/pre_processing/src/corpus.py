@@ -6,10 +6,10 @@ import requests
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 
-import utils.io as io
+from app.utils.src import utils
 
 
-class Corpus():
+class Corpus:
     """Interface between the corpus data on Elasticsearch and other modules. All fetched data is returned as a pandas
     dataframe."""
 
@@ -21,7 +21,7 @@ class Corpus():
         self.port = port
 
     def init_ltr(self, fconfig):
-        feature_set = io.read_json(fconfig)
+        feature_set = utils.read_json(fconfig)
         base = 'http://' + self.host + ":" + str(self.port) + '/'
         requests.put(base + '_ltr')
         full_path = base + "_ltr/_featureset/" + feature_set['featureset']['name']
