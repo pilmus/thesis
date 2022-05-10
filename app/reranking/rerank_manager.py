@@ -5,7 +5,7 @@ from app.pre_processing.pre_processor import get_preprocessor
 from app.reranking.src.deltr import Deltr
 from app.reranking.src.lambdamart import LambdaMartYear, LambdaMartRandomization, LambdaMartMRFR
 from app.reranking.src.mrfr import MRFR
-from app.reranking.src.p_controller import PController
+from app.reranking.src.post_process_reranker import AdvantageController
 from app.reranking.src.random_shuffle import RandomRanker
 
 
@@ -13,7 +13,7 @@ class Reranker(IntEnum):
     RANDOM_SHUFFLE = 1
     LAMBDAMART = 2
     LAMBDAMART2020 = 3
-    P_CONTROLLER = 4
+    AC_CONTROLLER = 4
     MRFR = 5
     LAMBDAMART_MRFR = 6
     # LAMBDAMART_R = 3
@@ -27,13 +27,9 @@ def rerank(app_entry):
     rerankers = {1: RandomRanker,
                  2: LambdaMartYear,
                  3: LambdaMartYear,
-                 4: PController,
+                 4: AdvantageController,
                  5: MRFR,
                  6: LambdaMartMRFR
-                 # 3: LambdaMartRandomization,
-                 # 4: Deltr,
-                 # 5: PController,
-                 # 6: CoordinateAscent,
                  }
 
     reranker_class = rerankers[reranker_num]
