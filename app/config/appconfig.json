@@ -180,7 +180,12 @@
         },
         "seed0": {
           "random_state": "list([0])"
+        },
+        "train0":{
+          "random_state": "list([0])",
+          "relevance_probabilities": "reranking/resources/relevances/lm_mrfr_training_full.csv"
         }
+
       }
     },
     "random_shuffle": {
@@ -416,8 +421,6 @@
           "trecruns_dir": "evaluation/resources/2020/trecruns",
           "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
           "year": 2020,
-          "relevance_probabilities": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
-          "grouping": "reranking/resources/mappings/evaluation_doc_to_author.json",
           "K": 3,
           "beta": 1,
           "lambd": 1
