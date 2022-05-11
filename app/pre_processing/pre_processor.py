@@ -1,6 +1,7 @@
 import os
 
 import pandas as pd
+from sklearn.datasets import dump_svmlight_file
 
 from app.pre_processing.src.corpus import Corpus
 from app.pre_processing.src.features import FeatureEngineer, ExtendedFeatureEngineer
@@ -37,7 +38,7 @@ class PreProcessor():
             "_iohe": IOHandler
         }
 
-        if extend: #todo; ew, fix this
+        if extend:  # todo; ew, fix this
             preproc_components["_fe"] = ExtendedFeatureEngineer
 
         for k, v in preproc_config.items():
@@ -60,8 +61,10 @@ class PreProcessor():
         esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
         fm.to_csv(esf_path, index=False)
 
-    def get_query_seq(self):
-        pass
+    def dump_svm(self, X, y, qids):
+        rn = self._app_entry.reranker_name
+        svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.csv')
+        dump_svmlight_file(X, y, svm_path, query_id=qids)
 
     @property
     def fe(self):

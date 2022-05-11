@@ -4,6 +4,7 @@ import os.path
 import sys
 
 import pandas as pd
+from sklearn.datasets import dump_svmlight_file
 
 from app.evaluation.evaluator import evaluate, summarize, compare_means
 from app.evaluation.src.y2020.eval.trec.json2qrels import json2qrels
@@ -248,7 +249,8 @@ class AppEntry:
         print("What do you want to prepare?")
         print(f"1: Group mapping file")
         print(f"2: Qrels")
-        print(f"3: Feature file")
+        print(f"3: Feature file (ES)")
+        print(f"4: Feature file (SVM)")
         choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
@@ -335,12 +337,43 @@ class AppEntry:
 
             pr = get_preprocessor()
             pr.init(self,extend=True)
-
+            # todo: move this logic to preprocessor
             tf = pr.fe.get_feature_mat(pr.ioht)
             ef = pr.fe.get_feature_mat(pr.iohe)
 
             ff = pd.concat([tf,ef]).drop_duplicates()
             pr.save_feature_mat(ff)
+        elif choice == 4:
+            print("Convert training or test file?")
+            print(f"1: Training")
+            print(f"2: Test")
+            choice1 = int(input("$ (default: 1)") or 1)
+            self.common_logic()
+
+            pr = get_preprocessor()
+            pr.init(self)
+            if choice1 == 1:
+                ioh = pr.ioht
+            elif choice1 == 2:
+                ioh = pr.iohe
+            else:
+                return #todo: ?¿?
+
+            fm = pr.fe.get_feature_mat(ioh)
+            fm = pd.merge(fm, ioh.get_query_seq()[['qid','doc_id', 'relevance']].drop_duplicates(),on =['qid', 'doc_id'])
+            fm = fm.sort_values(by='qid')
+
+            qids = fm['qid'].to_list()
+            y = fm['relevance'].to_list()
+            X = fm.drop(['qid','relevance','doc_id'],axis=1)
+
+            pr.dump_svm(X,y,qids)
+
+
+
+
+
+
 
 
 

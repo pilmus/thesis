@@ -112,28 +112,11 @@ class LambdaMart(model.RankerInterface):
 class LambdaMartYear(LambdaMart):
     def __init__(self, featureengineer, random_state, missing_value_strategy):
         super().__init__(featureengineer, random_state)
-        self.missing_value_strategy = missing_value_strategy
-        self.missing_values = None
+
 
     def _get_feature_mat(self, inputhandler):
         x = self.fe.get_feature_mat(inputhandler)
-        if self.missing_value_strategy == 'dropzero':
-            x = x.dropna()
-            x = x[x.year != 0]
-        elif self.missing_value_strategy == 'avg':
-            if not self.missing_values:
-                # this method is first encountered when training. we then want to set the "missing value" to the
-                # mean of the training set. when we second encounter this method, we don't change the method, but use
-                # the mean of the training set to impute the test set as well. https://stats.stackexchange.com/a/301353
-                self.missing_values = self._impute_means(x)
-            for col in x.columns.to_list():
-                if col == 'doc_id':
-                    continue
-                x[col] = x[col].fillna(self.missing_values[col])
-            x.year = x.year.replace(0, self.missing_values['year'])
 
-        else:
-            raise ValueError(f"Invalid missing value strategy: {self.missing_value_strategy}")
 
         return x
 
