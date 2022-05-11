@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from elasticsearch import Elasticsearch
 from tqdm import tqdm
-from app.reranking.poibin.poibin import PoiBin
 from app.reranking.src import model
+from app.reranking.src.poibin.poibin import PoiBin
 
 from app.utils.src.utils import invert_key_to_list_mapping, block_print, enable_print, write_json
 

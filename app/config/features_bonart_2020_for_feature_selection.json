@@ -1,0 +1,522 @@
+{
+  "validation": {
+    "params": {
+      "keywords": "python"
+    },
+    "index": "semanticscholar2020og"
+  },
+  "featureset": {
+    "name": "features_bonart_2020_for_feature_selection",
+    "features": [
+      {
+        "name": "title_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "title": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "abstract_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "paperAbstract": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "venue_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "venue": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "journal_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "journalName": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "authors_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "author_names": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "sources_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "sources": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "fields_of_study_bm25",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "match": {
+            "fields_of_study": "{{keywords}}"
+          }
+        }
+      },
+      {
+        "name": "year",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "year",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_title_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "title"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_abstract_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "paperAbstract"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_venue_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "venue"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_journal_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "journalName"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_authors_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "author_names"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_sources_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "sources"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_fields_of_study_tf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "fields_of_study"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_title_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "title"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_abstract_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "paperAbstract"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_venue_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "venue"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_journal_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "journalName"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_authors_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "author_names"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_sources_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "sources"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_fields_of_study_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "fields_of_study"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_title_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "title"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_abstract_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "paperAbstract"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_venue_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "venue"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_journal_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "journalName"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_authors_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "author_names"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_sources_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "sources"
+            ]
+          }
+        }
+      },
+      {
+        "name": "tsq_expr_fields_of_study_tf_idf",
+        "params": [
+          "keywords"
+        ],
+        "template": {
+          "term_stat": {
+            "expr": "tf * idf",
+            "aggr": "sum",
+            "terms": [
+              "{{keywords}}"
+            ],
+            "fields": [
+              "fields_of_study"
+            ]
+          }
+        }
+      },
+      {
+        "name": "inCitations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "inCitations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      },
+      {
+        "name": "outCitations",
+        "template": {
+          "function_score": {
+            "functions": [
+              {
+                "field_value_factor": {
+                  "field": "outCitations",
+                  "missing": 0
+                }
+              }
+            ],
+            "query": {
+              "match_all": {}
+            }
+          }
+        }
+      }
+    ]
+  }
+}

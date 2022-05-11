@@ -1,7 +1,9 @@
 import os
 
+import pandas as pd
+
 from app.pre_processing.src.corpus import Corpus
-from app.pre_processing.src.features import FeatureEngineer
+from app.pre_processing.src.features import FeatureEngineer, ExtendedFeatureEngineer
 from app.pre_processing.src.iohandler import IOHandler
 
 PREPROCESSOR = None
@@ -24,7 +26,7 @@ class PreProcessor():
     def __init__(self):
         print("ape")
 
-    def init(self, app_entry):
+    def init(self, app_entry, extend=None):
         self._app_entry = app_entry
         preproc_config = app_entry.preproc_config
 
@@ -34,6 +36,9 @@ class PreProcessor():
             "_ioht": IOHandler,
             "_iohe": IOHandler
         }
+
+        if extend: #todo; ew, fix this
+            preproc_components["_fe"] = ExtendedFeatureEngineer
 
         for k, v in preproc_config.items():
             component_class = preproc_components[k]
@@ -49,6 +54,11 @@ class PreProcessor():
         if os.path.exists(esf_path):
             return esf_path
         return None
+
+    def save_feature_mat(self, fm):
+        rn = self._app_entry.reranker_name
+        esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
+        fm.to_csv(esf_path, index=False)
 
     def get_query_seq(self):
         pass

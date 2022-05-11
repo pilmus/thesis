@@ -8,12 +8,11 @@ from tqdm import tqdm
 
 from app.pre_processing.pre_processor import get_preprocessor
 from app.pre_processing.src.iohandler import IOHandler
-from app.reranking.prob_calibration.calibration_module.calibrator import PlattCalibrator
 from app.reranking.src import model
 
 from sklearn.calibration import IsotonicRegression
 
-from app.reranking.src.mrfr import MRFR
+from app.reranking.src.post_process_reranker import MRFR
 
 
 class LambdaMart(model.RankerInterface):

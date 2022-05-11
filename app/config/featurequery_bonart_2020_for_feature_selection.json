@@ -1,0 +1,31 @@
+{
+    "query": {
+        "bool": {
+            "filter": [
+                {
+                    "terms": {
+                        "_id": "doc_ids"
+                    }
+                },
+                {
+                    "sltr": {
+                        "_name": "logged_featureset_bonart_2020_for_feature_selection",
+                        "featureset": "features_bonart_2020_for_feature_selection",
+                        "params": {
+                            "keywords": "query"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "ext": {
+        "ltr_log": {
+            "log_specs": {
+                "name": "log_entry_bonart_2020_for_feature_selection",
+                "named_query": "logged_featureset_bonart_2020_for_feature_selection",
+                "missing_as_zero": true
+            }
+        }
+    }
+}

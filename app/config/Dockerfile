@@ -1,2 +1,2 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:7.0.1
-RUN ./bin/elasticsearch-plugin install -b http://es-learn-to-rank.labs.o19s.com/ltr-1.1.1-es7.0.1.zip
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+RUN ./bin/elasticsearch-plugin install -b https://github.com/o19s/elasticsearch-learning-to-rank/releases/download/v1.5.8-es7.17.3/ltr-plugin-v1.5.8-es7.17.3.zip

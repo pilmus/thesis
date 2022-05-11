@@ -248,6 +248,7 @@ class AppEntry:
         print("What do you want to prepare?")
         print(f"1: Group mapping file")
         print(f"2: Qrels")
+        print(f"3: Feature file")
         choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
@@ -329,6 +330,20 @@ class AppEntry:
             outfile = f"{os.path.splitext(grouping)[0]}-qrels.tsv"
 
             json2qrels(sample, grouping, outfile, complete=True,not_verbose=False)
+        elif choice == 3:
+            self.common_logic()
+
+            pr = get_preprocessor()
+            pr.init(self,extend=True)
+
+            tf = pr.fe.get_feature_mat(pr.ioht)
+            ef = pr.fe.get_feature_mat(pr.iohe)
+
+            ff = pd.concat([tf,ef]).drop_duplicates()
+            pr.save_feature_mat(ff)
+
+
+
 
     def analyze(self):
         self.common_logic()

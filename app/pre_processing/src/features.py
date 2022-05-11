@@ -24,11 +24,20 @@ class FeatureEngineer:
             raise ValueError(
                 f"You must either initialize a corpus, fquery, and fconfig or give a pre-generated feature matrix!")
 
-    def __get_features(self, queryterm, doc_ids):
+    def _get_features(self, queryterm, doc_ids):
+        #todo: queryterm is >=1 words?
+        docs = self._get_es_ltr_resp(doc_ids, queryterm)
+        resp = self._features_from_response(docs)
+        resp = self._add_query_features(queryterm, resp)
+        return resp
+
+    def _get_es_ltr_resp(self, doc_ids, queryterm):
         self.query['query']['bool']['filter'][0]['terms']['_id'] = doc_ids
         self.query['query']['bool']['filter'][1]['sltr']['params']['keywords'] = queryterm
         docs = self.corpus.es.search(index=self.corpus.index, body=self.query, size=len(doc_ids))
-        resp = self.__features_from_response(docs)
+        return docs
+
+    def _add_query_features(self, queryterm, resp):
         resp['qlength'] = len(queryterm)
         return resp
 
@@ -41,19 +50,19 @@ class FeatureEngineer:
         if self.feature_mat:
             f = pd.read_csv(self.feature_mat, dtype={'doc_id': object})
             qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
-            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'],how='right')
+            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right')
             return feature_mat
         else:
             tqdm.pandas()
             features = iohandler.get_query_seq().groupby('qid').progress_apply(
-                lambda df: self.__get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
+                lambda df: self._get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
 
             features = features.reset_index(
                 level=0)  # brings the qid back as a column after having been used to groupby
 
             return features
 
-    def __features_from_response(self, docs):
+    def _features_from_response(self, docs):
         docs = docs['hits']['hits']
         features = [doc['fields']['_ltrlog'][0][self.log_field_name] for doc in docs]
         ids = [doc['_id'] for doc in docs]
@@ -80,3 +89,39 @@ class AnnotationFeatureEngineer(FeatureEngineer):
         features = pd.merge(es_features, doc_annotations, on='doc_id', how='left')
         features = features.dropna()
         return features
+
+
+class ExtendedFeatureEngineer(FeatureEngineer):
+    """Adds a number of features based on other sources than an elasticsearch ltr featureset."""
+
+    FIELDS = ["title","paperAbstract", "venue", "journalName", "author_names","sources","fields_of_study"]
+
+    def _get_features(self, queryterm, doc_ids):
+        featdf = super()._get_features(queryterm,doc_ids)
+        esdf = self.__get_es_resp(doc_ids)
+        featdf = pd.merge(featdf,esdf,on='doc_id')
+        return featdf
+
+    def __get_es_resp(self, doc_ids):
+        query = {'query':{'ids':{'values':doc_ids}}}
+        resp = self.corpus.es.search(index=self.corpus.index, body=query, size=len(doc_ids))
+        hits = resp['hits']['hits']
+        records = []
+        for hit in hits:
+            resdict = {}
+            resdict['doc_id'] = hit['_id']
+            src = hit['_source']
+            for field in self.FIELDS:
+                if type(src[field]) == list:
+                    resdict[f'{field}length_char'] = len(" ".join(src[field]))
+                    resdict[f'{field}length_token'] = len(" ".join(src[field]).split())
+                else:
+                    resdict[f'{field}length_char'] = len(src[field])
+                    resdict[f'{field}length_token'] = len(src[field].split())
+            records.append(resdict)
+        return pd.DataFrame(records)
+
+    def _add_query_features(self, queryterm, resp):
+        resp['qlength_char'] = len(queryterm)
+        resp['qlength_token'] = len(queryterm.split())
+        return resp
