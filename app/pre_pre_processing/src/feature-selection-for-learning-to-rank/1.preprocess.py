@@ -7,13 +7,13 @@ def pluck_feature_and_generate_ranking_file(input_example_file, target_directory
 	line_count = sum(1 for line in open(input_example_file))
 
 	with open("Q0", "w") as q0_file:
-		for _ in xrange(line_count): q0_file.write("Q0\n")
+		for _ in range(line_count): q0_file.write("Q0\n")
 
 	with open("rank", "w") as rank_file:
-		for i in xrange(line_count): rank_file.write(str(i+1) + "\n")
+		for i in range(line_count): rank_file.write(str(i+1) + "\n")
 
 	with open("label", "w") as label_file:
-		for _ in xrange(line_count): label_file.write("Feature{}\n".format(feature_number))
+		for _ in range(line_count): label_file.write("Feature{}\n".format(feature_number))
 
 	os.system(" cut -d' ' -f2 {} | cut -d':' -f2 > query_ids ".format(input_example_file))
 	os.system(" rev {} | cut -d' ' -f1 | rev | tr -d '\r'> document_ids".format(input_example_file))
@@ -61,7 +61,7 @@ for path in paths:
 	os.makedirs(path)
 
 for feature_number in range(1, total_number_of_features + 1):
-	print "About to process Feature {}".format(feature_number)
+	print("About to process Feature {}".format(feature_number))
 	
 	input_example_file = os.path.join( root_directory, "trainingset.txt" )
 	target_directory = os.path.join( root_directory, "rankings" )
@@ -73,4 +73,4 @@ for feature_number in range(1, total_number_of_features + 1):
 	source_directory = os.path.join( root_directory, "rankings" )
 	target_directory = os.path.join( root_directory, "ranking_scores" )
 	evaluate_ranking_file(source_directory, target_directory, feature_number, qrel_file_path)		
-	print "---------"
+	print("---------")

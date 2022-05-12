@@ -4,7 +4,7 @@ import os.path
 import pandas as pd
 
 from app.evaluation.src.y2020.compare_run_means import compare_run_means
-from app.evaluation.src.y2020.eval.trec.json2qrels import json2qrels
+from app.evaluation.src.y2020.eval.trec.json2qrels import json_to_group_qrels
 
 from app.evaluation.src.y2020.eval.expeval import expeval
 from app.evaluation.src.y2020.eval.trec.json2runfile import json2runfile

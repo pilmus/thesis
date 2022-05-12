@@ -141,15 +141,33 @@
             "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
           }
-        }
-      },
-        "rerank_configs": {
-          "default": {
-            "random_state": "list([None])"
+        },
+        "75_25_split": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
+            "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
+            "feature_mat": "self.get_feature_mat()"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_75.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_-25.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           }
         }
+      },
+      "rerank_configs": {
+        "default": {
+          "random_state": "list([None])"
+        }
       }
-    ,
+    },
     "lambdamart_mrfr": {
       "incrementables": [
         "random_state"
@@ -213,11 +231,10 @@
         "seed0": {
           "random_state": "list([0])"
         },
-        "train0":{
+        "train0": {
           "random_state": "list([0])",
           "relevance_probabilities": "reranking/resources/relevances/lm_mrfr_training_full.csv"
         }
-
       }
     },
     "random_shuffle": {

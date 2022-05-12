@@ -19,10 +19,10 @@ def main():
     complete = args.complete
     destination = args.destination
     not_verbose = args.not_verbose
-    json2qrels(relfn, groupfn, complete, destination, not_verbose)
+    json_to_group_qrels(relfn, groupfn, complete, destination, not_verbose)
 
 
-def json2qrels(ground_truth_relevance, grouping_file, destination, complete, not_verbose):
+def json_to_group_qrels(ground_truth_relevance, grouping_file, destination, complete, not_verbose):
     did2gids = {}
     with open(grouping_file, "r") as fp:
         for row in csv.reader(fp, delimiter=','):
@@ -47,6 +47,18 @@ def json2qrels(ground_truth_relevance, grouping_file, destination, complete, not
                             df.write("\t".join([qid, gids, did, rel]) + "\n")
                     if not not_verbose:
                         print("\t".join([qid, gids, did, rel]))  # each qid/did combination gets its own line?
+
+
+def json_to_base_qrels(gt, destination):
+    with open(gt, 'r') as fp:
+        for line in fp:
+            data = json.loads(line.strip())
+            qid = "%d" % data["qid"]
+            for d in data["documents"]:
+                did = d["doc_id"]
+                rel = "%d" % d["relevance"]
+                with open(destination, 'a') as f:
+                    f.write("\t".join([qid, "0", did, rel, "\n"]))
 
 
 if __name__ == '__main__':

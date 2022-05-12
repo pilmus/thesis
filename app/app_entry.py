@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.datasets import dump_svmlight_file
 
 from app.evaluation.evaluator import evaluate, summarize, compare_means
-from app.evaluation.src.y2020.eval.trec.json2qrels import json2qrels
+from app.evaluation.src.y2020.eval.trec.json2qrels import json_to_group_qrels, json_to_base_qrels
 from app.pre_pre_processing.src.merged_annotations_to_groups import annotations_to_groups, MappingMode, Grouping
 from app.pre_processing.pre_processor import get_preprocessor
 
@@ -315,33 +315,55 @@ class AppEntry:
                     "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
                 valid_sample = os.path.exists(sample)
 
-            valid_grouping = False
-            while not valid_grouping:
-                print("Enter the path to grouping file")
-                grouping = str(input(
-                    "$ (default: evaluation/resources/2020/groupings/full-annotations-mixed_group.csv)") or "evaluation/resources/2020/groupings/full-annotations-mixed_group.csv")
-                valid_grouping = os.path.exists(grouping)
+            print("Group qrels or base qrels?")
+            print("1: Group")
+            print("2: Base")
+            choice1 = int(input("$ (default: 1)") or 1)
 
-            valid_outdir = False
-            while not valid_outdir:
-                print("Enter the path to the outdir")
-                outdir = str(input(
-                    "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
-                valid_outdir = os.path.exists(outdir)
+            if choice1 == 1:
 
-            outfile = f"{os.path.splitext(grouping)[0]}-qrels.tsv"
+                valid_grouping = False
+                while not valid_grouping:
+                    print("Enter the path to grouping file")
+                    grouping = str(input(
+                        "$ (default: evaluation/resources/2020/groupings/full-annotations-mixed_group.csv)") or "evaluation/resources/2020/groupings/full-annotations-mixed_group.csv")
+                    valid_grouping = os.path.exists(grouping)
 
-            json2qrels(sample, grouping, outfile, complete=True,not_verbose=False)
+                valid_outdir = False
+                while not valid_outdir:
+                    print("Enter the path to the outdir")
+                    outdir = str(input(
+                        "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
+                    valid_outdir = os.path.exists(outdir)
+
+                outfile = f"{os.path.splitext(grouping)[0]}-qrels.tsv"
+
+                json_to_group_qrels(sample, grouping, outfile, complete=True, not_verbose=False)
+            elif choice1 == 2:
+                valid_outdir = False
+                while not valid_outdir:
+                    print("Enter the path to the outdir")
+                    outdir = str(input(
+                        "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
+                    valid_outdir = os.path.exists(outdir)
+
+                print("Enter the desired file name")
+                outfile = str(input(
+                    "$ (default: qrels.qrel)") or "qrels.qrel")
+
+                json_to_base_qrels(sample, os.path.join(outdir, outfile))
+
+
         elif choice == 3:
             self.common_logic()
 
             pr = get_preprocessor()
-            pr.init(self,extend=True)
+            pr.init(self, extend=True)
             # todo: move this logic to preprocessor
             tf = pr.fe.get_feature_mat(pr.ioht)
             ef = pr.fe.get_feature_mat(pr.iohe)
 
-            ff = pd.concat([tf,ef]).drop_duplicates()
+            ff = pd.concat([tf, ef]).drop_duplicates()
             pr.save_feature_mat(ff)
         elif choice == 4:
             print("Convert training or test file?")
@@ -357,30 +379,32 @@ class AppEntry:
             elif choice1 == 2:
                 ioh = pr.iohe
             else:
-                return #todo: ?¿?
+                return  # todo: ?¿?
 
             fm = pr.fe.get_feature_mat(ioh)
-            fm = pd.merge(fm, ioh.get_query_seq()[['qid','doc_id', 'relevance']].drop_duplicates(),on =['qid', 'doc_id'])
+            fm = pd.merge(fm, ioh.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
+                          on=['qid', 'doc_id'])
             fm = fm.sort_values(by='qid')
 
             qids = fm['qid'].to_list()
             y = fm['relevance'].to_list()
-            X = fm.drop(['qid','relevance','doc_id'],axis=1)
+            X = fm.drop(['qid', 'relevance', 'doc_id'], axis=1)
+            docids = fm['doc_id']
 
-            pr.dump_svm(X,y,qids)
+            print("Sparse or dense?")
+            print(f"1: Sparse")
+            print(f"2: Dense")
+            choice_sparsedense = bool(int(input("$ (default: 1)") or 1) - 1)
 
+            print("Zero- or one indexed?")
+            print(f"1: Zero")
+            print(f"2: One")
+            choice_indexing = bool(int(input("$ (default: 1)") or 1) - 1)
 
-
-
-
-
-
-
-
+            pr.dump_svm(X, y, qids, docids, choice_sparsedense,choice_indexing)
 
     def analyze(self):
         self.common_logic()
-
 
         self.analyze_logic()
 

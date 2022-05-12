@@ -61,10 +61,35 @@ class PreProcessor():
         esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
         fm.to_csv(esf_path, index=False)
 
-    def dump_svm(self, X, y, qids):
+    def dump_svm(self, X, y, qids, docids=None, dense=False, zero_indexed=True):
         rn = self._app_entry.reranker_name
-        svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.csv')
-        dump_svmlight_file(X, y, svm_path, query_id=qids)
+
+        if dense:
+            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.densesvm')
+            with open(svm_path, 'a') as f:
+                for i, (rel, qid, docid) in enumerate(zip(y, qids, docids)):
+                    feats = X.iloc[i].to_list()
+                    if zero_indexed:
+                        feats = [f"{fnum}:{fval}" for fnum, fval in enumerate(feats)]
+                    else:
+                        feats = [f"{fnum + 1}:{fval}" for fnum, fval in enumerate(feats)]
+                    f.write(' '.join([f"{rel}", f"qid:{qid}"] + feats + [f"# docid = {docid}\n"]))
+
+
+        elif not dense:
+            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.sparsesvm')
+            dump_svmlight_file(X, y, svm_path, query_id=qids, zero_based=zero_indexed)
+            if not docids is None:
+                with open(svm_path, 'r') as f:
+                    file_lines = [line.strip() for line in f.readlines()]
+                    appends = [f"# docid = {docid}\n" for docid in docids]
+                    zl = zip(file_lines, appends)
+                    outlines = [' '.join(z) for z in zl]
+
+                with open(svm_path, 'w') as f:
+                    f.writelines(outlines)
+        else:
+            raise ValueError("Invalid dense/sparse option: ", dense)
 
     @property
     def fe(self):

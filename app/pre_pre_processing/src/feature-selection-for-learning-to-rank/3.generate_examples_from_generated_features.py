@@ -39,7 +39,7 @@ for k in n:
 		for method in methods:
 			
 			lines = open( os.path.join(feature_selection_directory, "{}_{}.ranking".format(method, balancing_factor) )).readlines()[:k]
-			feature_numbers = map(lambda line: int(line.strip()), lines)
+			feature_numbers = list(map(lambda line: int(line.strip()), lines))
 			### Translate Training Examples - Start ###
 			source_examples_file_path = os.path.join( root_directory, "trainingset.txt")
 			target_examples_file_path = os.path.join( root_directory, "feature_selected_example_files", "{}_{}_{}_training_examples.dat".format(method, k, balancing_factor))
