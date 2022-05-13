@@ -32,7 +32,8 @@ def select(query_wise_rankings_directory, ranking_scores_directory, k, balancing
     No_of_features = len(feature_numbers)
     scorematrix = numpy.zeros((No_of_features, No_of_features))
 
-    for i in range(1, No_of_features + 1):
+    print("Computing score matrix.")
+    for i in tqdm(range(1, No_of_features + 1)):
         for j in range(i + 1, No_of_features + 1):
             val = calcmsdVal(i, j, fscores[i - 1], fscores[j - 1], query_wise_rankings_directory, feature_numbers,
                              query_ids, balancing_factor)
@@ -43,7 +44,7 @@ def select(query_wise_rankings_directory, ranking_scores_directory, k, balancing
 
     pbar = tqdm(total=k)
 
-    print("Computing scores for features.")
+    print("Finding maxpairs.")
     while cnt <= k:
         """ Find max pair"""
         row, column = numpy.unravel_index(scorematrix.argmax(), scorematrix.shape)
