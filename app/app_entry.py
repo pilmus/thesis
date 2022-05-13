@@ -2,6 +2,7 @@ import itertools
 import json
 import os.path
 import sys
+import random
 
 import pandas as pd
 from sklearn.datasets import dump_svmlight_file
@@ -251,6 +252,7 @@ class AppEntry:
         print(f"2: Qrels")
         print(f"3: Feature file (ES)")
         print(f"4: Feature file (SVM)")
+        print(f"5: Augmented training sample")
         choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
@@ -352,16 +354,16 @@ class AppEntry:
                     "$ (default: qrels.qrel)") or "qrels.qrel")
 
                 json_to_base_qrels(sample, os.path.join(outdir, outfile))
-
-
         elif choice == 3:
             self.common_logic()
 
             pr = get_preprocessor()
-            pr.init(self, extend=True)
+            pr.init(self)
             # todo: move this logic to preprocessor
+
+
             tf = pr.fe.get_feature_mat(pr.ioht)
-            ef = pr.fe.get_feature_mat(pr.iohe)
+            ef = pr.fe.get_feature_mat(pr.iohe) #todo: make it so that you can extract features from ioht or iohe seperately
 
             ff = pd.concat([tf, ef]).drop_duplicates()
             pr.save_feature_mat(ff)
@@ -401,7 +403,38 @@ class AppEntry:
             print(f"2: One")
             choice_indexing = bool(int(input("$ (default: 1)") or 1) - 1)
 
-            pr.dump_svm(X, y, qids, docids, choice_sparsedense,choice_indexing)
+            pr.dump_svm(X, y, qids, docids, choice_sparsedense, choice_indexing)
+        elif choice == 5:
+
+            valid_training_sample = False
+            while not valid_training_sample:
+                print("Enter the path to the training sample")
+                training_sample = str(input(
+                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+                valid_training_sample = os.path.exists(training_sample)
+
+            print("What percentage of documents should be sampled?")
+            frac = float(input("$ "))
+
+            dfs = [pd.read_json(training_sample, lines=True)]
+            for i in range(5): #todo: make range param configurable
+                df = pd.read_json(training_sample, lines=True)
+                df[['qid','documents']] = df.apply(lambda row: pd.Series({"qid":f"{row.qid}_{i+1}","documents":random.sample(row.documents, int(frac * len(row.documents)))}), axis=1)
+                dfs.append(df)
+
+            aug_df = pd.concat(dfs)
+
+            outpath = f"{os.path.splitext(training_sample)[0]}_aug{frac}.json"
+            aug_df.to_json(outpath,orient='records',lines=True)
+
+            aug_df.qid.drop_duplicates().reset_index(drop=True).to_csv(os.path.join(os.path.dirname(training_sample),f"training-sequence-full_aug{frac}.tsv"))
+
+
+            # load training file
+            # for each qid, sample
+            pass
+        else:
+            print("Invalid choice: ", choice)
 
     def analyze(self):
         self.common_logic()

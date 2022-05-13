@@ -27,7 +27,7 @@ class PreProcessor():
     def __init__(self):
         print("ape")
 
-    def init(self, app_entry, extend=None):
+    def init(self, app_entry):
         self._app_entry = app_entry
         preproc_config = app_entry.preproc_config
 
@@ -38,7 +38,7 @@ class PreProcessor():
             "_iohe": IOHandler
         }
 
-        if extend:  # todo; ew, fix this
+        if preproc_config.get("extend",None):  # todo; ew, fix this
             preproc_components["_fe"] = ExtendedFeatureEngineer
 
         for k, v in preproc_config.items():

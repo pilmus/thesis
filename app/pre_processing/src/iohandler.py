@@ -29,6 +29,9 @@ class IOHandler:
         self.seq = self.__read_sequence(fsequence)
         self.queries = pd.DataFrame(queries)
 
+        self.seq.qid = self.seq.qid.astype('str')
+        self.queries.qid = self.queries.qid.astype('str')
+
     def __read_sequence(self, fsequence):
         df = pd.read_csv(fsequence, names=["sid", "q_num", "qid"], sep='^|\.|,', engine='python')
         if df.sid.isnull().all():
