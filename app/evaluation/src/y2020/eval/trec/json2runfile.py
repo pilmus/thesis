@@ -30,7 +30,7 @@ def json2runfile(runfile, destination, non_verbose, args_runid=None):
     with open(runfile, "r") as fp:
         for line in fp:
             data = json.loads(line.strip())
-            qid = "%d" % data["qid"]
+            qid = str(data["qid"])
             if not (qid in qid_cnts):
                 qid_cnts[qid] = 0
             else:

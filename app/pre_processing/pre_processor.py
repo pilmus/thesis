@@ -1,3 +1,4 @@
+import csv
 import os
 
 import pandas as pd
@@ -48,10 +49,10 @@ class PreProcessor():
                 component_params.append(eval(val))
             setattr(self, k, component_class(*component_params))
 
-    def get_feature_mat(self):
+    def get_feature_mat(self, additional_name=""):
         # either return feature matrix FILE or return None
         rn = self._app_entry.reranker_name
-        esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
+        esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}{additional_name}.csv')
         if os.path.exists(esf_path):
             return esf_path
         return None
@@ -90,6 +91,39 @@ class PreProcessor():
                     f.writelines(outlines)
         else:
             raise ValueError("Invalid dense/sparse option: ", dense)
+
+    def svm_to_csv(self, svmfile, outfile):
+
+
+        reader = csv.reader(
+            open('pre_processing/resources/expanded_feature_numbers.csv', 'r'))
+        feat_dict = {}
+        for k, v in reader:
+            feat_dict[k] = v
+
+        with open(svmfile, 'r') as f:
+
+            samples = []
+
+            for line in f.readlines():  # note: readlines has the \n at the end
+                line = line.strip()
+                featvals = line.split(" ")
+                rel = featvals[0]
+                qid = featvals[1].split(':')[1]
+                docid = featvals[-1]
+
+                sample_dict = {}
+
+                sample_dict['qid'] = qid
+                sample_dict['doc_id'] = docid
+                for featval in featvals[2:-3]:
+                    k, v = featval.split(':')
+                    sample_dict[feat_dict[str(int(k) + 1)]] = v
+
+                samples.append(sample_dict)
+        outdf = pd.DataFrame(samples)
+
+        outdf.to_csv(outfile,index=False)
 
     @property
     def fe(self):

@@ -253,15 +253,16 @@ class AppEntry:
         print(f"3: Feature file (ES)")
         print(f"4: Feature file (SVM)")
         print(f"5: Augmented training sample")
+        print(f"6: ES feature file from SVMlight")
         choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
-            valid_training_sample = False
-            while not valid_training_sample:
+            valid_svmlight_file = False
+            while not valid_svmlight_file:
                 print("Enter the path to the training sample")
-                training_sample = str(input(
+                svmlight_file = str(input(
                     "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
-                valid_training_sample = os.path.exists(training_sample)
+                valid_svmlight_file = os.path.exists(svmlight_file)
 
             valid_eval_sample = False
             while not valid_eval_sample:
@@ -295,7 +296,7 @@ class AppEntry:
                 mm = MappingMode(mm_val).name.lower()
                 valid_mm = MappingMode.has_value(mm_val)
 
-            grouping = annotations_to_groups(training_sample, eval_sample, doc_annotations, gm, mm)
+            grouping = annotations_to_groups(svmlight_file, eval_sample, doc_annotations, gm, mm)
 
             outfile = f"full-annotations-{gm}-{mm}.csv"
 
@@ -406,12 +407,12 @@ class AppEntry:
             pr.dump_svm(X, y, qids, docids, choice_sparsedense, choice_indexing)
         elif choice == 5:
 
-            valid_training_sample = False
-            while not valid_training_sample:
+            valid_training_file = False
+            while not valid_training_file:
                 print("Enter the path to the training sample")
                 training_sample = str(input(
                     "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
-                valid_training_sample = os.path.exists(training_sample)
+                valid_training_file = (os.path.exists(training_sample) and os.path.isfile(training_sample))
 
             print("What percentage of documents should be sampled?")
             frac = float(input("$ "))
@@ -433,6 +434,21 @@ class AppEntry:
             # load training file
             # for each qid, sample
             pass
+        elif choice == 6:
+            valid_svmlight_file = False
+            while not valid_svmlight_file:
+                print("Enter the path to the SVMlight file")
+                svmlight_file = str(input(
+                    "$ (default: pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat)") or "pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat")
+                valid_svmlight_file = (os.path.exists(svmlight_file) and os.path.isfile(svmlight_file))
+
+            print("Enter the output location")
+            outfile = str(input("$ "))
+
+            pr = get_preprocessor()
+            pr.svm_to_csv(svmlight_file, outfile)
+
+
         else:
             print("Invalid choice: ", choice)
 
