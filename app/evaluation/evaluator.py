@@ -12,11 +12,26 @@ from app.evaluation.src.y2020.eval.trec.json2runfile import json2runfile
 from app.post_processing.post_processor import get_postprocessor
 
 import app.evaluation.src.y2019.trec_fair_ranking_evaluator as eval2019
+from app.utils.src.utils import valid_file_with_none
 
 
 def evaluate(app_entry):
-    runfile = os.path.basename(get_postprocessor().outfile)
-    year = int(app_entry.get_argument('year'))
+    runfile = get_postprocessor().outfile
+    valid_runfile = valid_file_with_none(runfile)
+    while not valid_runfile:
+        print("Enter a runfile to evaluate.")
+        runfile = str(input("$ "))
+        valid_runfile = valid_file_with_none(runfile)
+    runfile = os.path.basename(runfile)
+
+    year = app_entry.get_argument('year')
+    valid_year = year == "2019" or year == "2020"
+
+    while not valid_year:
+        print("Which year's evaluation method? (2019/2020)")
+        year = str(input("$ (default: 2020)") or 2020)
+        valid_year = year == "2019" or year == "2020"
+    year = int(year)
 
     if year == 2019:
         ref_run = app_entry.get_argument("ref_run")
@@ -32,16 +47,27 @@ def evaluate(app_entry):
         eval2019.evaluate(qseq_file, gt_file, level_annot_file, "level", outdir, run_files=[runfile, ref_run])
         eval2019.evaluate(qseq_file, gt_file, h_index_4_annot_file, "h_index_4", outdir, run_files=[runfile, ref_run])
     elif year == 2020: #todo: add preproc config name to outfiles
-        jsonruns_dir = app_entry.get_argument("outdir")
-        trecruns_dir = app_entry.get_argument("trecruns_dir")
+        jsonruns_dir = (app_entry.get_argument("outdir") or "evaluation/resources/2020/jsonruns")
+        trecruns_dir = (app_entry.get_argument("trecruns_dir") or "evaluation/resources/2020/trecruns")
+
         qrels = app_entry.get_argument("qrels")
+        valid_qrels = valid_file_with_none(qrels)
+        while not valid_qrels:
+            print("Which qrels file?")
+            qrels = str(input(
+                    "$ (default: evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv)") or "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv")
+            valid_qrels = valid_file_with_none(qrels)
+
+        # qrels = app_entry.get_argument("qrels")
 
         tsv_name = f"{os.path.splitext(os.path.basename(runfile))[0]}.tsv"
         trec_format_runfile = os.path.join(trecruns_dir, tsv_name)
         json2runfile(os.path.join(jsonruns_dir, runfile), trec_format_runfile, non_verbose=True)
 
+        outname = f"{os.path.splitext(tsv_name)[0]}_{os.path.basename(os.path.splitext(qrels)[0])}.tsv"
+
         outdir = os.path.join(os.path.dirname(jsonruns_dir), 'eval_results')
-        outfile = os.path.join(outdir, tsv_name)
+        outfile = os.path.join(outdir, outname)
         expeval(qrels, trec_format_runfile, outfile,
                 complete=True,
                 groupEvaluation=True,
@@ -50,6 +76,9 @@ def evaluate(app_entry):
 
     else:
         raise ValueError(f"Invalid year: {year}.")
+
+
+
 
 
 def summarize(app_entry):

@@ -42,6 +42,8 @@ class AppEntry:
 
     _rankers = None
 
+    initialized = False
+
     def __init__(self):
         pass
 
@@ -150,6 +152,8 @@ class AppEntry:
         self._basename = value
 
     def get_argument(self, paramk):
+        if not self.initialized:
+            return None
         if paramk in self.incrementables:
             print(paramk)
             return self.incrstate[paramk]
@@ -159,6 +163,7 @@ class AppEntry:
         return paramv
 
     def entry(self):
+        self.initialized = False
         paths = [("Run", self.run), ("Prepare", self.prepare), ("Analyse", self.analyze), ("Quit", self.quit)]
         while True:
             print("What do you want to do?")
@@ -221,6 +226,7 @@ class AppEntry:
 
         self.basename = f"{self.preproc_config_name}_{self.config_name}"
         self.init_incrementables()
+        self.initialized = True
 
     def run(self):
 
@@ -339,7 +345,7 @@ class AppEntry:
                         "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
                     valid_outdir = os.path.exists(outdir)
 
-                outfile = f"{os.path.splitext(grouping)[0]}-qrels.tsv"
+                outfile = os.path.join(outdir, f"{os.path.basename(os.path.splitext(sample)[0])}-{os.path.basename(os.path.splitext(grouping)[0])}-qrels.tsv")
 
                 json_to_group_qrels(sample, grouping, outfile, complete=True, not_verbose=False)
             elif choice1 == 2:
@@ -362,9 +368,9 @@ class AppEntry:
             pr.init(self)
             # todo: move this logic to preprocessor
 
-
             tf = pr.fe.get_feature_mat(pr.ioht)
-            ef = pr.fe.get_feature_mat(pr.iohe) #todo: make it so that you can extract features from ioht or iohe seperately
+            ef = pr.fe.get_feature_mat(
+                pr.iohe)  # todo: make it so that you can extract features from ioht or iohe seperately
 
             ff = pd.concat([tf, ef]).drop_duplicates()
             pr.save_feature_mat(ff)
@@ -374,7 +380,6 @@ class AppEntry:
 
             pr = get_preprocessor()
             pr.init(self)
-
 
             print("Sparse or dense?")
             print(f"1: Sparse")
@@ -421,18 +426,22 @@ class AppEntry:
             frac = float(input("$ "))
 
             dfs = [pd.read_json(training_sample, lines=True)]
-            for i in range(5): #todo: make range param configurable
+            for i in range(5):  # todo: make range param configurable
                 df = pd.read_json(training_sample, lines=True)
-                df[['qid','documents']] = df.apply(lambda row: pd.Series({"qid":f"{row.qid}_{i+1}","documents":random.sample(row.documents, int(frac * len(row.documents)))}), axis=1)
+                df[['qid', 'documents']] = df.apply(lambda row: pd.Series({"qid": f"{row.qid}_{i + 1}",
+                                                                           "documents": random.sample(row.documents,
+                                                                                                      int(frac * len(
+                                                                                                          row.documents)))}),
+                                                    axis=1)
                 dfs.append(df)
 
             aug_df = pd.concat(dfs)
 
             outpath = f"{os.path.splitext(training_sample)[0]}_aug{frac}.json"
-            aug_df.to_json(outpath,orient='records',lines=True)
+            aug_df.to_json(outpath, orient='records', lines=True)
 
-            aug_df.qid.drop_duplicates().reset_index(drop=True).to_csv(os.path.join(os.path.dirname(training_sample),f"training-sequence-full_aug{frac}.tsv"))
-
+            aug_df.qid.drop_duplicates().reset_index(drop=True).to_csv(
+                os.path.join(os.path.dirname(training_sample), f"training-sequence-full_aug{frac}.tsv"))
 
             # load training file
             # for each qid, sample
@@ -456,7 +465,7 @@ class AppEntry:
             print("Invalid choice: ", choice)
 
     def analyze(self):
-        self.common_logic()
+        # self.common_logic()
 
         self.analyze_logic()
 
@@ -468,21 +477,21 @@ class AppEntry:
         print("Evaluate?")
         i = input("[y/n] ")
         if i == 'y':
-            get_preprocessor().init(self)
-            for incrcombo in dict_product(self.incrementables):
-                self.incrstate = incrcombo
-                get_postprocessor().init(self)
+            # get_preprocessor().init(self)
+            # for incrcombo in dict_product(self.incrementables):
+            #     self.incrstate = incrcombo
+            #     get_postprocessor().init(self)
                 evaluate(self)
 
-        print("Compare means?")
-        i = input("[y/n] ")
-        if i == 'y':
-            compare_means(self)
-        # kendall_tau(self)
-        print("Summarize?")
-        i = input("[y/n] ")
-        if i == 'y':
-            summarize(self)
+        # print("Compare means?")
+        # i = input("[y/n] ")
+        # if i == 'y':
+        #     compare_means(self)
+        # # kendall_tau(self)
+        # print("Summarize?")
+        # i = input("[y/n] ")
+        # if i == 'y':
+        #     summarize(self)
 
 
 def main():

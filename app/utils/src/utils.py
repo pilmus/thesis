@@ -47,3 +47,7 @@ def block_print():
 def enable_print():
     """Enable printing."""
     sys.stdout = sys.__stdout__
+
+
+def valid_file_with_none(filename):
+    return os.path.exists(filename or '') and os.path.isfile(filename or '')
