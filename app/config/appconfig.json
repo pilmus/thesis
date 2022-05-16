@@ -104,7 +104,7 @@
             "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
           },
           "_iohe": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller.tsv\")",
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           }
         }

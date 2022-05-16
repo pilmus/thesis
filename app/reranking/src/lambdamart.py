@@ -20,7 +20,7 @@ class LambdaMart(model.RankerInterface):
     Wrapper around the LambdaMart algorithm
     """
 
-    def __init__(self, featureengineer, random_state=None, save_dir=None):
+    def __init__(self, random_state=None, save_dir=None):
         super().__init__()
         self.fe = get_preprocessor().fe
         self.metric = pyltr.metrics.NDCG(k=7)
@@ -85,8 +85,6 @@ class LambdaMart(model.RankerInterface):
         if self.save_dir:
             self.save()
 
-
-
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
@@ -100,8 +98,8 @@ class LambdaMart(model.RankerInterface):
                         how='left', on=['sid', 'q_num', 'doc_id'])
         return pred
 
-    def save(self,fitted):
-        savename = f"{self.__class__.__name__ }_{self.random_state}_{self.train_ioh}"
+    def save(self, fitted):
+        savename = f"{self.__class__.__name__}_{self.random_state}_{self.train_ioh}"
         with open(savename, 'wb') as handle:
             pickle.dump(self.lambdamart, handle)
 
@@ -109,59 +107,38 @@ class LambdaMart(model.RankerInterface):
         pass
 
 
-class LambdaMartYear(LambdaMart):
-    def __init__(self, featureengineer, random_state, missing_value_strategy):
-        super().__init__(featureengineer, random_state)
-
-
-    def _get_feature_mat(self, inputhandler):
-        x = self.fe.get_feature_mat(inputhandler)
-
-
-        return x
-
-    def _impute_means(self, x):  # todo: test
-        missing_values = {}
-        for col in x.columns.to_list():
-            if col == 'doc_id':
-                continue
-            # df[~df['Age'].isna()]
-            missing_values[col] = x[~x[col].isna()][col].mean()
-        # return x[x.year != 0].year.mean()
-        return missing_values
-
-
-class LambdaMartMRFR(LambdaMartYear):
-    def __init__(self, featureengineer, random_state, missing_value_strategy,relevance_probabilities,grouping,K,beta,lambd):
-        super().__init__(featureengineer, random_state, missing_value_strategy)
+class LambdaMartMRFR(LambdaMart):
+    def __init__(self,  random_state, missing_value_strategy, relevance_probabilities, grouping, K,
+                 beta, lambd):
+        super().__init__(random_state, missing_value_strategy)
         self.relevance_probabilities = relevance_probabilities
         self.grouping = grouping
         self.K = K
         self.beta = beta
         self._lambda = lambd
 
-
-
-
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
         qids = qids.assign(est_relevance=pred)
-        est_rels = pd.merge(inputhandler.get_query_seq()[['sid', 'qid','doc_id']].drop_duplicates(),qids)[['qid','doc_id','est_relevance']].drop_duplicates()
+        est_rels = pd.merge(inputhandler.get_query_seq()[['sid', 'qid', 'doc_id']].drop_duplicates(), qids)[
+            ['qid', 'doc_id', 'est_relevance']].drop_duplicates()
 
         # normalize relevance
         # est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(lambda x: (x - x.mean()) / x.std())
-        est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(lambda x: (x - x.min()) / (x.max() - x.min()))
+        est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(
+            lambda x: (x - x.min()) / (x.max() - x.min()))
         est_rels = est_rels.sort_values(by=['qid', 'est_relevance'])
 
-        est_rels.to_csv(self.relevance_probabilities,index=False)
+        est_rels.to_csv(self.relevance_probabilities, index=False)
 
-        mrfr = MRFR(self.relevance_probabilities,self.grouping,self.K,self.beta,self._lambda)
+
+        mrfr = MRFR(self.relevance_probabilities, self.grouping, self.K, self.beta, self._lambda)
         outdf = mrfr.rerank(inputhandler)
 
         predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], outdf, how='left',
-                        on=['sid', 'q_num', 'doc_id'])
+                               on=['sid', 'q_num', 'doc_id'])
 
         # tqdm.pandas()
         # qids.loc[:, 'rank'] = qids.groupby(['sid','q_num'])['pred'].progress_apply(pd.Series.rank, ascending=False,
@@ -169,8 +146,6 @@ class LambdaMartMRFR(LambdaMartYear):
         # pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
         #                 how='left', on=['sid', 'q_num', 'doc_id'])
         # qids.drop('pred', inplace=True, axis=1)
-
-
 
         return predictions
 
@@ -181,8 +156,8 @@ class LambdaMartRandomization(LambdaMart):
     Ferraro, Porcaro, and Serra, ‘Balancing Exposure and Relevance in Academic Search’.
     """
 
-    def __init__(self, featureengineer, sort_reverse=False, random_state=None):
-        super().__init__(featureengineer, random_state=random_state)
+    def __init__(self, sort_reverse=False, random_state=None):
+        super().__init__(random_state=random_state)
         self.sort_reverse = sort_reverse
         self.mean_diff_dict = {}
 
