@@ -39,7 +39,7 @@ class PreProcessor():
             "_iohe": IOHandler
         }
 
-        if preproc_config.get("extend",None):  # todo; ew, fix this
+        if preproc_config.pop("extend", None):  # todo; ew, fix this
             preproc_components["_fe"] = ExtendedFeatureEngineer
 
         for k, v in preproc_config.items():
@@ -62,11 +62,25 @@ class PreProcessor():
         esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
         fm.to_csv(esf_path, index=False)
 
-    def dump_svm(self, X, y, qids, docids=None, dense=False, zero_indexed=True):
+    def dump_svm(self, X, y, qids, docids=None, dense=False, zero_indexed=True, train=True):
         rn = self._app_entry.reranker_name
 
+        if train:
+            _train = 'train'
+        else:
+            _train = 'test'
+
+        if zero_indexed:
+            _zi = 'zero'
+        else:
+            _zi = 'one'
+
+        filename = f"{rn}_{_train}_{_zi}"
+
         if dense:
-            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.densesvm')
+            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{filename}.densesvm')
+            if os.path.exists(svm_path):
+                os.remove(svm_path)
             with open(svm_path, 'a') as f:
                 for i, (rel, qid, docid) in enumerate(zip(y, qids, docids)):
                     feats = X.iloc[i].to_list()
@@ -78,7 +92,7 @@ class PreProcessor():
 
 
         elif not dense:
-            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{rn}.sparsesvm')
+            svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{filename}.sparsesvm')
             dump_svmlight_file(X, y, svm_path, query_id=qids, zero_based=zero_indexed)
             if not docids is None:
                 with open(svm_path, 'r') as f:
@@ -93,7 +107,6 @@ class PreProcessor():
             raise ValueError("Invalid dense/sparse option: ", dense)
 
     def svm_to_csv(self, svmfile, outfile):
-
 
         reader = csv.reader(
             open('pre_processing/resources/expanded_feature_numbers.csv', 'r'))
@@ -123,7 +136,7 @@ class PreProcessor():
                 samples.append(sample_dict)
         outdf = pd.DataFrame(samples)
 
-        outdf.to_csv(outfile,index=False)
+        outdf.to_csv(outfile, index=False)
 
     @property
     def fe(self):

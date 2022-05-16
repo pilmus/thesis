@@ -369,30 +369,12 @@ class AppEntry:
             ff = pd.concat([tf, ef]).drop_duplicates()
             pr.save_feature_mat(ff)
         elif choice == 4:
-            print("Convert training or test file?")
-            print(f"1: Training")
-            print(f"2: Test")
-            choice1 = int(input("$ (default: 1)") or 1)
+
             self.common_logic()
 
             pr = get_preprocessor()
             pr.init(self)
-            if choice1 == 1:
-                ioh = pr.ioht
-            elif choice1 == 2:
-                ioh = pr.iohe
-            else:
-                return  # todo: ?¿?
 
-            fm = pr.fe.get_feature_mat(ioh)
-            fm = pd.merge(fm, ioh.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
-                          on=['qid', 'doc_id'])
-            fm = fm.sort_values(by='qid')
-
-            qids = fm['qid'].to_list()
-            y = fm['relevance'].to_list()
-            X = fm.drop(['qid', 'relevance', 'doc_id'], axis=1)
-            docids = fm['doc_id']
 
             print("Sparse or dense?")
             print(f"1: Sparse")
@@ -404,7 +386,28 @@ class AppEntry:
             print(f"2: One")
             choice_indexing = bool(int(input("$ (default: 1)") or 1) - 1)
 
-            pr.dump_svm(X, y, qids, docids, choice_sparsedense, choice_indexing)
+            fmt = pr.fe.get_feature_mat(pr.ioht)
+            fmt = pd.merge(fmt, pr.ioht.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
+                           on=['qid', 'doc_id'])
+            fmt = fmt.sort_values(by='qid')
+
+            qidst = fmt['qid'].to_list()
+            yt = fmt['relevance'].to_list()
+            Xt = fmt.drop(['qid', 'relevance', 'doc_id'], axis=1)
+            docidst = fmt['doc_id']
+            pr.dump_svm(Xt, yt, qidst, docidst, choice_sparsedense, choice_indexing)
+
+            fme = pr.fe.get_feature_mat(pr.iohe)
+            fme = pd.merge(fme, pr.iohe.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
+                           on=['qid', 'doc_id'])
+            fme = fme.sort_values(by='qid')
+
+            qidse = fme['qid'].to_list()
+            ye = fme['relevance'].to_list()
+            Xe = fme.drop(['qid', 'relevance', 'doc_id'], axis=1)
+            docidse = fme['doc_id']
+            pr.dump_svm(Xe, ye, qidse, docidse, choice_sparsedense, choice_indexing, train=False)
+
         elif choice == 5:
 
             valid_training_file = False

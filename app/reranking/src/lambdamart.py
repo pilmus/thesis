@@ -20,10 +20,19 @@ class LambdaMart(model.RankerInterface):
     Wrapper around the LambdaMart algorithm
     """
 
-    def __init__(self, random_state=None, save_dir=None):
+    def __init__(self, random_state=None, early_stopping_frac = 0.6, metric = 'NDCG', save_dir=None):
         super().__init__()
         self.fe = get_preprocessor().fe
-        self.metric = pyltr.metrics.NDCG(k=7)
+        if metric == 'NDCG':
+            self.metric = pyltr.metrics.NDCG(k=7)
+        elif metric == 'ERR':
+            self.metric = pyltr.metrics.ERR()
+        else:
+            raise ValueError("Invalid metric: ", metric)
+
+
+        self.early_stopping_frac = early_stopping_frac
+
 
         self.lambdamart = pyltr.models.LambdaMART(
             metric=self.metric,
