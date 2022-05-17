@@ -50,7 +50,7 @@ class FeatureEngineer:
     def get_feature_mat(self, iohandler, *args, **kwargs):
         print("Getting features...")
         if self.feature_mat:
-            f = pd.read_csv(self.feature_mat, dtype={'doc_id': object, 'qid': str})
+            f = pd.read_csv(self.feature_mat, dtype={'doc_id': object, 'qid': str}) #todo: doc_id str?
             qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
             feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right')
             fm = feature_mat

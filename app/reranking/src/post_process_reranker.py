@@ -36,10 +36,10 @@ def doc_singleton_grouping(docids, outfile):
 
 
 class PostProcessReranker(model.RankerInterface):
-    def __init__(self, estimated_relevance, grouping, missing_group_strategy):
+    def __init__(self, estimated_relevance, mapping, missing_group_strategy):
         super().__init__()
         self._erels = estimated_relevance
-        self._grouping = grouping
+        self._mapping = mapping
         self._missing_group_strategy = missing_group_strategy
 
     def get_doc_to_group_mapping(self, docids, mapping_file, missing_group_strategy):
@@ -50,8 +50,10 @@ class PostProcessReranker(model.RankerInterface):
             mapping = {doc: mapping.get(doc, []) for doc in docids}
         elif missing_group_strategy == 'single_dummy':
             mapping = {doc: mapping.get(doc, ['dummy']) for doc in docids}
+            mapping = {doc: (authlist if authlist != [] else ["dummy"]) for doc, authlist in mapping.items()}
         elif missing_group_strategy == 'docid_dummy':
             mapping = {doc: mapping.get(doc, [doc]) for doc in docids}
+            mapping = {doc: (authlist if authlist != [] else [doc]) for doc, authlist in mapping.items()}
         else:
             raise ValueError('Invalid missing group strategy: ', missing_group_strategy)
         return mapping
@@ -140,14 +142,14 @@ class PostProcessReranker(model.RankerInterface):
         return targexp
 
     def rerank(self, ioh):
-        erels = pd.read_csv(self._erels)
+        erels = pd.read_csv(self._erels,dtype={'qid': str})
         qseq_with_relevances = pd.merge(ioh.get_query_seq(), erels, on=['qid', 'doc_id'],
                                         how='left').sort_values(
             by=['sid', 'q_num']).reset_index(drop=True)
         qseq_with_relevances = qseq_with_relevances.fillna(0)
         docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
 
-        doc_to_group_mapping = self.get_doc_to_group_mapping(docids, self._grouping,
+        doc_to_group_mapping = self.get_doc_to_group_mapping(docids, self._mapping,
                                                              missing_group_strategy=self._missing_group_strategy)
 
         outdf = pd.DataFrame(columns=['sid', 'q_num', 'doc_id', 'rank'])
@@ -191,9 +193,10 @@ class PostProcessReranker(model.RankerInterface):
 
 
 class AdvantageController(PostProcessReranker):
-    def __init__(self, est_rel_file, grouping, missing_group_strategy, theta):
-        super().__init__(est_rel_file, grouping, missing_group_strategy)
+    def __init__(self, est_rel_file, mapping, missing_group_strategy, theta, hscore_method):
+        super().__init__(est_rel_file, mapping, missing_group_strategy)
         self._theta = theta
+        self._hscore_method = hscore_method
 
     def advantage_mean(self, groups, group_advantages, t):
         if len(groups) == 0:
@@ -246,7 +249,7 @@ class AdvantageController(PostProcessReranker):
 
             hscores = {}
             for document in documents:
-                hscores[document] = self.hscore(document, document_advantages, rhos, t)
+                hscores[document] = self.hscore(document, document_advantages, rhos, t, self._hscore_method)
 
             t2 = time.time()
             print(f"Hscores took {round(t2 - t1, 2)}s.")
@@ -290,6 +293,8 @@ class AdvantageController(PostProcessReranker):
             return base_hscore
         elif method == 'max':
             return max(0, base_hscore)
+        elif method == 'min':
+            return min(0, base_hscore)
         else:
             raise ValueError("Invalid hscore method: ", method)
 

@@ -28,7 +28,7 @@
       "rerank_configs": {
         "default": {
           "outdir": "evaluation/resources/2019/jsonruns",
-          "year": 2019,
+          "year": "2019",
           "ref_run": "trec_run/fair_LambdaMART.json",
           "qseq_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
           "gt_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
@@ -114,7 +114,7 @@
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
           "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
-          "year": 2020,
+          "year": "2020",
           "square": false,
           "random_state": "list([None])"
         },
@@ -250,7 +250,7 @@
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
           "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
-          "year": 2020,
+          "year": "2020",
           "square": false,
           "random_state": "list([None])",
           "missing_value_strategy": "avg",
@@ -285,7 +285,7 @@
       "rerank_configs": {
         "default": {
           "outdir": "evaluation/resources/2019/jsonruns",
-          "year": 2019,
+          "year": "2019",
           "ref_run": "trec_run/fair_random.jsonl",
           "qseq_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-seq-5-25000.csv",
           "gt_file": "pre_processing/resources/evaluation/2019/TREC-Competition-eval-sample-with-rel.json",
@@ -329,43 +329,347 @@
       },
       "rerank_configs": {
         "default": {
+          "year": "2020",
           "outdir": "evaluation/resources/2020/jsonruns",
-          "year": 2020,
-          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
-          "mapping": "reranking/resources/mappings/evaluation_doc_to_author.json",
-          "theta": 0.9
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
+          "square": false
         },
-        "nle_meta_9_1_eval_singleton_author": {
+        "meta_9_linear_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "theta": 0.9,
-          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv"
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
         },
-        "nle_meta_99_1_eval_singleton_author": {
+        "meta_9_linear_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "meta_9_linear_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_9_max_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_max_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "meta_9_max_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_9_min_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_min_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "meta_9_min_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_99_linear_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "theta": 0.99,
-          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv"
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
         },
-        "nle_text_9_1_eval_singleton_author": {
-          "theta": 0.9,
-          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv"
-        },
-        "nle_text_99_1_eval_singleton_author": {
-          "est_rel_file": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
-          "theta": 0.99
-        },
-        "nle_meta_9_1_train_singleton_author": {
-          "theta": 0.9,
-          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv"
-        },
-        "nle_meta_99_1_train_singleton_author": {
+        "meta_99_linear_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "theta": 0.99,
-          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv"
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
         },
-        "nle_text_9_1_train_singleton_author": {
-          "theta": 0.9,
-          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv"
-        },
-        "nle_text_99_1_train_singleton_author": {
+        "meta_99_linear_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "theta": 0.99,
-          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv"
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_99_max_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_99_max_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "meta_99_max_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_99_min_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_99_min_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_99_min_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_9_linear_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_linear_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_9_linear_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "text_9_max_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_max_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_9_max_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "text_9_min_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_min_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_9_min_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "text_99_linear_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_linear_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_99_linear_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "text_99_max_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_max_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_99_max_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "text_99_min_author_none_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_min_author_one_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "text_99_min_author_ind_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "meta_9_linear_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_max_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_min_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_99_linear_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_99_max_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_99_min_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_linear_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_max_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_min_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_linear_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "linear",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_max_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "max",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_99_min_doc_train": {
+          "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_B.csv",
+          "theta": 0.99,
+          "hscore_method": "min",
+          "mapping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
         }
       }
     },
@@ -401,7 +705,7 @@
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
           "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
-          "year": 2020,
+          "year": "2020",
           "K": 3,
           "beta": 1,
           "lambd": 1
