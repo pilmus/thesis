@@ -19,16 +19,16 @@ def main():
     compare_run_means(ref_run, runs, save)
 
 
-def compare_run_means(ref_run, runs, save=None):
+def compare_run_means(ref_run, runs, save=None, round_by=3):
     df_ref = pd.read_csv(ref_run, sep='\t', names=['key', 'qid', 'value'])
     df_ref = df_ref.pivot(index='qid', columns='key', values='value')
     ref_mean = df_ref.difference.mean()
     print("\t".join(['mean', 'abs(meandiff)', 'refmean', 'file']))
     comp_dicts = []
     comp_dicts.append(
-        {'mean': str(round(ref_mean, 3)),
-         'abs(meandiff)': str(abs(round(ref_mean - ref_mean, 3))),
-         'refmean': str(round(ref_mean, 3)),
+        {'mean': str(round(ref_mean, round_by)),
+         'abs(meandiff)': str(abs(round(ref_mean - ref_mean, round_by))),
+         'refmean': str(round(ref_mean, round_by)),
          'file': os.path.basename(ref_run)})
     print("\t".join(comp_dicts[-1].values()))
     for run in runs:
@@ -36,9 +36,9 @@ def compare_run_means(ref_run, runs, save=None):
         df = df.pivot(index='qid', columns='key', values='value')
         df_mean = df.difference.mean()
         comp_dicts.append(
-            {'mean': str(round(df_mean, 3)),
-             'abs(meandiff)': str(abs(round(df.difference.mean() - ref_mean, 3))),
-             'refmean': str(round(ref_mean, 3)),
+            {'mean': str(round(df_mean, round_by)),
+             'abs(meandiff)': str(abs(round(df.difference.mean() - ref_mean, round_by))),
+             'refmean': str(round(ref_mean, round_by)),
              'file': os.path.basename(run)})
         print("\t".join(comp_dicts[-1].values()))
     if save:

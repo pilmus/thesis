@@ -4,6 +4,7 @@ import os.path
 import re
 import sys
 import random
+import traceback
 
 import pandas as pd
 from sklearn.datasets import dump_svmlight_file
@@ -165,7 +166,7 @@ class AppEntry:
 
     def entry(self):
         self.initialized = False
-        paths = [("Run", self.run), ("Run multiple", self.run_all), ("Prepare", self.prepare), ("Analyse", self.analyze), ("Quit", self.quit)]
+        paths = [("Run", self.run), ("Run multiple", self.run_multiple), ("Prepare", self.prepare), ("Analyse", self.analyze), ("Quit", self.quit)]
         while True:
             print("What do you want to do?")
             for i, path in enumerate(paths):
@@ -178,7 +179,12 @@ class AppEntry:
                 print(f"Invalid choice: {choice + 1}.")
 
             path_method = paths[choice][1]
-            path_method()
+            try:
+                path_method()
+            except:
+                print("An error occurred somewhere:")
+                traceback.print_exc()
+
             #
             # if choice == 1:
             #     self.run()
@@ -253,7 +259,7 @@ class AppEntry:
         # if you want to do multi runs with different pre-processing steps you should make a different configuration
         # is doable b/c you might want to run over a thousand parameters but not over a thousand input sequences in this case
 
-    def run_all(self):
+    def run_multiple(self):
         self.load_config('config/appconfig.json')
         print("Choose a ranker:")
         for reranker in Reranker:
@@ -542,15 +548,16 @@ class AppEntry:
         sys.exit(0)
 
     def analyze_logic(self):
-        # todo add evaluate
-        print("Evaluate?")
-        i = input("[y/n] ")
-        if i == 'y':
-            # get_preprocessor().init(self)
-            # for incrcombo in dict_product(self.incrementables):
-            #     self.incrstate = incrcombo
-            #     get_postprocessor().init(self)
+
+        print("What do you want to do?")
+        print("1: Evaluate")
+        print("2: Compare means")
+        choice = int(input("$ (default: 1)" or 1))
+
+        if choice == 1:
                 evaluate(self)
+        elif choice == 2:
+            compare_means(self)
 
         # print("Compare means?")
         # i = input("[y/n] ")

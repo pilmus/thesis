@@ -24,14 +24,7 @@ def evaluate(app_entry):
         valid_runfile = valid_file_with_none(runfile)
     runfile = os.path.basename(runfile)
 
-    year = app_entry.get_argument('year')
-    valid_year = year == "2019" or year == "2020"
-
-    while not valid_year:
-        print("Which year's evaluation method? (2019/2020)")
-        year = str(input("$ (default: 2020)") or 2020)
-        valid_year = year == "2019" or year == "2020"
-    year = int(year)
+    year = get_year(app_entry)
 
     if year == 2019:
         ref_run = app_entry.get_argument("ref_run")
@@ -78,7 +71,56 @@ def evaluate(app_entry):
         raise ValueError(f"Invalid year: {year}.")
 
 
+def compare_means(app_entry):
+    # reranker = app_entry.reranker_name
+    year = get_year(app_entry)
 
+    if year == 2020:
+        # outdir = app_entry.get_argument("outdir")
+        # outdir = app_entry.get_argument("outdir")
+        # eval_results = os.path.join(os.path.dirname(outdir), 'eval_results')
+        eval_results = 'evaluation/resources/2020/eval_results' #todo: un-hardcode
+
+        print("Enter glob pattern to select files.")
+        globstr = str(input("$ "))
+
+        # globfile = f"{reranker}_{app_entry.basename}*.tsv"
+
+        print("Enter reference run name, if any:")
+        refpath = str(input("$ ") or "")
+
+        # ref_run = app_entry.get_argument("ref_run")
+        runfiles = glob.glob(os.path.join(eval_results,globstr))
+
+
+
+
+        if refpath == "":
+            refpath = os.path.basename(runfiles[0])
+
+        # runfile = os.path.basename(get_postprocessor().outfile)
+
+
+        # runfile_result = os.path.join(eval_results, f"{os.path.splitext(runfile)[0]}.tsv")
+        refrun_result = os.path.join(eval_results, f"{os.path.splitext(refpath)[0]}.tsv")
+        print("Round by how many digits?")
+        round_by = int(input("$ (default: 3)") or 3)
+
+        compare_run_means(refrun_result, runfiles, round_by=round_by)
+    elif year == 2019:
+        raise NotImplementedError
+    else:
+        raise ValueError(f"Invalid year: {year}.")
+
+def get_year(app_entry):
+    year = app_entry.get_argument('year')
+    valid_year = year == "2019" or year == "2020"
+    while not valid_year:
+        print("Which year's method? (2019/2020)")
+        year = str(input("$ (default: 2020)") or 2020)
+        valid_year = year == "2019" or year == "2020"
+    year = int(year)
+    return year
 
 
 def summarize(app_entry):
@@ -122,31 +164,6 @@ def summarize(app_entry):
         raise ValueError(f"Invalid year: {year}.")
 
 
-def compare_means(app_entry):
-    reranker = app_entry.reranker_name
-    year = int(app_entry.get_argument('year'))
-
-    if year == 2020:
-        outdir = app_entry.get_argument("outdir")
-        eval_results = os.path.join(os.path.dirname(outdir), 'eval_results')
-
-        globfile = f"{reranker}_{app_entry.basename}*.tsv"
-
-        ref_run = app_entry.get_argument("ref_run")
-        runfiles = glob.glob(os.path.join(eval_results,globfile))
-
-
-
-        # runfile = os.path.basename(get_postprocessor().outfile)
-
-
-        # runfile_result = os.path.join(eval_results, f"{os.path.splitext(runfile)[0]}.tsv")
-        refrun_result = os.path.join(eval_results, f"{os.path.splitext(ref_run)[0]}.tsv")
-        compare_run_means(refrun_result, runfiles)
-    elif year == 2019:
-        raise NotImplementedError
-    else:
-        raise ValueError(f"Invalid year: {year}.")
 
 
 def kendall_tau(app_entry):
