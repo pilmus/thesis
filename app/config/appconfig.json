@@ -123,11 +123,11 @@
             "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           },
           "_iohe": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_-10.tsv\")",
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           }
         },
-        "90_10_split_feature_selection": {
+        "feature_selection": {
           "_corpus": {
             "index": "str(\"semanticscholar2020og\")"
           },
@@ -135,15 +135,35 @@
             "corpus": "self._corpus",
             "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
             "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
-            "feature_mat": "self.get_feature_mat()"
+            "feature_mat": "self.get_feature_mat(additional_name=\"_feature_selection\")"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          },
+          "extend": true
+        },
+        "feature_selection_90_10_split": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
+            "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
+            "feature_mat": "self.get_feature_mat(additional_name=\"_feature_selection\")"
           },
           "_ioht": {
             "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
             "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           },
           "_iohe": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_-10.tsv\")",
-            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_-10.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           },
           "extend": true
         }
@@ -152,7 +172,7 @@
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
           "year": "2020",
           "square": false,
           "random_state": "list([None])",
@@ -161,12 +181,6 @@
         },
         "seed0": {
           "random_state": "list([0])"
-        },
-        "seed0-5": {
-          "random_state": "list(range(0,5))"
-        },
-        "seed0-1000": {
-          "random_state": "list(range(0,1000))"
         },
         "seed0_ndcg": {
           "random_state": "list([0])",

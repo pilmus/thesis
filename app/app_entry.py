@@ -490,7 +490,7 @@ class AppEntry:
             print("Zero- or one indexed?")
             print(f"1: Zero")
             print(f"2: One")
-            choice_indexing = bool(int(input("$ (default: 1)") or 1) - 1)
+            choice_indexing = not bool(int(input("$ (default: 1)") or 1) - 1)
 
             fmt = pr.fe.get_feature_mat(pr.ioht,compute_impute=True)
             fmt = pd.merge(fmt, pr.ioht.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
@@ -501,7 +501,7 @@ class AppEntry:
             yt = fmt['relevance'].to_list()
             Xt = fmt.drop(['qid', 'relevance', 'doc_id'], axis=1)
             docidst = fmt['doc_id']
-            pr.dump_svm(Xt, yt, qidst, docidst, choice_sparsedense, choice_indexing)
+            pr.dump_svm(Xt, yt, qidst, docids=docidst, dense=choice_sparsedense, zero_indexed=choice_indexing)
 
             fme = pr.fe.get_feature_mat(pr.iohe)
             fme = pd.merge(fme, pr.iohe.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
@@ -512,8 +512,7 @@ class AppEntry:
             ye = fme['relevance'].to_list()
             Xe = fme.drop(['qid', 'relevance', 'doc_id'], axis=1)
             docidse = fme['doc_id']
-            pr.dump_svm(Xe, ye, qidse, docidse, choice_sparsedense, choice_indexing, train=False)
-
+            pr.dump_svm(Xe, ye, qidse, docids=docidse, dense=choice_sparsedense, zero_indexed=choice_indexing, train=False)
         elif choice == 5:
             training_sample = valid_path_from_user_input('training sample',
                                                          'pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json',
@@ -565,8 +564,6 @@ class AppEntry:
 
             pr = get_preprocessor()
             pr.svm_to_csv(svmlight_file, outfile)
-
-
         else:
             print("Invalid choice: ", choice)
 

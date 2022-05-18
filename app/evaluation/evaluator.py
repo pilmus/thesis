@@ -18,7 +18,7 @@ from app.utils.src.utils import valid_file_with_none
 def evaluate(app_entry):
     runfile = get_postprocessor().outfile
     valid_runfile = valid_file_with_none(runfile)
-    while not valid_runfile:
+    while not valid_runfile: #todo: replace with method
         print("Enter a runfile to evaluate.")
         runfile = str(input("$ "))
         valid_runfile = valid_file_with_none(runfile)
@@ -82,16 +82,22 @@ def compare_means(app_entry):
         eval_results = 'evaluation/resources/2020/eval_results' #todo: un-hardcode
 
         print("Enter glob pattern to select files.")
-        globstr = str(input("$ "))
 
+        runfiles = []
+        if not runfiles:
+            globstr = str(input("$ "))
+            runfiles = glob.glob(os.path.join(eval_results, globstr))
+            if not runfiles:
+                print("Glob pattern returned empty list, try again.")
         # globfile = f"{reranker}_{app_entry.basename}*.tsv"
 
         print("Enter reference run name, if any:")
         refpath = str(input("$ ") or "")
 
         # ref_run = app_entry.get_argument("ref_run")
-        runfiles = glob.glob(os.path.join(eval_results,globstr))
 
+
+        print("Comparing these files:", runfiles)
 
 
 

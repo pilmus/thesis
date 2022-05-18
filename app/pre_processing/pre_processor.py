@@ -62,7 +62,7 @@ class PreProcessor():
         esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
         fm.to_csv(esf_path, index=False)
 
-    def dump_svm(self, X, y, qids, docids=None, dense=False, zero_indexed=True, train=True):
+    def dump_svm(self, X, y, qids, docids, dense=False, zero_indexed=True, train=True):
         rn = self._app_entry.reranker_name
 
         if train:
@@ -79,6 +79,8 @@ class PreProcessor():
 
         if dense:
             svm_path = os.path.join('pre_processing', 'resources', 'svmcache', f'{filename}.densesvm')
+
+            # we manually create the dense svm file because we don't want to drop zero-values
             if os.path.exists(svm_path):
                 os.remove(svm_path)
             with open(svm_path, 'a') as f:

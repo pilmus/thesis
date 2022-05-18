@@ -41,12 +41,14 @@ for k in n:
 			lines = open( os.path.join(feature_selection_directory, "{}_{}.ranking".format(method, balancing_factor) )).readlines()[:k]
 			feature_numbers = list(map(lambda line: int(line.strip()), lines))
 			### Translate Training Examples - Start ###
-			source_examples_file_path = os.path.join( root_directory, "trainingset.txt")
+			# source_examples_file_path = os.path.join( root_directory, "trainingset.txt")
+			source_examples_file_path = training_file
 			target_examples_file_path = os.path.join( root_directory, "feature_selected_example_files", "{}_{}_{}_training_examples.dat".format(method, k, balancing_factor))
 			translate_example_file_with_selected_features(source_examples_file_path, target_examples_file_path, feature_numbers)
 			### Translate Training Examples - Complete ###			
 			### Translate Testing Examples - Start ###
-			source_examples_file_path = os.path.join( root_directory, "testset.txt")
-			target_examples_file_path = os.path.join( root_directory, "feature_selected_example_files", "{}_{}_{}_testing_examples.dat".format(method, k, balancing_factor))			
+			# source_examples_file_path = os.path.join( root_directory, "testset.txt")
+			source_examples_file_path = test_file
+			target_examples_file_path = os.path.join( root_directory, "feature_selected_example_files", "{}_{}_{}_testing_examples.dat".format(method, k, balancing_factor))
 			translate_example_file_with_selected_features(source_examples_file_path, target_examples_file_path, feature_numbers)
 			### Translate Testing Examples - Complete ###
