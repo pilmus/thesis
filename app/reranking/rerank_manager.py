@@ -14,7 +14,6 @@ class Reranker(IntEnum):
     AC_CONTROLLER = 4
     MRFR = 5
     LAMBDAMART_MRFR = 6
-    LAMBDAMART_FEATURE_SELECTION = 7
 
 
 def rerank(app_entry):

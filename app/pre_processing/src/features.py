@@ -7,7 +7,7 @@ from tqdm import tqdm
 class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
-    def __init__(self, corpus, fquery, fconfig, feature_mat=None, missing_value_strategy='avg', init_ltr=True):
+    def __init__(self, corpus, fquery, fconfig, feature_mat=None, init_ltr=True):
         if corpus:
             self.corpus = corpus
 
@@ -23,7 +23,6 @@ class FeatureEngineer:
         if not feature_mat and not corpus:
             raise ValueError(
                 f"You must either initialize a corpus, fquery, and fconfig or give a pre-generated feature matrix!")
-        self.missing_value_strategy = missing_value_strategy
         self.missing_values = None
 
     def _get_features(self, queryterm, doc_ids):
@@ -47,39 +46,54 @@ class FeatureEngineer:
     def log_field_name(self):
         return self.query["ext"]["ltr_log"]["log_specs"]["name"]
 
-    def get_feature_mat(self, iohandler, *args, **kwargs):
+    def retrieve_es_features(self, iohandler):
+        """No imputation on raw escache features."""
+        tqdm.pandas()
+        features = iohandler.get_query_seq().groupby('qid').progress_apply(
+            lambda df: self._get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
+
+        features = features.reset_index(
+            level=0)  # brings the qid back as a column after having been used to groupby
+
+        return features
+
+    def get_feature_mat(self, iohandler, missing_value_strategy = 'avg', compute_impute=False):
+        """
+
+        :param iohandler:
+        :param missing_value_strategy:
+        :param compute_impute: Compute imputation mean based on this iohandler's sequence.
+        :return:
+        """
         print("Getting features...")
         if self.feature_mat:
             f = pd.read_csv(self.feature_mat, dtype={'doc_id': object, 'qid': str}) #todo: doc_id str?
             qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
-            feature_mat = pd.merge(f, qs, on=['qid', 'doc_id'], how='right')
-            fm = feature_mat
+            fm = pd.merge(f, qs, on=['qid', 'doc_id'], how='right')
+            # fm = feature_mat
         else:
-            tqdm.pandas()
-            features = iohandler.get_query_seq().groupby('qid').progress_apply(
-                lambda df: self._get_features(df['query'].iloc[0], df['doc_id'].unique().tolist()))
+            raise AttributeError("Attribute 'feature_mat' not set!")
 
-            features = features.reset_index(
-                level=0)  # brings the qid back as a column after having been used to groupby
-
-            fm = features
-        if self.missing_value_strategy == 'dropzero':  # todo: move this to the feature engineer?
+        if missing_value_strategy == 'dropzero':  # todo: move this to the feature engineer?
             fm = fm.dropna()
             fm = fm[fm.year != 0]
-        elif self.missing_value_strategy == 'avg':
-            if not self.missing_values:
-                # this method is first encountered when training. we then want to set the "missing value" to the
-                # mean of the training set. when we second encounter this method, we don't change the method, but use
-                # the mean of the training set to impute the test set as well. https://stats.stackexchange.com/a/301353
+        elif missing_value_strategy == 'avg':
+            if compute_impute:
+                # Use mean of training set to impute mean of validation/test set. https://stats.stackexchange.com/a/301353
+                #
                 self.missing_values = self._impute_means(fm)
+            else:
+                if not self.missing_values:
+                    raise ValueError("No imputation values were computed.")
             for col in fm.columns.to_list():
                 if col == 'doc_id':
                     continue
                 fm[col] = fm[col].fillna(self.missing_values[col])
             fm.year = fm.year.replace(0, self.missing_values['year'])
-
+        elif missing_value_strategy == 'ignore':
+            pass
         else:
-            raise ValueError(f"Invalid missing value strategy: {self.missing_value_strategy}")
+            raise ValueError(f"Invalid missing value strategy: {missing_value_strategy}")
         return fm
 
     def _features_from_response(self, docs):
@@ -107,21 +121,21 @@ class FeatureEngineer:
         return missing_values
 
 
-class AnnotationFeatureEngineer(FeatureEngineer):
-    def __init__(self, doc_annotations, corpus=None, fquery=None, fconfig=None, init_ltr=True, es_feature_mat=None):
-        super(AnnotationFeatureEngineer, self).__init__(corpus, fquery, fconfig, init_ltr, es_feature_mat)
-        self.doc_annotations = pd.read_csv(doc_annotations).rename({'id': 'doc_id'}, axis=1)
-
-    def get_feature_mat(self, iohandler, annotation_features=None, *args, **kwargs):
-        if not annotation_features:
-            annotation_features = ['doc_id']
-        else:
-            annotation_features = ['doc_id'] + annotation_features
-        es_features = super().get_feature_mat(iohandler)
-        doc_annotations = self.doc_annotations[annotation_features]
-        features = pd.merge(es_features, doc_annotations, on='doc_id', how='left')
-        features = features.dropna()
-        return features
+# class AnnotationFeatureEngineer(FeatureEngineer):
+#     def __init__(self, doc_annotations, corpus=None, fquery=None, fconfig=None, init_ltr=True, es_feature_mat=None):
+#         super(AnnotationFeatureEngineer, self).__init__(corpus, fquery, fconfig, init_ltr, es_feature_mat)
+#         self.doc_annotations = pd.read_csv(doc_annotations).rename({'id': 'doc_id'}, axis=1)
+#
+#     def get_feature_mat(self, iohandler, annotation_features=None, *args, **kwargs):
+#         if not annotation_features:
+#             annotation_features = ['doc_id']
+#         else:
+#             annotation_features = ['doc_id'] + annotation_features
+#         es_features = super().get_feature_mat(iohandler)
+#         doc_annotations = self.doc_annotations[annotation_features]
+#         features = pd.merge(es_features, doc_annotations, on='doc_id', how='left')
+#         features = features.dropna()
+#         return features
 
 
 class ExtendedFeatureEngineer(FeatureEngineer):

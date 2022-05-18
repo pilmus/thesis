@@ -20,19 +20,17 @@ class LambdaMart(model.RankerInterface):
     Wrapper around the LambdaMart algorithm
     """
 
-    def __init__(self, random_state=None, early_stopping_frac = 0.6, metric = 'NDCG', save_dir=None):
+    def __init__(self, random_state=None, early_stopping_frac=0.6, metric='NDCG', save_dir=None):
         super().__init__()
         self.fe = get_preprocessor().fe
         if metric == 'NDCG':
             self.metric = pyltr.metrics.NDCG(k=7)
         elif metric == 'ERR':
-            self.metric = pyltr.metrics.ERR()
+            self.metric = pyltr.metrics.ERR(1)
         else:
             raise ValueError("Invalid metric: ", metric)
 
-
         self.early_stopping_frac = early_stopping_frac
-
 
         self.lambdamart = pyltr.models.LambdaMART(
             metric=self.metric,
@@ -55,11 +53,12 @@ class LambdaMart(model.RankerInterface):
         x.drop(['q_num', 'doc_id', 'relevance', 'qid'], inplace=True, axis=1)
         return (x, y, qids)
 
-    def _get_feature_mat(self, inputhandler):
-        return self.fe.get_feature_mat(inputhandler)
-
-    def _prepare_data(self, inputhandler, frac=0.66):
-        x = self._get_feature_mat(inputhandler)
+    def _prepare_data(self, inputhandler, frac):
+        if frac < 1:
+            impute = True
+        else:
+            impute = False  # todo: unjank this, should not let imputation depend on whether we use a frac or not. make it a class variable instead that is set to true when training and false when evaluating https://stats.stackexchange.com/a/425086
+        x = self.fe.get_feature_mat(inputhandler, compute_impute=impute)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
         training = x.q_num.drop_duplicates().sample(frac=frac, random_state=self.random_state)
@@ -84,7 +83,8 @@ class LambdaMart(model.RankerInterface):
 
         self.train_ioh = inputhandler
 
-        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler, frac=0.66)
+        x_train, y_train, qids_train, x_val, y_val, qids_val = self._prepare_data(inputhandler,
+                                                                                  frac=self.early_stopping_frac)
 
         monitor = pyltr.models.monitors.ValidationMonitor(
             x_val, y_val, qids_val['q_num'], metric=self.metric, stop_after=250)
@@ -117,7 +117,7 @@ class LambdaMart(model.RankerInterface):
 
 
 class LambdaMartMRFR(LambdaMart):
-    def __init__(self,  random_state, missing_value_strategy, relevance_probabilities, grouping, K,
+    def __init__(self, random_state, missing_value_strategy, relevance_probabilities, grouping, K,
                  beta, lambd):
         super().__init__(random_state, missing_value_strategy)
         self.relevance_probabilities = relevance_probabilities
@@ -141,7 +141,6 @@ class LambdaMartMRFR(LambdaMart):
         est_rels = est_rels.sort_values(by=['qid', 'est_relevance'])
 
         est_rels.to_csv(self.relevance_probabilities, index=False)
-
 
         mrfr = MRFR(self.relevance_probabilities, self.grouping, self.K, self.beta, self._lambda)
         outdf = mrfr.rerank(inputhandler)

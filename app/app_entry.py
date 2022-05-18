@@ -16,6 +16,7 @@ from app.pre_processing.pre_processor import get_preprocessor
 
 from app.post_processing.post_processor import get_postprocessor
 from app.reranking.rerank_manager import rerank, Reranker
+from app.utils.src.utils import valid_file_with_none, valid_dir_with_none, valid_path_from_user_input
 
 
 def dict_product(dicts):
@@ -103,7 +104,8 @@ class AppEntry:
 
     @property
     def config_incr_name(self):
-        base = self.basename
+        # base = self.basename
+        base = f"{self.preproc_config_name}_{self.config_name}"
         for k, v in self.incrstate.items():
             base = f"{base}_{k}={v}"
 
@@ -145,13 +147,13 @@ class AppEntry:
     def ranker_num(self):
         return Reranker[self._reranker_name.upper()].value
 
-    @property
-    def basename(self):
-        return self._basename
-
-    @basename.setter
-    def basename(self, value):
-        self._basename = value
+    # @property
+    # def basename(self):
+    #     return self._basename
+    #
+    # @basename.setter
+    # def basename(self, value):
+    #     self._basename = value
 
     def get_argument(self, paramk):
         if not self.initialized:
@@ -166,7 +168,8 @@ class AppEntry:
 
     def entry(self):
         self.initialized = False
-        paths = [("Run", self.run), ("Run multiple", self.run_multiple), ("Prepare", self.prepare), ("Analyse", self.analyze), ("Quit", self.quit)]
+        paths = [("Run", self.run), ("Run multiple", self.run_multiple), ("Prepare", self.prepare),
+                 ("Analyse", self.analyze), ("Quit", self.quit)]
         while True:
             print("What do you want to do?")
             for i, path in enumerate(paths):
@@ -195,13 +198,32 @@ class AppEntry:
             # else:
 
     def common_logic(self):
-        self.load_config('config/appconfig.json')
-        print("Choose a ranker:")
-        for reranker in Reranker:
-            print(f"{reranker.value}: {reranker.name}")
-        reranker_num = int(input("$ ") or 2)
-        self.reranker_name = Reranker(reranker_num).name.lower()
+        self.load_appconfig()
+        self.user_choose_ranker()
+        self.user_choose_preprocess_config()
+        self.user_choose_ranking_config()
 
+        # self.set_basename()
+        self.init_incrementables()
+        self.initialized = True
+
+    # def set_basename(self):
+    #     self.basename = f"{self.preproc_config_name}_{self.config_name}"
+
+    def user_choose_ranking_config(self):
+        config_list = list(self.configs.keys())
+        if len(config_list) > 1:
+            print("Choose a configuration:")
+            for i, config in enumerate(config_list):
+                print(f"{i + 1}: {config}")
+            config_idx = int(input("$ ") or 1)
+            config_name = config_list[config_idx - 1]
+            self.config_name = config_name
+        else:
+            print("Using default ranker configuration.")
+            self.config_name = config_list[0]
+
+    def user_choose_preprocess_config(self):
         pre_configs = self.ranker.get('preproc_config')
         prprp_keys = list(pre_configs.keys())
         if len(prprp_keys) > 1:
@@ -218,22 +240,15 @@ class AppEntry:
             self._preproc_config = next(iter(pre_configs.values()))
         self._preproc_config_name = prpr_key
 
-        config_list = list(self.configs.keys())
+    def user_choose_ranker(self):
+        print("Choose a ranker:")
+        for reranker in Reranker:
+            print(f"{reranker.value}: {reranker.name}")
+        reranker_num = int(input("$ ") or 2)
+        self.reranker_name = Reranker(reranker_num).name.lower()
 
-        if len(config_list) > 1:
-            print("Choose a configuration:")
-            for i, config in enumerate(config_list):
-                print(f"{i + 1}: {config}")
-            config_idx = int(input("$ ") or 1)
-            config_name = config_list[config_idx - 1]
-            self.config_name = config_name
-        else:
-            print("Using default ranker configuration.")
-            self.config_name = config_list[0]
-
-        self.basename = f"{self.preproc_config_name}_{self.config_name}"
-        self.init_incrementables()
-        self.initialized = True
+    def load_appconfig(self):
+        self.load_config('config/appconfig.json')
 
     def run(self):
 
@@ -260,34 +275,16 @@ class AppEntry:
         # is doable b/c you might want to run over a thousand parameters but not over a thousand input sequences in this case
 
     def run_multiple(self):
-        self.load_config('config/appconfig.json')
-        print("Choose a ranker:")
-        for reranker in Reranker:
-            print(f"{reranker.value}: {reranker.name}")
-        reranker_num = int(input("$ ") or 2)
-        self.reranker_name = Reranker(reranker_num).name.lower()
+        self.load_appconfig()
+        self.user_choose_ranker()
 
-        pre_configs = self.ranker.get('preproc_config')
-        prprp_keys = list(pre_configs.keys())
-        if len(prprp_keys) > 1:
-            print("Choose a preprocessing configuration:")
-            for i, pre_config in enumerate(prprp_keys):
-                print(f"{i + 1}: {pre_config}")
-
-            preproc_choice = int((input("$ ") or 1))
-            prpr_key = prprp_keys[preproc_choice - 1]
-            self._preproc_config = pre_configs[prpr_key]
-        else:
-            print("Using default preprocessing configuration.")
-            prpr_key = prprp_keys[0]
-            self._preproc_config = next(iter(pre_configs.values()))
-        self._preproc_config_name = prpr_key
+        self.user_choose_preprocess_config()
 
         config_keys = list(self.configs.keys())
 
         print("Configs for this ranker are: ")
         for i, config_key in enumerate(config_keys):
-            print(i, ": ",config_key)
+            print(i, ": ", config_key)
 
         print("Select by config or by numbers?")
         print("Enter the ranking config match pattern.")
@@ -305,27 +302,24 @@ class AppEntry:
             print(i, ": ", config)
 
         for selected_config in filtered_list:
-           self.config_name = selected_config
-           self.basename = f"{self.preproc_config_name}_{self.config_name}"
-           self.init_incrementables()
-           self.initialized = True
+            self.config_name = selected_config
+            # self.basename = f"{self.preproc_config_name}_{self.config_name}"
+            self.init_incrementables()
+            self.initialized = True
 
-           get_preprocessor().init(self)
+            get_preprocessor().init(self)
 
-           # from here
-           print(self.incrementables)
-           for incrcombo in dict_product(self.incrementables):
-               self.incrstate = incrcombo
+            # from here
+            print(self.incrementables)
+            for incrcombo in dict_product(self.incrementables):
+                self.incrstate = incrcombo
 
-               predictions = rerank(self)
+                predictions = rerank(self)
 
-               get_postprocessor().init(self)
-               get_postprocessor().write_submission(predictions)
+                get_postprocessor().init(self)
+                get_postprocessor().write_submission(predictions)
 
-               evaluate(self)
-
-
-
+                evaluate(self)
 
     def prepare(self):
         print("What do you want to prepare?")
@@ -338,26 +332,34 @@ class AppEntry:
         choice = int(input("$ (default: 2)") or 2)
 
         if choice == 1:
-            valid_training_sample = False
-            while not valid_training_sample:
-                print("Enter the path to the training sample")
-                training_sample = str(input(
-                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
-                valid_training_sample = os.path.exists(training_sample)
+            training_sample = valid_path_from_user_input('training sample',
+                                                         'pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json',
+                                                         'file')
+            # valid_training_sample = False
+            # while not valid_training_sample:
+            #     print("Enter the path to the training sample")
+            #     training_sample = str(input(
+            #         "$ (default: )") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+            #     valid_training_sample = os.path.exists(training_sample)
 
-            valid_eval_sample = False
-            while not valid_eval_sample:
-                print("Enter the path to the evaluation sample")
-                eval_sample = str(input(
-                    "$ (default: pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json)") or "pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
-                valid_eval_sample = os.path.exists(eval_sample)
+            eval_sample = valid_path_from_user_input('eval sample',
+                                                     'pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json',
+                                                     'file')
+            # valid_eval_sample = False
+            # while not valid_eval_sample:
+            #     print("Enter the path to the evaluation sample")
+            #     eval_sample = str(input(
+            #         "$ (default: pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json)") or "pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json")
+            #     valid_eval_sample = os.path.exists(eval_sample)
 
-            valid_doc_annotations = False
-            while not valid_doc_annotations:
-                print("Enter the path to the document annotations")
-                doc_annotations = str(input(
-                    "$ (default: pre_pre_processing/resources/doc-annotations.csv)") or "pre_pre_processing/resources/doc-annotations.csv")
-                valid_doc_annotations = os.path.exists(doc_annotations)
+            doc_annotations = valid_path_from_user_input('document annotations',
+                                                         'pre_pre_processing/resources/doc-annotations.csv', 'file')
+            # valid_doc_annotations = False
+            # while not valid_doc_annotations:
+            #     print("Enter the path to the document annotations")
+            #     doc_annotations = str(input(
+            #         "$ (default: )") or "pre_pre_processing/resources/doc-annotations.csv")
+            #     valid_doc_annotations = os.path.exists(doc_annotations)
 
             valid_gm = False
             while not valid_gm:
@@ -381,55 +383,68 @@ class AppEntry:
 
             outfile = f"full-annotations-{gm}-{mm}.csv"
 
-            valid_outdir = False
-            while not valid_outdir:
-                print("Enter the save location of the grouping file")
-                outdir = str(
-                    input("$ (default: evaluation/resources/2020/groupings)") or "evaluation/resources/2020/groupings")
-                valid_outdir = os.path.exists(outdir)
+            outdir = valid_path_from_user_input('grouping dir', 'evaluation/resources/2020/groupings', 'dir')
+            # valid_outdir = False
+            # while not valid_outdir:
+            #     print("Enter the save location of the grouping file")
+            #     outdir = str(
+            #         input("$ (default: )") or "evaluation/resources/2020/groupings")
+            #     valid_outdir = os.path.exists(outdir)
 
             outfile = os.path.join(outdir, outfile)
 
             grouping.to_csv(outfile, index=False)
         elif choice == 2:
-            valid_sample = False
-            while not valid_sample:
-                print("Enter the path to the ground truth file")
-                sample = str(input(
-                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
-                valid_sample = os.path.exists(sample)
 
-            print("Group qrels or base qrels?")
-            print("1: Group")
-            print("2: Base")
+            sample = valid_path_from_user_input('ground truth file',
+                                                'pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json',
+                                                'file')
+            # valid_sample = False
+            # while not valid_sample:
+            #     print("Enter the path to the ground truth file")
+            #     sample = str(input(
+            #         "$ (default: )") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+            #     valid_sample = valid_file_with_none(sample)
+
+            print("Grouped qrels or individual qrels?")
+            print("1: Grouped")
+            print("2: Individual")
             choice1 = int(input("$ (default: 1)") or 1)
 
+            outdir = valid_path_from_user_input('outdir', 'evaluation/resources/2020/qrels', 'dir')
             if choice1 == 1:
 
-                valid_grouping = False
-                while not valid_grouping:
-                    print("Enter the path to grouping file")
-                    grouping = str(input(
-                        "$ (default: evaluation/resources/2020/groupings/full-annotations-mixed_group.csv)") or "evaluation/resources/2020/groupings/full-annotations-mixed_group.csv")
-                    valid_grouping = os.path.exists(grouping)
+                grouping = valid_path_from_user_input('grouping file',
+                                                      'evaluation/resources/2020/groupings/full-annotations-mixed_group.csv',
+                                                      'file')
+                # valid_grouping = False
+                # while not valid_grouping:
+                #     print("Enter the path to grouping file")
+                #     grouping = str(input(
+                #         "$ (default: )") or "evaluation/resources/2020/groupings/full-annotations-mixed_group.csv")
+                #     valid_grouping = valid_file_with_none(grouping)
 
-                valid_outdir = False
-                while not valid_outdir:
-                    print("Enter the path to the outdir")
-                    outdir = str(input(
-                        "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
-                    valid_outdir = os.path.exists(outdir)
+                # valid_outdir = False
+                # while not valid_outdir:
+                #     print("Enter the path to the outdir")
+                #     outdir = str(input(
+                #         "$ (default: )") or "evaluation/resources/2020/qrels")
+                #     valid_outdir = valid_dir_with_none(outdir)
 
-                outfile = os.path.join(outdir, f"{os.path.basename(os.path.splitext(sample)[0])}-{os.path.basename(os.path.splitext(grouping)[0])}-qrels.tsv")
+                outfile = os.path.join(outdir,
+                                       f"{os.path.basename(os.path.splitext(sample)[0])}-{os.path.basename(os.path.splitext(grouping)[0])}-qrels.tsv")
 
                 json_to_group_qrels(sample, grouping, outfile, complete=True, not_verbose=False)
             elif choice1 == 2:
-                valid_outdir = False
-                while not valid_outdir:
-                    print("Enter the path to the outdir")
-                    outdir = str(input(
-                        "$ (default: evaluation/resources/2020/qrels)") or "evaluation/resources/2020/qrels")
-                    valid_outdir = os.path.exists(outdir)
+                # outdir = valid_path_from_user_input('outdir','evaluation/resources/2020/qrels','dir')
+                # valid_outdir = False
+                # print("Enter the path to the outdir")
+                # while not valid_outdir:
+                #     outdir = str(input(
+                #         "$ (default: )") or "evaluation/resources/2020/qrels")
+                #     valid_outdir = valid_dir_with_none(outdir)
+                #     if not valid_outdir:
+                #         print("Invalid directory path:", outdir, "\nTry again!")
 
                 print("Enter the desired file name")
                 outfile = str(input(
@@ -437,21 +452,32 @@ class AppEntry:
 
                 json_to_base_qrels(sample, os.path.join(outdir, outfile))
         elif choice == 3:
-            self.common_logic()
+            # self.common_logic()
+            self.load_appconfig()
+            self.user_choose_ranker()
+            self.user_choose_preprocess_config()
+            # self.basename = f"{self.preproc_config_name}_{self.config_name}"
 
             pr = get_preprocessor()
             pr.init(self)
             # todo: move this logic to preprocessor
 
-            tf = pr.fe.get_feature_mat(pr.ioht)
-            ef = pr.fe.get_feature_mat(
+            tf = pr.fe.retrieve_es_features(pr.ioht)
+            ef = pr.fe.retrieve_es_features(
                 pr.iohe)  # todo: make it so that you can extract features from ioht or iohe seperately
 
             ff = pd.concat([tf, ef]).drop_duplicates()
             pr.save_feature_mat(ff)
         elif choice == 4:
+            self.load_appconfig()
+            self.user_choose_ranker()
+            self.user_choose_preprocess_config()
+            # self.user_choose_ranking_config()
 
-            self.common_logic()
+            # self.set_basename()
+            # self.init_incrementables()
+            # self.initialized = True
+            # self.common_logic()
 
             pr = get_preprocessor()
             pr.init(self)
@@ -466,7 +492,7 @@ class AppEntry:
             print(f"2: One")
             choice_indexing = bool(int(input("$ (default: 1)") or 1) - 1)
 
-            fmt = pr.fe.get_feature_mat(pr.ioht)
+            fmt = pr.fe.get_feature_mat(pr.ioht,compute_impute=True)
             fmt = pd.merge(fmt, pr.ioht.get_query_seq()[['qid', 'doc_id', 'relevance']].drop_duplicates(),
                            on=['qid', 'doc_id'])
             fmt = fmt.sort_values(by='qid')
@@ -489,13 +515,15 @@ class AppEntry:
             pr.dump_svm(Xe, ye, qidse, docidse, choice_sparsedense, choice_indexing, train=False)
 
         elif choice == 5:
-
-            valid_training_file = False
-            while not valid_training_file:
-                print("Enter the path to the training sample")
-                training_sample = str(input(
-                    "$ (default: pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json)") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
-                valid_training_file = (os.path.exists(training_sample) and os.path.isfile(training_sample))
+            training_sample = valid_path_from_user_input('training sample',
+                                                         'pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json',
+                                                         'file')
+            # valid_training_file = False
+            # while not valid_training_file:
+            #     print("Enter the path to the training sample")
+            #     training_sample = str(input(
+            #         "$ (default: )") or "pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json")
+            #     valid_training_file = (os.path.exists(training_sample) and os.path.isfile(training_sample))
 
             print("What percentage of documents should be sampled?")
             frac = float(input("$ "))
@@ -522,12 +550,15 @@ class AppEntry:
             # for each qid, sample
             pass
         elif choice == 6:
-            valid_svmlight_file = False
-            while not valid_svmlight_file:
-                print("Enter the path to the SVMlight file")
-                svmlight_file = str(input(
-                    "$ (default: pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat)") or "pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat")
-                valid_svmlight_file = (os.path.exists(svmlight_file) and os.path.isfile(svmlight_file))
+            svmlight_file = valid_path_from_user_input('SVMlight file',
+                                                       'pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat',
+                                                       'file')
+            # valid_svmlight_file = False
+            # while not valid_svmlight_file:
+            #     print("Enter the path to the SVMlight file")
+            #     svmlight_file = str(input(
+            #         "$ (default: )") or "pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat")
+            #     valid_svmlight_file = (os.path.exists(svmlight_file) and os.path.isfile(svmlight_file))
 
             print("Enter the output location")
             outfile = str(input("$ "))
@@ -555,7 +586,7 @@ class AppEntry:
         choice = int(input("$ (default: 1)" or 1))
 
         if choice == 1:
-                evaluate(self)
+            evaluate(self)
         elif choice == 2:
             compare_means(self)
 
