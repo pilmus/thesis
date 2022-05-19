@@ -36,9 +36,10 @@ def doc_singleton_grouping(docids, outfile):
 
 
 class PostProcessReranker(model.RankerInterface):
-    def __init__(self, estimated_relevance, mapping, missing_group_strategy):
+    def __init__(self, estimated_relevance, mapping, missing_group_strategy, erels_format = 'csv'):
         super().__init__()
         self._erels = estimated_relevance
+        self._erels_format = erels_format
         self._mapping = mapping
         self._missing_group_strategy = missing_group_strategy
 
@@ -142,7 +143,12 @@ class PostProcessReranker(model.RankerInterface):
         return targexp
 
     def rerank(self, ioh):
-        erels = pd.read_csv(self._erels,dtype={'qid': str})
+        if self._erels_format == 'csv':
+            erels = pd.read_csv(self._erels,dtype={'qid': str})
+        elif self._erels_format == 'json':
+            print("hello")
+        else:
+            raise ValueError("Illegal value for 'erels_format':", self._erels_format)
         qseq_with_relevances = pd.merge(ioh.get_query_seq(), erels, on=['qid', 'doc_id'],
                                         how='left').sort_values(
             by=['sid', 'q_num']).reset_index(drop=True)

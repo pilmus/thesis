@@ -263,10 +263,12 @@ class AppEntry:
 
             predictions = rerank(self)
 
-            get_postprocessor().init(self)
-            get_postprocessor().write_submission(predictions)
+            if not self.get_argument("skip_submission"):
+                get_postprocessor().init(self)
+                get_postprocessor().write_submission(predictions)
 
-            evaluate(self)
+            if not self.get_argument("skip_eval"):
+                evaluate(self)
         # self.analyze_logic()
         # to here
         # has to be repeated on a multirun

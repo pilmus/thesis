@@ -12,16 +12,20 @@ from app.evaluation.src.y2020.eval.trec.json2runfile import json2runfile
 from app.post_processing.post_processor import get_postprocessor
 
 import app.evaluation.src.y2019.trec_fair_ranking_evaluator as eval2019
-from app.utils.src.utils import valid_file_with_none
+from app.utils.src.utils import valid_file_with_none, valid_path_from_user_input
 
 
 def evaluate(app_entry):
     runfile = get_postprocessor().outfile
-    valid_runfile = valid_file_with_none(runfile)
-    while not valid_runfile: #todo: replace with method
-        print("Enter a runfile to evaluate.")
-        runfile = str(input("$ "))
-        valid_runfile = valid_file_with_none(runfile)
+    # valid_runfile = valid_file_with_none(runfile)
+
+    if not runfile:
+        runfile = valid_path_from_user_input('runfile to evaluate', 'no default','file')
+
+    # while not valid_runfile: #todo: replace with method
+    #     print("Enter a runfile to evaluate.")
+    #     runfile = str(input("$ "))
+    #     valid_runfile = valid_file_with_none(runfile)
     runfile = os.path.basename(runfile)
 
     year = get_year(app_entry)

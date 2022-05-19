@@ -8,7 +8,9 @@ class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
     def __init__(self, corpus, fquery, fconfig, feature_mat=None, init_ltr=True):
-        if corpus:
+        if feature_mat:
+            self.feature_mat = feature_mat
+        elif corpus:
             self.corpus = corpus
 
             with open(fquery) as f:
@@ -17,10 +19,9 @@ class FeatureEngineer:
 
             if init_ltr:
                 corpus.init_ltr(fconfig)
-        self.feature_mat = None
-        if feature_mat:
-            self.feature_mat = feature_mat
-        if not feature_mat and not corpus:
+            self.feature_mat = None
+
+        else:
             raise ValueError(
                 f"You must either initialize a corpus, fquery, and fconfig or give a pre-generated feature matrix!")
         self.missing_values = None

@@ -20,9 +20,13 @@ class LambdaMart(model.RankerInterface):
     Wrapper around the LambdaMart algorithm
     """
 
+    def __str__(self):
+        return f"LM_{self.random_state}_{self.early_stopping_frac}_{self._metric_name}"
+
     def __init__(self, random_state=None, early_stopping_frac=0.6, metric='NDCG', save_dir=None):
         super().__init__()
         self.fe = get_preprocessor().fe
+        self._metric_name = metric
         if metric == 'NDCG':
             self.metric = pyltr.metrics.NDCG(k=7)
         elif metric == 'ERR':
@@ -117,43 +121,24 @@ class LambdaMart(model.RankerInterface):
 
 
 class LambdaMartMRFR(LambdaMart):
-    def __init__(self, random_state, missing_value_strategy, relevance_probabilities, grouping, K,
-                 beta, lambd):
-        super().__init__(random_state, missing_value_strategy)
-        self.relevance_probabilities = relevance_probabilities
-        self.grouping = grouping
-        self.K = K
-        self.beta = beta
-        self._lambda = lambd
+    def __init__(self, random_state, early_stopping_frac=0.6, metric='NDCG'):
+        super().__init__(random_state, early_stopping_frac=early_stopping_frac, metric=metric)
 
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
         qids = qids.assign(est_relevance=pred)
-        est_rels = pd.merge(inputhandler.get_query_seq()[['sid', 'qid', 'doc_id']].drop_duplicates(), qids)[
-            ['qid', 'doc_id', 'est_relevance']].drop_duplicates()
+        predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids)
 
-        # normalize relevance
-        # est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(lambda x: (x - x.mean()) / x.std())
-        est_rels['est_relevance'] = est_rels.groupby('qid')['est_relevance'].transform(
+        predictions['est_relevance'] = predictions.groupby('qid')['est_relevance'].transform(
             lambda x: (x - x.min()) / (x.max() - x.min()))
-        est_rels = est_rels.sort_values(by=['qid', 'est_relevance'])
+        predictions = predictions.sort_values(by=['sid', 'q_num', 'est_relevance'])
+        predictions[['qid','doc_id','est_relevance']].to_csv(f'reranking/resources/relevances/{self}_{inputhandler}.csv',index=False) #todo: un-hardcode
 
-        est_rels.to_csv(self.relevance_probabilities, index=False)
 
-        mrfr = MRFR(self.relevance_probabilities, self.grouping, self.K, self.beta, self._lambda)
-        outdf = mrfr.rerank(inputhandler)
-
-        predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], outdf, how='left',
-                               on=['sid', 'q_num', 'doc_id'])
-
-        # tqdm.pandas()
-        # qids.loc[:, 'rank'] = qids.groupby(['sid','q_num'])['pred'].progress_apply(pd.Series.rank, ascending=False,
-        #                                                                    method='first')
-        # pred = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids,
-        #                 how='left', on=['sid', 'q_num', 'doc_id'])
-        # qids.drop('pred', inplace=True, axis=1)
+        # predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], predictions,
+        #                        how='left', on=['sid', 'q_num', 'doc_id'])
 
         return predictions
 
