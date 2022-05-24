@@ -36,7 +36,7 @@ def doc_singleton_grouping(docids, outfile):
 
 
 class PostProcessReranker(model.RankerInterface):
-    def __init__(self, estimated_relevance, mapping, missing_group_strategy, erels_format = 'csv'):
+    def __init__(self, estimated_relevance, mapping, missing_group_strategy, erels_format='csv'):
         super().__init__()
         self._erels = estimated_relevance
         self._erels_format = erels_format
@@ -143,12 +143,7 @@ class PostProcessReranker(model.RankerInterface):
         return targexp
 
     def rerank(self, ioh):
-        if self._erels_format == 'csv':
-            erels = pd.read_csv(self._erels,dtype={'qid': str})
-        elif self._erels_format == 'json':
-            print("hello")
-        else:
-            raise ValueError("Illegal value for 'erels_format':", self._erels_format)
+        erels = pd.read_csv(self._erels, dtype={'qid': str}).drop_duplicates()
         qseq_with_relevances = pd.merge(ioh.get_query_seq(), erels, on=['qid', 'doc_id'],
                                         how='left').sort_values(
             by=['sid', 'q_num']).reset_index(drop=True)
@@ -313,7 +308,7 @@ class MRFR(PostProcessReranker):
         self._lambda = lambd
 
     def util_ranking(self, actexps, rhos):
-        """Compute the utility for this ranking as given in eq 8 of Biega2021 todo:change name
+        """Compute the utility for this ranking as given in eq 8 of Biega2020 todo:change name
         gamma and k are set as in kletti and renders
         """
         # confirmed correct until here

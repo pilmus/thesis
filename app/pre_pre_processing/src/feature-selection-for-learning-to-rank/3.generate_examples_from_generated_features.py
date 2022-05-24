@@ -1,4 +1,7 @@
 import sys
+
+from tqdm import tqdm
+
 sys.path.insert(0, 'lib')
 import kendals_tau
 import findvar

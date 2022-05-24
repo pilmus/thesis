@@ -39,7 +39,8 @@ class PreProcessor():
             "_iohe": IOHandler
         }
 
-        if preproc_config.pop("extend", None):  # todo; ew, fix this
+        extend_val = preproc_config.pop("extend", None)
+        if extend_val:  # todo; ew, fix this
             preproc_components["_fe"] = ExtendedFeatureEngineer
 
         for k, v in preproc_config.items():
@@ -48,6 +49,8 @@ class PreProcessor():
             for val in v.values():
                 component_params.append(eval(val))
             setattr(self, k, component_class(*component_params))
+        if extend_val:
+            preproc_config["extend"] = extend_val
 
     def get_feature_mat(self, additional_name=""):
         # either return feature matrix FILE or return None
@@ -57,9 +60,9 @@ class PreProcessor():
             return esf_path
         return None
 
-    def save_feature_mat(self, fm):
+    def save_feature_mat(self, fm, additional_name=""):
         rn = self._app_entry.reranker_name
-        esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}.csv')
+        esf_path = os.path.join('pre_processing', 'resources', 'escache', f'{rn}{additional_name}.csv') #todo: addadditional name
         fm.to_csv(esf_path, index=False)
 
     def dump_svm(self, X, y, qids, docids, dense=False, zero_indexed=True, train=True):

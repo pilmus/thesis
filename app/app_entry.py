@@ -289,7 +289,7 @@ class AppEntry:
             print(i, ": ", config_key)
 
         print("Select by config or by numbers?")
-        print("Enter the ranking config match pattern.")
+        print("Enter the ranking config regex pattern.")
 
         filtered_list = []
         while not filtered_list:
@@ -533,7 +533,7 @@ class AppEntry:
             for i in range(5):  # todo: make range param configurable
                 df = pd.read_json(training_sample, lines=True)
                 df[['qid', 'documents']] = df.apply(lambda row: pd.Series({"qid": f"{row.qid}_{i + 1}",
-                                                                           "documents": random.sample(row.documents,
+                                                                           "documents": random.Random(0).sample(row.documents,
                                                                                                       int(frac * len(
                                                                                                           row.documents)))}),
                                                     axis=1)
@@ -545,14 +545,14 @@ class AppEntry:
             aug_df.to_json(outpath, orient='records', lines=True)
 
             aug_df.qid.drop_duplicates().reset_index(drop=True).to_csv(
-                os.path.join(os.path.dirname(training_sample), f"training-sequence-full_aug{frac}.tsv"))
+                os.path.join(os.path.dirname(training_sample), f"training-sequence-full_aug.tsv"))
 
             # load training file
             # for each qid, sample
             pass
         elif choice == 6:
             svmlight_file = valid_path_from_user_input('SVMlight file',
-                                                       'pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat',
+                                                       'pre_pre_processing/resources/libsvm_with_selected_features/<rest>/<of>/<path>',
                                                        'file')
             # valid_svmlight_file = False
             # while not valid_svmlight_file:
@@ -561,8 +561,7 @@ class AppEntry:
             #         "$ (default: )") or "pre_pre_processing/src/feature-selection-for-learning-to-rank/feature_selected_example_files/msd_10_0.9_training_examples.dat")
             #     valid_svmlight_file = (os.path.exists(svmlight_file) and os.path.isfile(svmlight_file))
 
-            print("Enter the output location")
-            outfile = str(input("$ "))
+            outfile = valid_path_from_user_input('output location', 'pre_processing/resources/escache/<filename>','file')
 
             pr = get_preprocessor()
             pr.svm_to_csv(svmlight_file, outfile)

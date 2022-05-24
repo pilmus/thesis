@@ -23,7 +23,7 @@ class LambdaMart(model.RankerInterface):
     def __str__(self):
         return f"LM_{self.random_state}_{self.early_stopping_frac}_{self._metric_name}"
 
-    def __init__(self, random_state=None, early_stopping_frac=0.6, metric='NDCG', save_dir=None):
+    def __init__(self, random_state=None, early_stopping_frac=0.6, metric='NDCG', save_dir=None, feature_numbers=None):
         super().__init__()
         self.fe = get_preprocessor().fe
         self._metric_name = metric
@@ -49,6 +49,7 @@ class LambdaMart(model.RankerInterface):
         self.random_state = random_state
         self.save_dir = save_dir
         self.train_ioh = None
+        self.feature_numbers = feature_numbers
 
     def __data_helper(self, x):
         x = x.sort_values('q_num')
@@ -62,7 +63,7 @@ class LambdaMart(model.RankerInterface):
             impute = True
         else:
             impute = False  # todo: unjank this, should not let imputation depend on whether we use a frac or not. make it a class variable instead that is set to true when training and false when evaluating https://stats.stackexchange.com/a/425086
-        x = self.fe.get_feature_mat(inputhandler, compute_impute=impute)
+        x = self.fe.get_feature_mat(inputhandler, compute_impute=impute, feature_numbers=self.feature_numbers)
         y = inputhandler.get_query_seq()[['sid', 'qid', "q_num", "doc_id", "relevance"]]
         x = pd.merge(x, y, how="left", on=['qid', 'doc_id'])
         training = x.q_num.drop_duplicates().sample(frac=frac, random_state=self.random_state)
@@ -102,6 +103,10 @@ class LambdaMart(model.RankerInterface):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
+        predictions = self._base_pred(inputhandler, pred, qids)
+        return predictions
+
+    def _base_pred(self, inputhandler, pred, qids):
         qids = qids.assign(pred=pred)
         tqdm.pandas()
         qids.loc[:, 'rank'] = qids.groupby('q_num')['pred'].progress_apply(pd.Series.rank, ascending=False,
@@ -121,25 +126,27 @@ class LambdaMart(model.RankerInterface):
 
 
 class LambdaMartMRFR(LambdaMart):
-    def __init__(self, random_state, early_stopping_frac=0.6, metric='NDCG'):
-        super().__init__(random_state, early_stopping_frac=early_stopping_frac, metric=metric)
+    def __init__(self, random_state, early_stopping_frac=0.6, metric='NDCG', feature_numbers=None, ranker_config=None):
+        super().__init__(random_state, early_stopping_frac=early_stopping_frac, metric=metric, feature_numbers=feature_numbers)
+        self.ranker_config = ranker_config
 
     def _predict(self, inputhandler):
         x, y, qids, tmp1, tmp2, tmp3 = self._prepare_data(inputhandler, frac=1)
         print("Predicting...")
         pred = self.lambdamart.predict(x)
+        predictions = self._base_pred(inputhandler, pred, qids)
+        self._pred_to_est_rel(inputhandler, pred, qids)
+
+        return predictions
+
+    def _pred_to_est_rel(self, inputhandler, pred, qids):
         qids = qids.assign(est_relevance=pred)
         predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], qids)
-
         predictions['est_relevance'] = predictions.groupby('qid')['est_relevance'].transform(
             lambda x: (x - x.min()) / (x.max() - x.min()))
         predictions = predictions.sort_values(by=['sid', 'q_num', 'est_relevance'])
-        predictions[['qid','doc_id','est_relevance']].to_csv(f'reranking/resources/relevances/{self}_{inputhandler}.csv',index=False) #todo: un-hardcode
-
-
-        # predictions = pd.merge(inputhandler.get_query_seq()[['sid', 'q_num', 'qid', 'doc_id']], predictions,
-        #                        how='left', on=['sid', 'q_num', 'doc_id'])
-
+        predictions[['qid', 'doc_id', 'est_relevance']].to_csv(
+            f'reranking/resources/relevances/{self.ranker_config}.csv', index=False)  # todo: un-hardcode
         return predictions
 
 

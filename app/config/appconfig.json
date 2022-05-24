@@ -89,6 +89,63 @@
             "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           }
         },
+        "train_90_10_split": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_feature_selection.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
+        },
+        "train_90_10_split_aug0.7": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_aug0.7_extended.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
+        },
+        "train_90_10_split_aug0.5": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_aug0.5_extended.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
+        },
         "train_aug0.7": {
           "_corpus": {
             "index": "str(\"semanticscholar2020og\")"
@@ -100,15 +157,15 @@
             "feature_mat": "self.get_feature_mat(additional_name='_aug0.7')"
           },
           "_ioht": {
-            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug0.7.tsv\")",
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
             "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
           },
           "_iohe": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
-            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
           }
         },
-        "train10": {
+        "train_aug0.5": {
           "_corpus": {
             "index": "str(\"semanticscholar2020og\")"
           },
@@ -116,15 +173,15 @@
             "corpus": "self._corpus",
             "fquery": "str(\"config/featurequery_bonart_2020.json\")",
             "fconfig": "str(\"config/features_bonart_2020.json\")",
-            "feature_mat": "self.get_feature_mat()"
+            "feature_mat": "self.get_feature_mat(additional_name='_aug0.5')"
           },
           "_ioht": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
-            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
           },
           "_iohe": {
-            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
-            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
           }
         },
         "feature_selection": {
@@ -166,6 +223,66 @@
             "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           },
           "extend": true
+        },
+        "feature_selection_90_10_split_full_output_seq": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
+            "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
+            "feature_mat": "self.get_feature_mat(additional_name=\"_feature_selection\")"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "extend": true
+        },
+        "train_aug0.7_extended": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
+            "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
+            "feature_mat": "self.get_feature_mat(additional_name='_aug0.7_extended')"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
+          },
+          "extend": true
+        },
+        "train_aug0.5_extended": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "self._corpus",
+            "fquery": "str(\"config/featurequery_bonart_2020_for_feature_selection.json\")",
+            "fconfig": "str(\"config/features_bonart_2020_for_feature_selection.json\")",
+            "feature_mat": "self.get_feature_mat(additional_name='_aug0.5_extended')"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
+          },
+          "extend": true
         }
       },
       "rerank_configs": {
@@ -175,9 +292,757 @@
           "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
           "year": "2020",
           "square": false,
-          "random_state": "list([None])",
+          "random_state": "list([0])",
           "metric": "NDCG",
           "early_stopping_frac": 0.6
+        },
+        "lm_err_mpt_10_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35
+          ]
+        },
+        "lm_err_mpt_10_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43
+          ]
+        },
+        "lm_err_mpt_10_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41
+          ]
+        },
+        "lm_err_mpt_15_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30
+          ]
+        },
+        "lm_err_mpt_15_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34
+          ]
+        },
+        "lm_err_mpt_15_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47
+          ]
+        },
+        "lm_err_mpt_20_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30,
+            47,
+            34,
+            20,
+            41,
+            16
+          ]
+        },
+        "lm_err_mpt_20_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34,
+            37,
+            47,
+            24,
+            39,
+            40
+          ]
+        },
+        "lm_err_mpt_20_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47,
+            37,
+            39,
+            40,
+            10,
+            2
+          ]
+        },
+        "lm_err_msd_10_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12
+          ]
+        },
+        "lm_err_msd_10_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31
+          ]
+        },
+        "lm_err_msd_10_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42
+          ]
+        },
+        "lm_err_msd_15_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20
+          ]
+        },
+        "lm_err_msd_15_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12
+          ]
+        },
+        "lm_err_msd_15_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5
+          ]
+        },
+        "lm_err_msd_20_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20,
+            40,
+            18,
+            35,
+            19,
+            41
+          ]
+        },
+        "lm_err_msd_20_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12,
+            35,
+            20,
+            43,
+            41,
+            46
+          ]
+        },
+        "lm_err_msd_20_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5,
+            35,
+            23,
+            43,
+            20,
+            40
+          ]
+        },
+        "lm_err_nofeat": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            30,
+            31,
+            32
+          ]
+        },
+        "lm_ndcg_mpt_10_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35
+          ]
+        },
+        "lm_ndcg_mpt_10_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43
+          ]
+        },
+        "lm_ndcg_mpt_10_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41
+          ]
+        },
+        "lm_ndcg_mpt_15_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30
+          ]
+        },
+        "lm_ndcg_mpt_15_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34
+          ]
+        },
+        "lm_ndcg_mpt_15_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47
+          ]
+        },
+        "lm_ndcg_mpt_20_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30,
+            47,
+            34,
+            20,
+            41,
+            16
+          ]
+        },
+        "lm_ndcg_mpt_20_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34,
+            37,
+            47,
+            24,
+            39,
+            40
+          ]
+        },
+        "lm_ndcg_mpt_20_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47,
+            37,
+            39,
+            40,
+            10,
+            2
+          ]
+        },
+        "lm_ndcg_msd_10_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12
+          ]
+        },
+        "lm_ndcg_msd_10_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31
+          ]
+        },
+        "lm_ndcg_msd_10_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42
+          ]
+        },
+        "lm_ndcg_msd_15_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20
+          ]
+        },
+        "lm_ndcg_msd_15_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12
+          ]
+        },
+        "lm_ndcg_msd_15_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5
+          ]
+        },
+        "lm_ndcg_msd_20_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20,
+            40,
+            18,
+            35,
+            19,
+            41
+          ]
+        },
+        "lm_ndcg_msd_20_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12,
+            35,
+            20,
+            43,
+            41,
+            46
+          ]
+        },
+        "lm_ndcg_msd_20_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5,
+            35,
+            23,
+            43,
+            20,
+            40
+          ]
+        },
+        "lm_ndcg_nofeat": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            30,
+            31,
+            32
+          ]
         },
         "seed0": {
           "random_state": "list([0])"
@@ -189,6 +1054,20 @@
         "seed0_err": {
           "random_state": "list([0])",
           "metric": "ERR"
+        },
+        "mpt_0.1_10": {
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35
+          ]
         }
       }
     },
@@ -253,18 +1132,826 @@
             "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_-10.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
           }
+        },
+        "train_90_10_split": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_feature_selection.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "extend": true
+        },
+        "train_90_10_split_aug0.7": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_aug0.7_extended.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.7.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "extend": true
+        },
+        "train_90_10_split_aug0.5": {
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_aug0.5_extended.csv\")"
+          },
+          "_ioht": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full_aug_90.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample_aug0.5.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "extend": true
         }
       },
       "rerank_configs": {
         "default": {
+          "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
           "year": "2020",
           "square": false,
-          "random_state": "list([None])",
-          "outdir" : "reranking/resources/relevances/",
-          "skip_submission": true,
-          "skip_eval": true
+          "random_state": "list([0])",
+          "metric": "NDCG",
+          "early_stopping_frac": 0.6
+        },
+        "lm_err_mpt_10_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35
+          ]
+        },
+        "lm_err_mpt_10_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43
+          ]
+        },
+        "lm_err_mpt_10_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41
+          ]
+        },
+        "lm_err_mpt_15_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30
+          ]
+        },
+        "lm_err_mpt_15_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34
+          ]
+        },
+        "lm_err_mpt_15_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47
+          ]
+        },
+        "lm_err_mpt_20_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30,
+            47,
+            34,
+            20,
+            41,
+            16
+          ]
+        },
+        "lm_err_mpt_20_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34,
+            37,
+            47,
+            24,
+            39,
+            40
+          ]
+        },
+        "lm_err_mpt_20_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47,
+            37,
+            39,
+            40,
+            10,
+            2
+          ]
+        },
+        "lm_err_msd_10_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12
+          ]
+        },
+        "lm_err_msd_10_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31
+          ]
+        },
+        "lm_err_msd_10_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42
+          ]
+        },
+        "lm_err_msd_15_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20
+          ]
+        },
+        "lm_err_msd_15_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12
+          ]
+        },
+        "lm_err_msd_15_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5
+          ]
+        },
+        "lm_err_msd_20_0.1": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20,
+            40,
+            18,
+            35,
+            19,
+            41
+          ]
+        },
+        "lm_err_msd_20_0.5": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12,
+            35,
+            20,
+            43,
+            41,
+            46
+          ]
+        },
+        "lm_err_msd_20_0.9": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5,
+            35,
+            23,
+            43,
+            20,
+            40
+          ]
+        },
+        "lm_err_nofeat": {
+          "metric": "ERR",
+          "feature_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            30,
+            31,
+            32
+          ]
+        },
+        "lm_ndcg_mpt_10_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35
+          ]
+        },
+        "lm_ndcg_mpt_10_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43
+          ]
+        },
+        "lm_ndcg_mpt_10_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41
+          ]
+        },
+        "lm_ndcg_mpt_15_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30
+          ]
+        },
+        "lm_ndcg_mpt_15_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34
+          ]
+        },
+        "lm_ndcg_mpt_15_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47
+          ]
+        },
+        "lm_ndcg_mpt_20_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            8,
+            9,
+            24,
+            10,
+            36,
+            31,
+            37,
+            35,
+            40,
+            46,
+            42,
+            43,
+            30,
+            47,
+            34,
+            20,
+            41,
+            16
+          ]
+        },
+        "lm_ndcg_mpt_20_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            36,
+            35,
+            46,
+            42,
+            30,
+            41,
+            43,
+            16,
+            20,
+            31,
+            10,
+            34,
+            37,
+            47,
+            24,
+            39,
+            40
+          ]
+        },
+        "lm_ndcg_mpt_20_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            24,
+            36,
+            35,
+            46,
+            30,
+            42,
+            43,
+            41,
+            16,
+            20,
+            31,
+            34,
+            47,
+            37,
+            39,
+            40,
+            10,
+            2
+          ]
+        },
+        "lm_ndcg_msd_10_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12
+          ]
+        },
+        "lm_ndcg_msd_10_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31
+          ]
+        },
+        "lm_ndcg_msd_10_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42
+          ]
+        },
+        "lm_ndcg_msd_15_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20
+          ]
+        },
+        "lm_ndcg_msd_15_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12
+          ]
+        },
+        "lm_ndcg_msd_15_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5
+          ]
+        },
+        "lm_ndcg_msd_20_0.1": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            8,
+            2,
+            9,
+            23,
+            24,
+            10,
+            31,
+            12,
+            36,
+            26,
+            37,
+            4,
+            34,
+            20,
+            40,
+            18,
+            35,
+            19,
+            41
+          ]
+        },
+        "lm_ndcg_msd_20_0.5": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            9,
+            36,
+            2,
+            37,
+            24,
+            31,
+            10,
+            40,
+            23,
+            42,
+            12,
+            35,
+            20,
+            43,
+            41,
+            46
+          ]
+        },
+        "lm_ndcg_msd_20_0.9": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            34,
+            8,
+            30,
+            17,
+            36,
+            16,
+            37,
+            2,
+            42,
+            24,
+            46,
+            10,
+            31,
+            5,
+            35,
+            23,
+            43,
+            20,
+            40
+          ]
+        },
+        "lm_ndcg_nofeat": {
+          "metric": "NDCG",
+          "feature_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            30,
+            31,
+            32
+          ]
         },
         "seed0": {
           "random_state": "list([0])"
@@ -699,32 +2386,2319 @@
             "fsequence_eval": "str(\"pre_processing/resources/training/2020/toy-sequence.tsv\")",
             "fquery_eval": "str(\"pre_processing/resources/training/2020/toy-sample.json\")"
           }
+        },
+        "train_90_10_split": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          }
         }
       },
       "rerank_configs": {
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/train-DocHLevel-mixed_group-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
           "year": "2020",
           "K": 3,
           "beta": 1,
-          "lambd": 1
+          "lambd": 1,
+          "missing_group_strategy": "ignore"
         },
         "toy": {
-          "relevance_probabilities": "reranking/resources/relevances/toy_rel_scores.csv",
+          "estimated_relevance": "reranking/resources/relevances/toy_rel_scores.csv",
           "grouping": "reranking/resources/mappings/toy_doc_to_group.json",
           "K": 3,
           "beta": 1,
           "lambd": 1
         },
         "META": {
-          "relevance_probabilities": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
+          "estimated_relevance": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "grouping": "reranking/resources/mappings/training_doc_to_author.json"
         },
         "LM_train": {
-          "relevance_probabilities": "reranking/resources/relevances/lm_mrfr_training.csv",
+          "estimated_relevance": "reranking/resources/relevances/lm_mrfr_training.csv",
           "grouping": "reranking/resources/mappings/doc_to_author.json"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.1_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.5_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.9_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_nofeat_author_none": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.7_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_aug0.5_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.1_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.5_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.9_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_nofeat_author_one": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "single_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_noaug_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.7_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.7_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_aug0.5_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.1_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.5_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.9_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_ndcg_aug0.5_nofeat_author_ind": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "docid_dummy"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_noaug_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_noaug_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.7_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.7_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.7_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_err_aug0.5_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_err_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_mpt_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_mpt_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_10_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_10_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_15_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_15_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.1_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.1_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.5_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.5_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_msd_20_0.9_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_msd_20_0.9_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "lm_mrfr_ndcg_aug0.5_nofeat_doc": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_train_90_10_split_aug0.5_lm_ndcg_nofeat_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
         }
       }
     }

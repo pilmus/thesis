@@ -58,7 +58,7 @@ def valid_dir_with_none(dirname):
     return os.path.exists(dirname or '') and os.path.isdir(dirname or '')
 
 
-def valid_path_from_user_input(desired_object, default_path, file_or_dir):
+def valid_path_from_user_input(desired_object, default_path, file_or_dir): #todo: this is the inpath version, make one for outpath also
     valid_path = False
     print(f"Enter the path to the {desired_object}")
     while not valid_path:

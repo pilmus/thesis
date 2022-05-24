@@ -1,4 +1,6 @@
+import csv
 import json
+import os.path
 
 import pandas as pd
 from tqdm import tqdm
@@ -7,8 +9,14 @@ from tqdm import tqdm
 class FeatureEngineer:
     """Returns feature vectors for provided query-doc_ids pairs"""
 
+    def __str__(self):
+        if self.feature_mat:
+            return f"fe_{os.path.splitext(os.path.basename(self.feature_mat))[0]}"
+        else:
+            return super.__str__(self)
+
     def __init__(self, corpus, fquery, fconfig, feature_mat=None, init_ltr=True):
-        if feature_mat:
+        if feature_mat: #todo: allow overwriting feature matrix
             self.feature_mat = feature_mat
         elif corpus:
             self.corpus = corpus
@@ -58,7 +66,7 @@ class FeatureEngineer:
 
         return features
 
-    def get_feature_mat(self, iohandler, missing_value_strategy = 'avg', compute_impute=False):
+    def get_feature_mat(self, iohandler, missing_value_strategy = 'avg', compute_impute=False, *args, **kwargs):
         """
 
         :param iohandler:
@@ -143,6 +151,60 @@ class ExtendedFeatureEngineer(FeatureEngineer):
     """Adds a number of features based on other sources than an elasticsearch ltr featureset."""
 
     FIELDS = ["title","paperAbstract", "venue", "journalName", "author_names","sources","fields_of_study"]
+
+    def get_feature_mat(self, iohandler, missing_value_strategy = 'avg', compute_impute=False, feature_numbers=None, *args, **kwargs):
+        """
+
+        :param iohandler:
+        :param missing_value_strategy:
+        :param compute_impute: Compute imputation mean based on this iohandler's sequence.
+        :return:
+        """
+
+        if not feature_numbers:
+            raise ValueError("Trying to use ExtendedFeatureEngineer without providing feature numbers.")
+
+        print("Getting features...")
+        if self.feature_mat:
+            f = pd.read_csv(self.feature_mat, dtype={'doc_id': object, 'qid': str}) #todo: doc_id str?
+            qs = iohandler.get_query_seq()[['qid', 'doc_id']].drop_duplicates()
+            fm = pd.merge(f, qs, on=['qid', 'doc_id'], how='right')
+            # fm = feature_mat
+        else:
+            raise AttributeError("Attribute 'feature_mat' not set!")
+
+        features = []
+
+        reader = csv.reader(
+            open('pre_processing/resources/expanded_feature_numbers.csv', 'r'))
+
+        for k, v in reader:
+            if int(k) in feature_numbers:
+                features.append(v)
+
+        fm = fm[['qid','doc_id'] + features]
+
+        if missing_value_strategy == 'dropzero':  # todo: move this to the feature engineer?
+            fm = fm.dropna()
+            fm = fm[fm.year != 0]
+        elif missing_value_strategy == 'avg':
+            if compute_impute:
+                # Use mean of training set to impute mean of validation/test set. https://stats.stackexchange.com/a/301353
+                #
+                self.missing_values = self._impute_means(fm)
+            else:
+                if not self.missing_values:
+                    raise ValueError("No imputation values were computed.")
+            for col in fm.columns.to_list():
+                if col == 'doc_id':
+                    continue
+                fm[col] = fm[col].fillna(self.missing_values[col])
+            fm.year = fm.year.replace(0, self.missing_values['year'])
+        elif missing_value_strategy == 'ignore':
+            pass
+        else:
+            raise ValueError(f"Invalid missing value strategy: {missing_value_strategy}")
+        return fm
 
     def _get_features(self, queryterm, doc_ids):
         featdf = super()._get_features(queryterm,doc_ids)

@@ -25,7 +25,7 @@ def rerank(app_entry):
                  4: AdvantageController,
                  5: MRFR,
                  6: LambdaMartMRFR,
-               }
+                 }
 
     reranker_class = rerankers[reranker_num]
 
@@ -39,6 +39,9 @@ def rerank(app_entry):
         # print(paramk, paramd[paramk])
 
     del paramd['self']
+
+    if reranker_num == 6: #todo: unjank
+        paramd['ranker_config'] = f"{app_entry.reranker_name}_{app_entry.config_incr_name}"
     print(paramd)
 
     reranker = reranker_class(**paramd)

@@ -53,7 +53,7 @@ class IOHandler:
                 "rank": rank,
                 "relevance": doc.get("relevance"),
                 "frequency": query.get("frequency"),
-                "qid": query.get("qid"),
+                "qid": str(query.get("qid")),
                 "query": query.get("query")
             })
         return ret
