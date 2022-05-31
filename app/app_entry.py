@@ -9,7 +9,7 @@ import traceback
 import pandas as pd
 from sklearn.datasets import dump_svmlight_file
 
-from app.evaluation.evaluator import evaluate, summarize, compare_means
+from app.evaluation.evaluator import evaluate, summarize, compare_means, evaluate_multiple
 from app.evaluation.src.y2020.eval.trec.json2qrels import json_to_group_qrels, json_to_base_qrels
 from app.pre_pre_processing.src.merged_annotations_to_groups import annotations_to_groups, MappingMode, Grouping
 from app.pre_processing.pre_processor import get_preprocessor
@@ -288,16 +288,27 @@ class AppEntry:
         for i, config_key in enumerate(config_keys):
             print(i, ": ", config_key)
 
-        print("Select by config or by numbers?")
+        print("Select with regex pattern or list slice.")
         print("Enter the ranking config regex pattern.")
+
+
 
         filtered_list = []
         while not filtered_list:
             pattern = str(input("$ "))
-            r = re.compile(pattern)
-            filtered_list = list(filter(r.match, config_keys))
+
+            listr = re.compile('\[([0-9]*):([0-9]*)\]')
+            listm = listr.match(pattern)
+            if listm:
+                low = int(listm.group(1))
+                hi = int(listm.group(2))
+                if low <= hi:
+                    filtered_list = config_keys[low:hi]
+            else:
+                r = re.compile(pattern)
+                filtered_list = list(filter(r.match, config_keys))
             if not filtered_list:
-                print("Empty result list, enter new pattern.")
+                print("Empty result list, enter new list or regex pattern.")
 
         print("Using following ranking configurations: ")
         for i, config in enumerate(filtered_list):
@@ -569,34 +580,23 @@ class AppEntry:
             print("Invalid choice: ", choice)
 
     def analyze(self):
-        # self.common_logic()
-
-        self.analyze_logic()
-
-    def quit(self):
-        sys.exit(0)
-
-    def analyze_logic(self):
-
         print("What do you want to do?")
         print("1: Evaluate")
-        print("2: Compare means")
+        print("2: Evaluate multiple")
+        print("3: Compare means")
         choice = int(input("$ (default: 1)" or 1))
 
         if choice == 1:
             evaluate(self)
         elif choice == 2:
+            evaluate_multiple()
+        elif choice ==3:
             compare_means(self)
 
-        # print("Compare means?")
-        # i = input("[y/n] ")
-        # if i == 'y':
-        #     compare_means(self)
-        # # kendall_tau(self)
-        # print("Summarize?")
-        # i = input("[y/n] ")
-        # if i == 'y':
-        #     summarize(self)
+    def quit(self):
+        sys.exit(0)
+
+
 
 
 def main():

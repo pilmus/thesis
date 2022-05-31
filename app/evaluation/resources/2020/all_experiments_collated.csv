@@ -1,0 +1,2 @@
+diff_mean,disp_mean,rel_mean,ranker,source,group,subgroup,theta,hfunc,augmentation,val_metric,feature_method,num_features,balancing_factor,ranker_config
+0.4621878,1.6479177,1.1394635,ac,lm_mrfr_err_aug0.5_mpt_10_0.1,author,ind,99,linear,,,,,,ac_lm_mrfr_err_aug0.5_mpt_10_0.1_author_ind_99_linear

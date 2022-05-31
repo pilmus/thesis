@@ -29,7 +29,7 @@ class PostProcessor():
         accepts a model and writes a jsonlines submission file.
         """
         print("Writing submission...")
-        predictions.sort_values(['sid', 'q_num', 'rank'], axis=0, inplace=True)
+        predictions = predictions.sort_values(by=['sid', 'q_num', 'rank'], axis=0)
         tqdm.pandas()
         submission = predictions.groupby(['sid', 'q_num', 'qid']).progress_apply(
             lambda df: pd.Series({'ranking': df['doc_id']}))

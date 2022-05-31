@@ -19,7 +19,7 @@ def read_qrels(fn, binarize, complete):
             fields = line.strip().split()
             if (len(fields) == 3):
                 qid = fields[0]
-                itr = "-1"  # no group == -1?
+                itr = "-1"  # no group == -1
                 did = fields[1]
                 rel = fields[2]
             else:

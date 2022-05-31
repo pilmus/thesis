@@ -34,12 +34,34 @@ def doc_singleton_grouping(docids, outfile):
     mapping = {doc: [doc] for doc in docids}
     write_json(mapping, outfile)
 
-
-class PostProcessReranker(model.RankerInterface):
-    def __init__(self, estimated_relevance, mapping, missing_group_strategy, erels_format='csv'):
-        super().__init__()
+class RelevanceRanker(model.RankerInterface):
+    def __init__(self,estimated_relevance):
+        super(RelevanceRanker, self).__init__()
         self._erels = estimated_relevance
-        self._erels_format = erels_format
+
+    def append_rel_to_qseq(self, ioh):
+        erels = pd.read_csv(self._erels, dtype={'qid': str}).drop_duplicates()[['qid', 'doc_id', 'est_relevance']]
+        qseq_with_relevances = pd.merge(ioh.get_query_seq(), erels, on=['qid', 'doc_id'],
+                                        how='left').sort_values(
+            by=['sid', 'q_num']).reset_index(drop=True)
+        qseq_with_relevances = qseq_with_relevances.fillna(0)
+        return qseq_with_relevances
+
+    def train(self, inputhandler):
+        pass
+
+    def _predict(self, inputhandler):
+        qseq_with_relevances = self.append_rel_to_qseq(inputhandler)
+        qseq_with_relevances['rank'] = qseq_with_relevances.groupby(['sid','q_num','qid']).est_relevance.apply(pd.Series.rank, ascending=False, method='first')
+        qseq_with_relevances = qseq_with_relevances.sort_values(by=['sid','q_num','qid','rank'])
+        return qseq_with_relevances
+
+
+
+
+class PostProcessReranker(RelevanceRanker):
+    def __init__(self, estimated_relevance, mapping, missing_group_strategy):
+        super().__init__(estimated_relevance)
         self._mapping = mapping
         self._missing_group_strategy = missing_group_strategy
 
@@ -143,11 +165,7 @@ class PostProcessReranker(model.RankerInterface):
         return targexp
 
     def rerank(self, ioh):
-        erels = pd.read_csv(self._erels, dtype={'qid': str}).drop_duplicates()
-        qseq_with_relevances = pd.merge(ioh.get_query_seq(), erels, on=['qid', 'doc_id'],
-                                        how='left').sort_values(
-            by=['sid', 'q_num']).reset_index(drop=True)
-        qseq_with_relevances = qseq_with_relevances.fillna(0)
+        qseq_with_relevances = self.append_rel_to_qseq(ioh)
         docids = qseq_with_relevances.doc_id.drop_duplicates().to_list()
 
         doc_to_group_mapping = self.get_doc_to_group_mapping(docids, self._mapping,
@@ -192,10 +210,9 @@ class PostProcessReranker(model.RankerInterface):
 
         return pred
 
-
 class AdvantageController(PostProcessReranker):
-    def __init__(self, est_rel_file, mapping, missing_group_strategy, theta, hscore_method):
-        super().__init__(est_rel_file, mapping, missing_group_strategy)
+    def __init__(self, estimated_relevance, grouping, missing_group_strategy, theta, hscore_method):
+        super().__init__(estimated_relevance, grouping, missing_group_strategy)
         self._theta = theta
         self._hscore_method = hscore_method
 
@@ -311,8 +328,6 @@ class MRFR(PostProcessReranker):
         """Compute the utility for this ranking as given in eq 8 of Biega2020 todo:change name
         gamma and k are set as in kletti and renders
         """
-        # confirmed correct until here
-        # actexps = actexp_documents(rankdf, rhos, gamma, k)
         for doc, actexp in actexps.items():
             actexps[doc] = actexp * self.f(rhos[doc])
 

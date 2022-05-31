@@ -24,11 +24,12 @@ def main():
     topfn = parameters["topfn"]  # the run file?
 
     expeval(relfn, topfn, destination, binarize, complete, groupEvaluation, normalize, square, umPatience, umType,
-                umUtility, non_verbose)
+            umUtility, non_verbose)
 
 
-def expeval(qrels, runfile, outfile, binarize=False, complete=False, groupEvaluation=False, normalize=True, square=True, umPatience=0.5, umType='gerr',
-                umUtility=0.5, non_verbose=True):
+def expeval(qrels, runfile, outfile, binarize=False, complete=False, groupEvaluation=False, normalize=True, square=True,
+            umPatience=0.5, umType='gerr',
+            umUtility=0.5, non_verbose=True):
     if outfile and os.path.exists(outfile):
         os.remove(outfile)
     #
@@ -129,6 +130,61 @@ def expeval(qrels, runfile, outfile, binarize=False, complete=False, groupEvalua
                 df.write("\t".join([disparity[qid].name, qid, disparity[qid].string(normalize)]) + "\n")
                 df.write("\t".join([relevance[qid].name, qid, relevance[qid].string(normalize)]) + "\n")
                 df.write("\t".join([difference[qid].name, qid, difference[qid].string(normalize)]) + "\n")
+
+
+def utility(qrels, runfile, outfile):
+    if outfile and os.path.exists(outfile):
+        os.remove(outfile)
+    #
+    # qrels = qid -> doc_id -> relgrade
+    #
+    qrels, _ = data.read_qrels(qrels, True, True)
+
+    #
+    # permutations = qid -> iteration -> permutation := rank -> doc_id
+    #
+    permutations = data.read_topfile(runfile)
+
+
+
+    util = {}
+    for qid, permutations_qid in permutations.items():
+        util[qid] = avg_expected_utility(permutations_qid, qrels[qid])
+
+    for qid in qrels:
+        print("\t".join(["util", qid, str(util[qid])]))
+
+        if outfile:
+            with open(outfile, "a") as df:
+                df.write("\t".join(["util", qid, str(util[qid])]) + "\n")
+
+
+def expected_utility(ranking, qrels, gamma=0.5):
+    """
+        Assumes ranking is a participant-sorted list of documents
+
+    """
+
+    u = 0.
+    stopped_until_now = 1.
+    for i, doc_id in enumerate(ranking):
+        stop_p = stopping_probability(qrels[doc_id])
+        u += (gamma ** i) * stopped_until_now * stop_p
+        stopped_until_now *= (1 - stop_p)
+    return u
+
+
+def avg_expected_utility(permutations, qrels):
+    """
+        Assumes sequence is sorted by sequence number,
+        then by the query number within the sequence.
+    """
+
+    return sum([expected_utility(permutation.value(), qrels) for permutation in permutations.values()]) / len(permutations)
+
+
+def stopping_probability(relgrade):
+    return 0.7 * relgrade
 
 
 if __name__ == '__main__':
