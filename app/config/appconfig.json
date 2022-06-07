@@ -1198,7 +1198,7 @@
         "default": {
           "outdir": "evaluation/resources/2020/jsonruns",
           "trecruns_dir": "evaluation/resources/2020/trecruns",
-          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
           "year": "2020",
           "square": false,
           "random_state": "list([0])",
@@ -2022,6 +2022,66 @@
           "trecruns_dir": "evaluation/resources/2020/trecruns",
           "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-training-sample_-10-full-annotations-DocHLevel-mixed_group-qrels.tsv",
           "square": false
+        },
+        "lm_eval": {
+          "year": "2020",
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
+          "square": false,
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_default_default_random_state=0.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_eval": {
+          "year": "2020",
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
+          "square": false,
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_eval": {
+          "year": "2020",
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
+          "square": false,
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
+        "meta_9_eval_old_config": {
+          "year": "2020",
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
+          "square": false,
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
+        },
+        "text_9_eval_old_config": {
+          "year": "2020",
+          "outdir": "evaluation/resources/2020/jsonruns",
+          "trecruns_dir": "evaluation/resources/2020/trecruns",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv",
+          "square": false,
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
+          "theta": 0.9,
+          "hscore_method": "linear",
+          "grouping": "reranking/resources/mappings/doc_to_author.json",
+          "missing_group_strategy": "ignore"
         },
         "meta_9_linear_author_none_train": {
           "est_rel_file": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
@@ -21564,6 +21624,11 @@
           "beta": 1,
           "lambd": 1
         },
+        "lm_eval": {
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_default_default_random_state=0.csv",
+          "grouping": "reranking/resources/mappings/doc_to_doc.json",
+          "missing_group_strategy": "ignore"
+        },
         "META_train_auth_ignore": {
           "estimated_relevance": "reranking/resources/relevances/Training_rel_scores_model_A.csv",
           "grouping": "reranking/resources/mappings/doc_to_author.json",
@@ -23892,6 +23957,12 @@
     },
     "relevance_ranker": {
       "preproc_config": {
+        "eval": {
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
         "train_90_10_split": {
           "_iohe": {
             "fsequence_eval": "str(\"pre_processing/resources/training/2020/training-sequence-full-p-controller_-10.tsv\")",
@@ -23910,6 +23981,14 @@
         },
         "TEXT_train": {
           "estimated_relevance": "reranking/resources/relevances/Training_rel_scores_model_B.csv"
+        },
+        "META_eval": {
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_A.csv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv"
+        },
+        "TEXT_eval": {
+          "estimated_relevance": "reranking/resources/relevances/Evaluation_rel_scores_model_B.csv",
+          "qrels": "evaluation/resources/2020/qrels/TREC-Fair-Ranking-eval-sample-full-annotations-DocLevel-mixed_group-qrels.tsv"
         }
       }
     }
