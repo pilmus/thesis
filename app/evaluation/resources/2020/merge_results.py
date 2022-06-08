@@ -1,13 +1,19 @@
 import glob
 import os
+import sys
 
 import pandas as pd
 from tqdm import tqdm
 
 eval_results = '/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/'
+
 eel = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/*EEL.tsv')
 eeli = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/*ERR.tsv')
 util = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/*util.tsv')
+
+# eel = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*EEL.tsv')
+# eeli = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*ERR.tsv')
+# util = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*util.tsv')
 
 columns = ['difference', 'disparity', 'relevance', 'difference_ind', 'disparity_ind', 'relevance_ind', 'util', 'qid',
            'ranker', 'source', 'group', 'subgroup', 'theta', 'hfunc', 'augmentation', 'val_metric',
@@ -87,40 +93,85 @@ for e, ei, u in tqdm(zip(eel, eeli, util), total=len(eel)):
         merge.group = group
         merge.subgroup = subgroup
     elif fname.startswith('mrfr'):
+
         if len(components) == 12:
             source = f'{components[5].upper()}_train'
             group = components[7]
             subgroup = '-'
+            augmentation = '-'
+            val_metric = '-'
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
 
         elif len(components) == 13:
             source = f'{components[5].upper()}_train'
             group = components[7]
             subgroup = components[8]
+            augmentation = '-'
+            val_metric = '-'
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+
 
         elif len(components) == 15:
 
-            source = f'lambdamart_{components[7]}_{components[8]}_{components[9]}'
+            source = f'lambdamart_{components[8]}_{components[7]}_{components[9]}'
             group = components[10]
             subgroup = '-'
 
+            augmentation = components[8]
+            val_metric = components[7]
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+        # ['mrfr', 'train', '90', '10', 'split', 'lm', 'mrfr', 'err', 'aug0.5', 'nofeat', 'doc', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+        # ['mrfr', 'train', '90', '10', 'split', 'lm', 'mrfr', 'err', 'aug0.5', 'nofeat', 'author', 'ind', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+
         elif len(components) == 16:
-            source = f'lambdamart_{components[7]}_{components[8]}_{components[9]}'
+            source = f'lambdamart_{components[8]}_{components[7]}_{components[9]}'
             group = components[10]
             subgroup = components[11]
 
+            augmentation = components[8]
+            val_metric = components[7]
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+
         elif len(components) == 17:
-            source = f'lambdamart_{components[7]}_{components[9]}_{components[10]}_{components[11]}'
+            source = f'lambdamart_{components[8]}_{components[7]}_{components[9]}_{components[10]}_{components[11]}'
             group = components[12]
             subgroup = '-'
 
+            augmentation = components[8]
+            val_metric = components[7]
+            feature_method = components[9]
+            num_features = components[10]
+            balancing_factor = components[11]
+
         elif len(components) == 18:
-            source = f'lambdamart_{components[7]}_{components[9]}_{components[10]}_{components[11]}'
+            source = f'lambdamart_{components[8]}_{components[7]}_{components[9]}_{components[10]}_{components[11]}'
             group = components[12]
             subgroup = components[13]
+
+            augmentation = components[8]
+            val_metric = components[7]
+            feature_method = components[9]
+            num_features = components[10]
+            balancing_factor = components[11]
+
         merge.ranker = 'rfr'
         merge.source = source
         merge.group = group
         merge.subgroup = subgroup
+        merge.augmentation = augmentation
+        merge.val_metric = val_metric
+        merge.feature_method = feature_method
+        merge.num_features = num_features
+        merge.balancing_factor = balancing_factor
+
     elif fname.startswith('lambdamart'):
         if len(components) == 15:
             metric = components[7]
@@ -159,7 +210,6 @@ for e, ei, u in tqdm(zip(eel, eeli, util), total=len(eel)):
 
     concat.append(merge)
 
-
-
 outdf = pd.concat(concat)
+# sys.exit()
 outdf.to_csv('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/all_experiments.csv', index=False)
