@@ -1,2 +1,0 @@
-{"qid":1,"query":"a","frequency":0.5,"documents":[{"doc_id":"1","relevance":0},{"doc_id":"2","relevance":0},{"doc_id":"3","relevance":0},{"doc_id":"4","relevance":0},{"doc_id":"5","relevance":1},{"doc_id":"6","relevance":0},{"doc_id":"7","relevance":0}]}
-{"qid":2,"query":"b","frequency":0.5,"documents":[{"doc_id":"1","relevance":0},{"doc_id":"2","relevance":0},{"doc_id":"3","relevance":0},{"doc_id":"4","relevance":0},{"doc_id":"5","relevance":1},{"doc_id":"6","relevance":0},{"doc_id":"7","relevance":0}]}

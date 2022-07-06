@@ -1095,6 +1095,26 @@
             "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
           }
         },
+        "eval": {
+          "extend": true,
+          "_corpus": {
+            "index": "str(\"semanticscholar2020og\")"
+          },
+          "_fe": {
+            "corpus": "None",
+            "fquery": "None",
+            "fconfig": "None",
+            "feature_mat": "str(\"pre_processing/resources/escache/lambdamart2020_feature_selection.csv\")"
+          },
+          "_ioht": {
+            "fsequence_train": "str(\"pre_processing/resources/training/2020/training-sequence-full.tsv\")",
+            "fquery_train": "str(\"pre_processing/resources/training/2020/TREC-Fair-Ranking-training-sample.json\")"
+          },
+          "_iohe": {
+            "fsequence_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-seq.tsv\")",
+            "fquery_eval": "str(\"pre_processing/resources/evaluation/2020/TREC-Fair-Ranking-eval-sample.json\")"
+          }
+        },
         "test": {
           "_corpus": {
             "index": "str(\"semanticscholar2020og\")"
@@ -21625,7 +21645,7 @@
           "lambd": 1
         },
         "lm_eval": {
-          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_default_default_random_state=0.csv",
+          "estimated_relevance": "reranking/resources/relevances/lambdamart_mrfr_eval_lm_ndcg_nofeat_random_state=0.csv",
           "grouping": "reranking/resources/mappings/doc_to_doc.json",
           "missing_group_strategy": "ignore"
         },

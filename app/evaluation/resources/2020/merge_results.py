@@ -11,9 +11,9 @@ eel = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/20
 eeli = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/*ERR.tsv')
 util = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/*util.tsv')
 
-# eel = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*EEL.tsv')
-# eeli = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*ERR.tsv')
-# util = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/mrfr*util.tsv')
+# eel = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/ac*EEL.tsv')
+# eeli = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/ac*ERR.tsv')
+# util = glob.glob('/mnt/c/Users/maaik/Documents/thesis/app/evaluation/resources/2020/eval_results/ac*util.tsv')
 
 columns = ['difference', 'disparity', 'relevance', 'difference_ind', 'disparity_ind', 'relevance_ind', 'util', 'qid',
            'ranker', 'source', 'group', 'subgroup', 'theta', 'hfunc', 'augmentation', 'val_metric',
@@ -40,20 +40,33 @@ for e, ei, u in tqdm(zip(eel, eeli, util), total=len(eel)):
     components = fname.split('_')
     if fname.startswith('ac'):
         if len(components) == 12:
+            # ['ac', 'controller', 'train10', 'meta', '99', 'linear', 'doc', 'train', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
             source = f'{components[3].upper()}_train'
             theta = components[4]
             hfunc = components[5]
             group = components[6]
             subgroup = '-'
-            # ['ac', 'controller', 'train10', 'meta', '99', 'linear', 'doc', 'train', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+
+            augmentation = '-'
+            val_metric = '-'
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
 
         elif len(components) == 13:
+            # ['ac', 'controller', 'train10', 'meta', '99', 'linear', 'author', 'ind', 'train', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
             source = f'{components[3].upper()}_train'
             theta = components[4]
             hfunc = components[5]
             group = components[6]
             subgroup = components[7]
-            # ['ac', 'controller', 'train10', 'meta', '99', 'linear', 'author', 'ind', 'train', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+
+            augmentation = '-'
+            val_metric = '-'
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+
 
         elif len(components) == 15:
             # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'err', 'aug0.5', 'nofeat', 'doc', '99', 'linear', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
@@ -63,6 +76,12 @@ for e, ei, u in tqdm(zip(eel, eeli, util), total=len(eel)):
             group = components[8]
             subgroup = '-'
 
+            augmentation = components[6]
+            val_metric = components[5]
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+
         elif len(components) == 16:
             # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'err', 'aug0.5', 'nofeat', 'author', 'ind', '99', 'linear', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
             source = f'lambdamart_{components[6]}_{components[5]}_{components[7]}'
@@ -71,27 +90,54 @@ for e, ei, u in tqdm(zip(eel, eeli, util), total=len(eel)):
             group = components[8]
             subgroup = components[9]
 
+            augmentation = components[6]
+            val_metric = components[5]
+            feature_method = '-'
+            num_features = '-'
+            balancing_factor = '-'
+
         elif len(components) == 17:
-            # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'ndcg', 'noaug', 'msd', '20', '0.9', 'doc', '9', 'min', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
-            source = f'lambdamart_{components[5]}_{components[7]}_{components[8]}_{components[9]}'
+            # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'err', 'aug0.5', 'mpt', '10', '0.1', 'doc', '99', 'linear', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+            source = f'lambdamart_{components[6]}_{components[5]}_{components[7]}_{components[8]}_{components[9]}'
             theta = components[11]
             hfunc = components[12]
             group = components[10]
             subgroup = '-'
 
+            augmentation = components[6]
+            val_metric = components[5]
+            feature_method = components[7]
+            num_features = components[8]
+            balancing_factor = components[9]
+
         elif len(components) == 18:
-            # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'ndcg', 'noaug', 'msd', '20', '0.9', 'author', 'one', '9', 'min', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
-            source = f'lambdamart_{components[5]}_{components[7]}_{components[8]}_{components[9]}'
+            # ['ac', 'controller', 'train10', 'lm', 'mrfr', 'err', 'aug0.5', 'mpt', '10', '0.1', 'author', 'ind', '99', 'linear', 'TREC-Fair-Ranking-training-sample', '-10-full-annotations-DocHLevel-mixed', 'group-qrels', 'EEL']
+            source = f'lambdamart_{components[6]}_{components[5]}_{components[7]}_{components[8]}_{components[9]}'
             theta = components[12]
             hfunc = components[13]
             group = components[10]
             subgroup = components[11]
+
+            augmentation = components[6]
+            val_metric = components[5]
+            feature_method = components[7]
+            num_features = components[8]
+            balancing_factor = components[9]
+
+
         merge.ranker = 'ac'
         merge.source = source
         merge.theta = theta
         merge.hfunc = hfunc
         merge.group = group
         merge.subgroup = subgroup
+
+        merge.augmentation = augmentation
+        merge.val_metric = val_metric
+        merge.feature_method = feature_method
+        merge.num_features = num_features
+        merge.balancing_factor = balancing_factor
+
     elif fname.startswith('mrfr'):
 
         if len(components) == 12:
