@@ -130,4 +130,5 @@ def target(qrels, umType, p, u, complete):
     disparity = metrics.Disparity(target, umType, p, u, relevanceLevels, n)
     relevance = metrics.Relevance(target, umType, p, u, relevanceLevels, n)
     difference = metrics.Difference(target, umType, p, u, relevanceLevels, n)
+    tconstant = metrics.TConstant(target)
     return target, disparity, relevance, difference

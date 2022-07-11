@@ -94,6 +94,13 @@ class Disparity(Metric):
     def compute(self, run):
         self.value = util.l2(run, False)
 
+class TConstant(Metric):
+    def __init__(self, target):
+        super().__init__("tconstant", 1.0)
+        self.target = target
+
+    def compute(self, run):
+        self.value = util.l2(self.target, False)
 
 #
 # difference
